@@ -1,0 +1,1178 @@
+<title>Oselu Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Fredoka:wght@500;600;700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one site, two worlds. Oselu = indigo ink on paper (adire-blue studio).
+   Wonderful Labs = same paper, oil-pastel marigold + leaf + coral. Hash views switch between them. */
+:root{
+  --paper:#FBFBF8;
+  --surface:#F1F2F6;
+  --ink:#1B1F3B;
+  --muted:#5B6077;
+  --line:#DCDEE8;
+  --indigo:#2B3A8C;
+  --indigo-soft:#E4E8F7;
+  --marigold:#F4B32B;
+  --marigold-ink:#7A4E00;
+  --leaf:#3E9A62;
+  --coral:#E8634A;
+  --labs-bg:#FFF6DF;
+  --font-display:"Young Serif", Georgia, "Times New Roman", serif;
+  --font-labs:"Fredoka", "Trebuchet MS", system-ui, sans-serif;
+  --font-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --step-0:1rem; --step-1:1.2rem; --step-2:1.6rem; --step-3:2.2rem; --step-4:clamp(2.4rem,6vw,3.6rem);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#12142A; --surface:#1B1E38; --ink:#EEF0FA; --muted:#A3A8C3; --line:#2C3052;
+  --indigo:#9AA9F2; --indigo-soft:#232955; --marigold:#F6C04D; --marigold-ink:#F6C04D;
+  --leaf:#6CC690; --coral:#F2846F; --labs-bg:#221E14; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#12142A; --surface:#1B1E38; --ink:#EEF0FA; --muted:#A3A8C3; --line:#2C3052;
+  --indigo:#9AA9F2; --indigo-soft:#232955; --marigold:#F6C04D; --marigold-ink:#F6C04D;
+  --leaf:#6CC690; --coral:#F2846F; --labs-bg:#221E14; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:var(--step-0);line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.15;font-weight:400}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--indigo);outline-offset:3px;border-radius:4px}
+
+/* header */
+header.site{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:14px}
+.logo{font-family:var(--font-display);font-size:1.45rem;text-decoration:none;color:var(--indigo)}
+nav.main{display:flex;gap:4px;flex-wrap:wrap}
+nav.main a{text-decoration:none;font-weight:600;font-size:.95rem;padding:8px 12px;border-radius:999px;color:var(--muted)}
+nav.main a:hover{color:var(--ink)}
+nav.main a[aria-current="page"]{background:var(--indigo-soft);color:var(--indigo)}
+nav.main a.labs-link[aria-current="page"]{background:var(--marigold);color:#2A1C00}
+nav.main a.labs-link{font-family:var(--font-labs)}
+
+section.view{padding-block:48px 72px}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+
+/* ---------- Oselu home ---------- */
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+.hero > *{min-width:0}
+.hero h1{font-family:var(--font-display);font-size:var(--step-4);color:var(--ink)}
+.hero h1 em{font-style:normal;color:var(--indigo)}
+.hero p.lede{margin-top:18px;font-size:var(--step-1);color:var(--muted);max-width:34em}
+.hero .actions{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;font:600 1rem var(--font-body);padding:12px 20px;border-radius:999px;border:2px solid var(--indigo);text-decoration:none;cursor:pointer}
+.btn.solid{background:var(--indigo);color:var(--paper)}
+.btn.ghost{background:transparent;color:var(--indigo)}
+.hero-art{aspect-ratio:4/5;max-width:100%;border-radius:4px;background:var(--indigo-soft);position:relative;overflow:hidden}
+.hero-art{display:block;text-decoration:none;background:var(--surface)}
+.ha-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease}
+.ha-img.on{opacity:1}
+.ha-cap{position:absolute;left:12px;bottom:12px;max-width:calc(100% - 24px);background:var(--paper);color:var(--ink);font-size:.82rem;font-weight:600;padding:6px 12px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.ha-cap b{color:var(--indigo);font-variant-numeric:tabular-nums;margin-right:6px}
+.hero-art:hover .ha-cap{background:var(--indigo);color:var(--paper)}
+.hero-art:hover .ha-cap b{color:var(--paper)}
+@media (prefers-reduced-motion:reduce){.ha-img{transition:none}}
+
+.disciplines{margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;border-top:1px solid var(--line);padding-top:28px}
+.disciplines h3{font-family:var(--font-display);font-size:var(--step-1);margin-bottom:6px}
+.disciplines p{color:var(--muted);font-size:.95rem}
+
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.section-head h2{font-family:var(--font-display);font-size:var(--step-3)}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.piece{display:flex;flex-direction:column;gap:10px}
+.slot{aspect-ratio:1/1;max-width:100%;border:2px dashed var(--line);border-radius:4px;background:var(--surface);display:grid;place-items:center;color:var(--muted);font-size:.85rem;text-align:center;padding:12px}
+.piece .meta{display:flex;justify-content:space-between;gap:8px;font-size:.9rem}
+.piece .meta b{font-weight:600}
+.piece .meta span{color:var(--muted)}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filters button{font:600 .85rem var(--font-body);border:1px solid var(--line);background:transparent;color:var(--muted);padding:6px 12px;border-radius:999px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+.about{display:grid;grid-template-columns:.8fr 1.2fr;gap:40px;align-items:start}
+.about > *{min-width:0}
+.about h2{font-family:var(--font-display);font-size:var(--step-3)}
+.about .copy{display:flex;flex-direction:column;gap:14px;max-width:38em;color:var(--ink)}
+.contact{margin-top:12px;border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:8px}
+.contact > p{color:var(--muted)}
+.contact-list{margin:8px 0 0;display:flex;flex-direction:column;gap:14px}
+.contact-list dt{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.contact-list dd{margin:4px 0 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:var(--step-1)}
+.contact-list .sel{user-select:all}
+.contact-list a{color:var(--indigo);font-weight:600;font-size:1rem}
+.copy-btn{font:600 .82rem var(--font-body);border:1px solid var(--line);background:transparent;color:var(--muted);padding:4px 12px;border-radius:999px;cursor:pointer}
+.note{background:var(--indigo-soft);color:var(--indigo);border-radius:6px;padding:12px 14px;font-size:.9rem}
+
+/* ---------- Wonderful Labs ---------- */
+.labs{font-family:var(--font-body)}
+.labs h1,.labs h2,.labs h3{font-family:var(--font-labs);font-weight:600}
+.labs-hero{background:var(--labs-bg);border-radius:28px;padding:40px clamp(20px,5vw,56px);position:relative;overflow:hidden}
+.labs-hero > *{position:relative}
+.labs-mark{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-labs);font-weight:700;font-size:1.05rem;color:var(--marigold-ink)}
+.labs-mark svg{width:34px;height:34px}
+.labs-hero h1{font-size:var(--step-4);margin-top:14px;max-width:14em}
+.labs-hero p{margin-top:16px;font-size:var(--step-1);color:var(--muted);max-width:34em}
+.scribble{position:absolute;right:-20px;top:-10px;width:min(340px,55%);opacity:.9;pointer-events:none}
+.btn.labs-btn{background:var(--ink);color:var(--paper);border-color:var(--ink);font-family:var(--font-labs);font-weight:600}
+.btn.labs-ghost{background:transparent;color:var(--ink);border-color:var(--ink);font-family:var(--font-labs);font-weight:600}
+
+.stops{margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.stop{border:2px solid var(--line);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:8px}
+.stop .where{font-family:var(--font-labs);font-weight:600;font-size:var(--step-1)}
+.stop .tag{align-self:flex-start;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+.tag.free{background:var(--leaf);color:#fff}
+.tag.paid{background:var(--marigold);color:#2A1C00}
+.tag.school{background:var(--coral);color:#fff}
+.stop p{color:var(--muted);font-size:.95rem}
+.stop a{font-weight:600;color:var(--ink);margin-top:auto}
+
+.believe{margin-top:56px;display:grid;grid-template-columns:.8fr 1.2fr;gap:40px}
+.believe > *{min-width:0}
+.believe h2{font-size:var(--step-3)}
+.believe ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.believe li{display:grid;grid-template-columns:18px 1fr;gap:12px;align-items:baseline}
+.dot{width:14px;height:14px;border-radius:50%;display:inline-block;transform:translateY(2px)}
+
+/* case study */
+.cs-head{max-width:46em}
+.cs-head h1{font-size:var(--step-4);margin-top:12px}
+.cs-head p{margin-top:16px;font-size:var(--step-1);color:var(--muted)}
+.facts{margin-top:32px;display:grid;grid-template-columns:repeat(4,1fr);border:2px solid var(--ink);border-radius:20px;overflow:hidden}
+.facts div{padding:16px 18px;border-right:2px solid var(--ink)}
+.facts div:last-child{border-right:0}
+.facts dt{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.facts dd{margin:4px 0 0;font-family:var(--font-labs);font-weight:600;font-size:var(--step-1);font-variant-numeric:tabular-nums}
+.cs-body{margin-top:48px;display:grid;grid-template-columns:200px 1fr;gap:40px}
+.cs-body > *{min-width:0}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 90px);align-self:start;display:flex;flex-direction:column;gap:6px;font-size:.92rem}
+.toc a{text-decoration:none;color:var(--muted)}
+.toc a:hover{color:var(--ink)}
+.cs-sections{display:flex;flex-direction:column;gap:44px;max-width:40em}
+.cs-sections h2{font-size:var(--step-2);margin-bottom:12px}
+.cs-sections p + p{margin-top:12px}
+.flow{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:0;border-left:3px solid var(--marigold)}
+.flow li{padding:0 0 18px 20px;position:relative}
+.flow li::before{content:"";position:absolute;left:-9px;top:6px;width:15px;height:15px;border-radius:50%;background:var(--paper);border:3px solid var(--marigold)}
+.flow li:last-child{padding-bottom:0}
+.flow b{font-family:var(--font-labs);font-weight:600;display:block}
+.flow span{color:var(--muted);font-size:.95rem}
+.photo-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.photo-row .slot{border-radius:16px}
+.todo{background:var(--labs-bg);border:2px dashed var(--marigold);border-radius:14px;padding:14px 16px;font-size:.92rem;color:var(--ink)}
+.todo b{color:var(--marigold-ink)}
+
+/* join */
+.join{display:grid;grid-template-columns:.9fr 1.1fr;gap:40px;align-items:start}
+.join > *{min-width:0}
+.join h1{font-size:var(--step-4);margin-top:12px}
+.join .intro p{margin-top:14px;color:var(--muted);font-size:var(--step-1)}
+form.reg{background:var(--labs-bg);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:18px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label,.field legend{font-weight:600;font-size:.95rem}
+.field .hint{font-size:.85rem;color:var(--muted)}
+input[type=text],input[type=email],input[type=tel],select,textarea{font:inherit;color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:11px 13px;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
+textarea{min-height:90px;resize:vertical}
+fieldset{border:0;padding:0;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chips label{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--line);background:var(--paper);border-radius:999px;padding:8px 14px;font-weight:500;cursor:pointer}
+.chips input{accent-color:var(--ink)}
+.chips label:has(input:checked){border-color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.err{color:var(--coral);font-size:.88rem;font-weight:600}
+.done{background:var(--paper);border:2px solid var(--leaf);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.done h3{font-size:var(--step-1)}
+.done pre{white-space:pre-wrap;font:inherit;font-size:.9rem;background:var(--surface);padding:12px;border-radius:10px;margin:0}
+.done .actions{display:flex;gap:10px;flex-wrap:wrap}
+
+
+/* work tabs + projects */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:24px}
+.tabs button{font:600 1rem var(--font-body);background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:10px 14px 12px;cursor:pointer;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--indigo);border-bottom-color:var(--indigo)}
+.tabs .count{font-size:.78rem;background:var(--indigo-soft);color:var(--indigo);border-radius:999px;padding:1px 8px;margin-left:4px;font-variant-numeric:tabular-nums}
+.panel-intro{color:var(--muted);margin-bottom:24px;max-width:40em}
+.projects{display:grid;grid-template-columns:repeat(3,1fr);gap:28px 20px}
+.proj{display:flex;flex-direction:column;gap:12px;text-decoration:none;color:inherit}
+.proj .thumb{aspect-ratio:1/1;max-width:100%;overflow:hidden;border-radius:4px;background:var(--surface)}
+.proj .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease}
+.proj .thumb.contain{background:#000}
+.proj .thumb.contain img{object-fit:contain}
+.proj:hover .thumb img{transform:scale(1.03)}
+.proj .meta{display:flex;flex-direction:column;gap:2px}
+.proj .meta b{font-family:var(--font-display);font-weight:400;font-size:var(--step-1)}
+.proj .meta span{color:var(--muted);font-size:.9rem}
+.empty{border:2px dashed var(--line);border-radius:8px;padding:40px 24px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:8px;align-items:center}
+.empty b{font-family:var(--font-display);font-weight:400;font-size:var(--step-2);color:var(--ink)}
+.empty p{max-width:30em}
+
+.pd-back{font-weight:600;text-decoration:none;color:var(--muted)}
+.pd-head{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end}
+.pd-head > *{min-width:0}
+.pd-head h1{font-family:var(--font-display);font-size:var(--step-4);margin-top:8px}
+.pd-head .lede{color:var(--muted);font-size:var(--step-1)}
+.pd-cover{margin-top:32px;max-width:100%;border-radius:4px;overflow:hidden;background:var(--surface)}
+.pd-cover img{width:100%;max-height:80vh;object-fit:contain;display:block;margin:0 auto}
+.pd-cover.dark{background:#000}
+.pd-text{margin-top:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:32px;border-top:1px solid var(--line);padding-top:28px}
+.pd-text > *{min-width:0}
+.pd-text h2{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--indigo);font-family:var(--font-body);margin-bottom:10px}
+.pd-text ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.pd-text p + p{margin-top:10px}
+.pd-gallery{margin-top:40px;display:flex;flex-direction:column;gap:24px}
+.pd-gallery img{width:100%;max-width:100%;display:block;border-radius:4px;background:var(--surface)}
+.pd-nav{margin-top:48px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:20px}
+.pd-nav a{text-decoration:none;font-weight:600;color:var(--indigo)}
+@media (max-width:820px){.projects{grid-template-columns:repeat(2,1fr)}.pd-head,.pd-text{grid-template-columns:1fr}}
+@media (max-width:480px){.projects{grid-template-columns:1fr}}
+
+/* illustration */
+.ills{display:flex;flex-direction:column;gap:64px}
+.ill-sec{scroll-margin-top:90px}
+.ill-head{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:end;margin-bottom:22px}
+.ill-head > *{min-width:0}
+.ill-head h3{font-family:var(--font-display);font-size:var(--step-3);margin-top:8px}
+.ill-head p{color:var(--muted)}
+.ill-tags{display:flex;gap:6px;flex-wrap:wrap}
+.ill-tags span{font-size:.78rem;font-weight:600;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--muted)}
+.ill-tags .yrs{background:var(--indigo-soft);border-color:transparent;color:var(--indigo)}
+.masonry{columns:3 260px;column-gap:16px}
+.masonry figure{break-inside:avoid;margin:0 0 16px;display:flex;flex-direction:column;gap:6px}
+.masonry button{all:unset;cursor:zoom-in;display:block;border-radius:4px;overflow:hidden;background:var(--surface)}
+.masonry button:focus-visible{outline:3px solid var(--indigo);outline-offset:3px}
+.masonry img{width:100%;height:auto;display:block;transition:transform .35s ease}
+.masonry button:hover img{transform:scale(1.02)}
+.masonry figcaption{font-size:.86rem;color:var(--muted);line-height:1.4}
+.masonry figcaption a{color:var(--indigo);font-weight:600}
+.ill-sec.wide .masonry{columns:1}
+.ill-sec.small .masonry{columns:4 180px}
+.ill-sec.products .masonry{display:none}
+.pp{border-top:1px solid var(--line);padding-block:28px;display:flex;flex-direction:column;gap:18px}
+.pp-head{display:grid;grid-template-columns:.7fr 1.3fr;gap:24px;align-items:start}
+.pp-head > *{min-width:0}
+.pp h4{font-family:var(--font-display);font-weight:400;font-size:var(--step-2);margin:0}
+.pp-sub{font-size:.85rem;color:var(--muted);margin-top:4px}
+.pp-head p{color:var(--muted);max-width:40em}
+.pp-head a{color:var(--indigo);font-weight:600;white-space:nowrap}
+.pp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.pp-grid button{all:unset;cursor:zoom-in;aspect-ratio:1/1;max-width:100%;background:#fff;border:1px solid var(--line);border-radius:4px;overflow:hidden;display:block}
+.pp-grid button:focus-visible{outline:3px solid var(--indigo);outline-offset:2px}
+.pp-grid img{width:100%;height:100%;object-fit:contain;display:block;transition:transform .3s ease}
+.pp-grid button:hover img{transform:scale(1.04)}
+@media (max-width:820px){.pp-head{grid-template-columns:1fr;gap:8px}.pp-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}}
+.ill-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:28px 20px}
+.ill-thumb{background:#fff;border:1px solid var(--line)}
+.ill-thumb img{object-fit:cover}
+.earlier{display:flex;justify-content:center;padding-block:36px 8px}
+#ill-earlier{padding-top:28px;border-top:1px solid var(--line)}
+.ill-intro{display:flex;flex-direction:column;gap:12px}
+.ill-intro .ext{color:var(--indigo);font-weight:600}
+.ill-body{margin-top:32px}
+@media (max-width:820px){.ill-cards{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:480px){.ill-cards{grid-template-columns:1fr}}
+.art-head{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:end;margin-bottom:24px}
+.art-head > *{min-width:0}
+.art-head h3{font-family:var(--font-display);font-size:var(--step-3);margin-top:8px}
+.art-head p{color:var(--muted)}
+.art-grid{columns:3 240px}
+.art-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.art-filters button{font:600 .9rem var(--font-body);border:1px solid var(--line);background:transparent;color:var(--muted);padding:7px 14px;border-radius:999px;cursor:pointer}
+.art-filters button span{font-variant-numeric:tabular-nums;opacity:.7;margin-left:4px}
+.art-filters button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.art-grid figcaption{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.new-badge{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--marigold);color:#2A1C00;border-radius:999px;padding:2px 8px}
+.art-medium{color:var(--muted);opacity:.8}
+.rm-btn{margin-left:auto;font:600 .78rem var(--font-body);background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:2px 10px;cursor:pointer}
+.rm-btn.armed{border-color:var(--coral);color:var(--coral)}
+.art-admin{border:2px dashed var(--indigo);border-radius:12px;padding:16px;margin-bottom:24px;background:var(--indigo-soft)}
+.aa-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.aa-bar p{color:var(--ink);font-size:.95rem;max-width:40em}
+.aa-form{margin-top:16px}
+.aa-grid{display:grid;grid-template-columns:240px 1fr;gap:20px}
+.aa-grid > *{min-width:0}
+.aa-drop{position:relative;display:grid;place-items:center;text-align:center;aspect-ratio:3/4;max-width:100%;border:2px dashed var(--line);border-radius:10px;background:var(--paper);color:var(--muted);cursor:pointer;overflow:hidden;padding:12px}
+.aa-drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.aa-drop img{width:100%;height:100%;object-fit:contain}
+.aa-fields{display:flex;flex-direction:column;gap:14px}
+.aa-actions{display:flex;gap:10px;flex-wrap:wrap}
+.aa-status{font-size:.9rem;color:var(--ink);min-height:1.2em}
+.aa-status.err{color:var(--coral);font-weight:600}
+@media (max-width:640px){.aa-grid{grid-template-columns:1fr}.aa-drop{aspect-ratio:4/3}}
+@media (max-width:820px){.art-head{grid-template-columns:1fr;gap:10px}}
+.lightbox{position:fixed;inset:0;z-index:50;background:rgba(10,12,28,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:calc(env(safe-area-inset-top,0px) + 56px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 24px) max(16px,env(safe-area-inset-left,0px))}
+.lightbox img{max-width:100%;max-height:78vh;object-fit:contain;border-radius:4px;background:#fff}
+.lightbox p{color:#EEF0FA;font-size:.95rem;text-align:center;max-width:40em}
+.lb-btn{position:absolute;background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:999px;width:44px;height:44px;font-size:1.3rem;cursor:pointer;display:grid;place-items:center}
+.lb-btn:hover{background:rgba(255,255,255,.25)}
+.lb-close{top:calc(env(safe-area-inset-top,0px) + 12px);right:max(12px,env(safe-area-inset-right,0px))}
+.lb-prev{left:max(12px,env(safe-area-inset-left,0px));top:50%}
+.lb-next{right:max(12px,env(safe-area-inset-right,0px));top:50%}
+@media (max-width:820px){.ill-head{grid-template-columns:1fr;gap:10px}.ill-sec.small .masonry{columns:2}}
+@media (max-width:480px){.lb-prev,.lb-next{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 16px)}}
+
+/* poster series */
+.series-strip{margin-top:56px}
+.series-strip .section-head h2{font-family:var(--font-display);font-size:var(--step-3)}
+.series-cards{display:grid;grid-template-columns:1fr 1.4fr;gap:20px}
+.series-cards > *{min-width:0}
+.sc{display:flex;flex-direction:column;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--paper);transition:border-color .2s}
+.sc:hover{border-color:var(--indigo)}
+.sc-mosaic{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;background:var(--line)}
+.sc-mosaic img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
+.sc-latest{position:relative;background:var(--surface);display:grid;place-items:center;flex:1;min-height:220px}
+.sc-latest img{max-height:340px;width:auto;max-width:100%;display:block}
+.sc-latest .new-badge{position:absolute;top:10px;left:10px}
+.sc-empty{flex:1;min-height:220px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;background:repeating-linear-gradient(135deg,var(--surface) 0 14px,var(--paper) 14px 28px);text-align:center;padding:20px}
+.sc-empty span{font-family:var(--font-display);font-size:var(--step-3);color:var(--indigo)}
+.sc-empty small{color:var(--muted)}
+.sc-body{display:flex;align-items:center;gap:16px;padding:16px 18px}
+.sc-big{font-family:var(--font-display);font-size:2.6rem;line-height:1;color:var(--indigo);font-variant-numeric:tabular-nums}
+.sc-body b{display:block;font-family:var(--font-display);font-weight:400;font-size:var(--step-1)}
+.sc-body span{color:var(--muted);font-size:.9rem}
+.wc-hero{margin-top:18px;display:grid;grid-template-columns:auto 1fr;gap:36px;align-items:center}
+.wc-hero > *{min-width:0}
+.wc-num{font-family:var(--font-display);font-size:clamp(5.5rem,16vw,11rem);line-height:.85;color:var(--indigo);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.wc-intro h1,.cov-hero h1{font-family:var(--font-display);font-size:var(--step-4);margin-top:8px}
+.wc-intro .lede,.cov-hero .lede{margin-top:14px;color:var(--muted);font-size:var(--step-1);max-width:38em}
+.wc-note{margin-top:12px;font-size:.85rem;color:var(--muted);font-style:italic}
+.wc-tools{margin-top:36px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.wc-tools .art-filters{margin:0}
+.wc-search input{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:8px 16px;width:min(260px,100%)}
+.wc-search input:focus{outline:none;border-color:var(--indigo)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.wc-count{color:var(--muted);font-size:.9rem;margin:12px 0 0;min-height:1em}
+.wc-wall{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.wc-tile{all:unset;position:relative;cursor:zoom-in;aspect-ratio:4/5;max-width:100%;overflow:hidden;border-radius:3px;background:var(--surface)}
+.wc-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
+.wc-tile:hover img{transform:scale(1.05)}
+.wc-tile:focus-visible{outline:3px solid var(--indigo);outline-offset:2px}
+.wc-cap{position:absolute;inset:auto 0 0 0;padding:18px 8px 6px;font-size:.72rem;line-height:1.25;color:#fff;background:linear-gradient(transparent,rgba(10,12,28,.82));opacity:0;transition:opacity .2s}
+.wc-cap b{display:block;font-variant-numeric:tabular-nums;opacity:.8}
+.wc-tile:hover .wc-cap,.wc-tile:focus-visible .wc-cap{opacity:1}
+@media (hover:none){.wc-cap{opacity:1}}
+.wc-none{color:var(--muted);padding:24px 0}
+.cov-hero{margin-top:18px;margin-bottom:32px}
+.cov-season{margin-top:28px}
+.cov-season h2{font-family:var(--font-display);font-size:var(--step-2);display:flex;gap:12px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:18px}
+.cov-season h2 span{font-family:var(--font-body);font-size:.85rem;color:var(--muted)}
+.cov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}
+.cov-card{margin:0;display:flex;flex-direction:column;gap:8px}
+.cov-card button{all:unset;position:relative;cursor:zoom-in;display:block;border-radius:4px;overflow:hidden;background:var(--surface)}
+.md-tag{position:absolute;top:8px;left:8px;font:700 .72rem var(--font-body);letter-spacing:.06em;background:var(--ink);color:var(--paper);border-radius:999px;padding:3px 9px}
+.alt-note{font-size:.8rem;color:var(--indigo)!important;font-weight:600}
+.cov-card img{width:100%;height:auto;display:block}
+.cov-card figcaption{display:flex;flex-direction:column;gap:2px}
+.cov-card figcaption b{font-family:var(--font-display);font-weight:400;font-size:var(--step-1)}
+.cov-card figcaption span{color:var(--muted);font-size:.88rem}
+.cov-card .rm-btn{margin:6px 0 0;align-self:flex-start}
+.cov-card button:hover img{transform:scale(1.02)}
+.cov-card img{transition:transform .3s ease}
+@media (max-width:820px){.series-cards{grid-template-columns:1fr}.wc-hero{grid-template-columns:1fr;gap:8px}.sc-mosaic{grid-template-columns:repeat(4,1fr)}.sc-mosaic img:nth-child(n+9){display:none}}
+@media (max-width:480px){.wc-wall{grid-template-columns:repeat(3,1fr);gap:6px}}
+
+footer{border-top:1px solid var(--line);padding-block:28px;color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media (max-width:820px){
+  .hero,.about,.believe,.join,.cs-body{grid-template-columns:1fr}
+  .hero-art{aspect-ratio:4/5;width:100%;max-width:360px}
+  .disciplines,.stops{grid-template-columns:1fr}
+  .gallery{grid-template-columns:repeat(2,1fr)}
+  .facts{grid-template-columns:repeat(2,1fr)}
+  .facts div:nth-child(2){border-right:0}
+  .facts div:nth-child(-n+2){border-bottom:2px solid var(--ink)}
+  .toc{position:static;flex-direction:row;flex-wrap:wrap;gap:12px}
+}
+@media (max-width:480px){
+  .gallery,.photo-row,.two{grid-template-columns:1fr}
+  .bar{padding-block:10px}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="logo" href="#home" data-go="home">Oselu</a>
+    <nav class="main" aria-label="Main">
+      <a href="#home" data-go="home">Home</a>
+      <a href="#work" data-go="work">Work</a>
+      <a href="#about" data-go="about">About</a>
+      <a href="#labs" data-go="labs" class="labs-link">Wonderful Labs</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<!-- ============ HOME ============ -->
+<section class="view" id="v-home" data-view="home">
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Visual artist · Graphic designer · Art educator</div>
+        <h1 style="margin-top:14px">I make pictures, design identities, and <em>create room for people to create.</em></h1>
+        <p class="lede">I'm Oselu Irabor. I work across illustration, graphic design, and visual storytelling, creating posters, editorial work, and visual identities. I also design playful art experiences that help children and adults explore their creativity.</p>
+        <div class="actions">
+          <a class="btn solid" href="#work" data-go="work">See my work</a>
+          <a class="btn ghost" href="#labs" data-go="labs">Visit Wonderful Labs</a>
+        </div>
+      </div>
+      <a class="hero-art" id="hero-art" href="#world-cup" data-go="world-cup" aria-label="One of 100 World Cup 2026 posters. See the full series.">
+        <img class="ha-img" id="ha-a" alt=""><img class="ha-img" id="ha-b" alt="">
+        <span class="ha-cap" id="ha-cap"></span>
+      </a>
+    </div>
+
+    <div class="series-strip">
+      <div class="section-head"><div><div class="eyebrow">Ongoing series</div><h2 style="margin-top:8px">Posters, made one match at a time</h2></div></div>
+      <div class="series-cards" id="series-home"></div>
+    </div>
+
+    <div class="disciplines">
+      <div><h3>Graphic design</h3><p>Posters, editorial covers, campaigns and identity systems.</p></div>
+      <div><h3>Illustration &amp; visual art</h3><p>Editorial illustration, drawing and painting.</p></div>
+      <div><h3>Teaching</h3><p>Hands-on art classes for kids and adults, run as Wonderful Labs.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WORK ============ -->
+<section class="view" id="v-work" data-view="work" hidden>
+  <div class="wrap">
+    <div class="section-head">
+      <div><div class="eyebrow">Portfolio</div><h2 style="margin-top:8px">Work</h2></div>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Portfolio">
+      <button type="button" role="tab" id="t-design" aria-controls="p-design" aria-selected="true">Graphic Design <span class="count">8</span></button>
+      <button type="button" role="tab" id="t-series" aria-controls="p-series" aria-selected="false">Poster Series <span class="count">2</span></button>
+      <button type="button" role="tab" id="t-illustration" aria-controls="p-illustration" aria-selected="false">Illustration <span class="count">158</span></button>
+      <button type="button" role="tab" id="t-art" aria-controls="p-art" aria-selected="false">Visual Art</button>
+    </div>
+
+    <div role="tabpanel" id="p-design" aria-labelledby="t-design">
+      <p class="panel-intro">Posters, editorial covers, campaigns and identity systems built from bold typography and illustration.</p>
+      <div class="projects" id="projects"></div>
+    </div>
+    <div role="tabpanel" id="p-series" aria-labelledby="t-series" hidden>
+      <p class="panel-intro">Two personal, ongoing poster series built around football: one for every match of the 2026 World Cup, and one for every Coventry matchday.</p>
+      <div class="series-cards" id="series-work"></div>
+    </div>
+    <div role="tabpanel" id="p-illustration" aria-labelledby="t-illustration" hidden>
+      <p class="panel-intro">In two words, I'm a world builder. My illustrations live across digital products, editorial platforms and games, turning complex ideas into clear, engaging visuals.</p>
+      <div class="ill-cards" id="ill-featured"></div>
+      <div class="earlier">
+        <button type="button" class="btn ghost" id="earlier-btn" aria-expanded="false" aria-controls="ill-earlier">Read earlier projects</button>
+      </div>
+      <div class="ill-cards" id="ill-earlier" hidden></div>
+    </div>
+    <div role="tabpanel" id="p-art" aria-labelledby="t-art" hidden>
+      <div class="art-head">
+        <div><div class="eyebrow">Oil pastel on paper</div><h3>Paintings &amp; drawings</h3></div>
+        <p>Personal work made by hand: sports moments, animals, people, places and still life, built up in thick layers of oil pastel. This is the same medium I teach in Wonderful Labs classes. New pieces are added regularly.</p>
+      </div>
+      <div class="art-admin" id="art-admin" hidden>
+        <div class="aa-bar">
+          <p><b>Only you can see this panel.</b> Add a new piece and it goes live on the site for everyone.</p>
+          <button type="button" class="btn solid" id="aa-open">Add artwork</button>
+        </div>
+        <form class="aa-form" id="aa-form" hidden novalidate>
+          <div class="aa-grid">
+            <label class="aa-drop" for="aa-file">
+              <img id="aa-preview" alt="" hidden>
+              <span id="aa-drop-text">Choose a photo or scan of the artwork<br><small>JPG or PNG. Large photos are resized automatically.</small></span>
+              <input type="file" id="aa-file" accept="image/jpeg,image/png,image/webp">
+            </label>
+            <div class="aa-fields">
+              <div class="field"><label for="aa-title">Title</label><input type="text" id="aa-title" placeholder="e.g. Market woman" maxlength="80"></div>
+              <div class="field"><label for="aa-cat">Group</label>
+                <select id="aa-cat"><option value="sports">Sports</option><option value="animals">Animals</option><option value="people">People &amp; places</option><option value="still">Still life</option></select></div>
+              <div class="field"><label for="aa-medium">Medium</label><input type="text" id="aa-medium" value="Oil pastel" maxlength="60"></div>
+              <p class="aa-status" id="aa-status" role="status"></p>
+              <div class="aa-actions"><button type="submit" class="btn solid" id="aa-save">Publish to site</button><button type="button" class="btn ghost" id="aa-cancel">Cancel</button></div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="art-filters" role="group" aria-label="Filter artwork" id="art-filters"></div>
+      <div class="masonry art-grid" id="art-grid"></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ WORLD CUP ============ -->
+<section class="view" id="v-world-cup" data-view="world-cup" hidden>
+  <div class="wrap">
+    <a class="pd-back" href="#work" data-go="work" data-tab="t-series">← Poster Series</a>
+    <div class="wc-hero">
+      <div class="wc-num" id="wc-num" aria-hidden="true">100</div>
+      <div class="wc-intro">
+        <div class="eyebrow">Personal series · FIFA World Cup 2026</div>
+        <h1>A poster for every match</h1>
+        <p class="lede">Through the 2026 World Cup I made a poster for each match as it was played, drawn by hand in oil pastel. Every one turns the flags of the two teams into a single composition, so no two are alike.</p>
+        <p class="wc-note">A personal project. Not affiliated with or endorsed by FIFA.</p>
+      </div>
+    </div>
+    <div class="wc-tools">
+      <div class="art-filters" role="group" aria-label="Filter by stage" id="wc-stages"></div>
+      <label class="wc-search" for="wc-q"><span class="sr">Find a team</span><input type="search" id="wc-q" placeholder="Find a team, e.g. Ghana" autocomplete="off"></label>
+    </div>
+    <p class="wc-count" id="wc-count" role="status"></p>
+    <div class="wc-wall" id="wc-wall"></div>
+  </div>
+</section>
+
+<!-- ============ COVENTRY ============ -->
+<section class="view" id="v-coventry" data-view="coventry" hidden>
+  <div class="wrap">
+    <a class="pd-back" href="#work" data-go="work" data-tab="t-series">← Poster Series</a>
+    <div class="cov-hero">
+      <div class="eyebrow">Personal series · Every matchday</div>
+      <h1>Coventry matchday posters</h1>
+      <p class="lede">A new poster for every Coventry City match in their 2026/27 Premier League season, made for matchday and posted here as the season goes on.</p>
+      <p class="wc-note">A personal fan project. Not affiliated with or endorsed by the club.</p>
+    </div>
+    <div class="art-admin" id="cov-admin" hidden>
+      <div class="aa-bar">
+        <p><b>Only you can see this panel.</b> Add this week's poster and it goes live for everyone.</p>
+        <button type="button" class="btn solid" id="cov-open">Add matchday poster</button>
+      </div>
+      <form class="aa-form" id="cov-form" hidden novalidate>
+        <div class="aa-grid">
+          <label class="aa-drop" for="cov-file">
+            <img id="cov-preview" alt="" hidden>
+            <span id="cov-drop-text">Choose the poster image<br><small>JPG or PNG. Large files are resized automatically.</small></span>
+            <input type="file" id="cov-file" accept="image/jpeg,image/png,image/webp">
+          </label>
+          <div class="aa-fields">
+            <div class="two">
+              <div class="field"><label for="cov-opp">Opponent</label><input type="text" id="cov-opp" placeholder="e.g. Leeds United" maxlength="60"></div>
+              <div class="field"><label for="cov-date">Match date</label><input type="date" id="cov-date"></div>
+            </div>
+            <div class="two">
+              <div class="field"><label for="cov-ha">Home or away</label><select id="cov-ha"><option value="home">Home</option><option value="away">Away</option></select></div>
+              <div class="field"><label for="cov-comp">Competition</label><input type="text" id="cov-comp" value="League" maxlength="40"></div>
+            </div>
+            <div class="field"><label for="cov-score">Final score <span class="hint">(optional, Coventry first, e.g. 2–1)</span></label><input type="text" id="cov-score" maxlength="12"></div>
+            <p class="aa-status" id="cov-status" role="status"></p>
+            <div class="aa-actions"><button type="submit" class="btn solid" id="cov-save">Publish to site</button><button type="button" class="btn ghost" id="cov-cancel">Cancel</button></div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div id="cov-feed"></div>
+  </div>
+</section>
+
+<!-- ============ ILLUSTRATION PROJECT ============ -->
+<section class="view" id="v-illproject" data-view="illproject" hidden>
+  <div class="wrap" id="ill-detail"></div>
+</section>
+
+<!-- ============ PROJECT DETAIL ============ -->
+<section class="view" id="v-project" data-view="project" hidden>
+  <div class="wrap" id="project-detail"></div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="view" id="v-about" data-view="about" hidden>
+  <div class="wrap about">
+    <div><div class="eyebrow">About</div><h2 style="margin-top:8px">Oselu Irabor</h2></div>
+    <div class="copy">
+      <p>I’m Oselu Irabor, a visual artist, illustrator, designer, and art educator. My work spans illustration, visual storytelling, and design, driven by a curiosity about how images communicate ideas and how creativity shapes the way we see the world.</p>
+      <p>Alongside my creative practice, I design playful, hands-on learning experiences that help people explore their creativity through drawing, experimentation, and collaboration. I’m interested in making art more accessible, helping people build creative confidence, and creating spaces where curiosity matters more than getting things right.</p>
+      <p>Whether I’m making images or bringing people together to make things, my work is rooted in the same belief: creativity is something we can all explore, practise, and grow into.</p>
+      <div class="contact">
+        <div class="eyebrow">Get in touch</div>
+        <p>For design commissions, artwork and workshops.</p>
+        <dl class="contact-list">
+          <div><dt>Email</dt><dd><span class="sel">iraborianlu@gmail.com</span> <button type="button" class="copy-btn" data-copy="iraborianlu@gmail.com">Copy</button></dd></div>
+          <div><dt>Phone / WhatsApp</dt><dd><span class="sel">+234 810 364 5200</span> <a href="https://wa.me/2348103645200" target="_blank" rel="noopener">Message on WhatsApp ↗</a></dd></div>
+          <div><dt>Instagram</dt><dd><a href="https://www.instagram.com/oselucoded/" target="_blank" rel="noopener">@oselucoded ↗</a></dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LABS ============ -->
+<section class="view labs" id="v-labs" data-view="labs" hidden>
+  <div class="wrap">
+    <div class="labs-hero">
+      <svg class="scribble" viewBox="0 0 340 220" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M30 150 C70 60, 140 40, 180 90 S 280 170, 320 60" stroke="var(--marigold)" stroke-width="18" opacity=".85"/>
+        <path d="M60 190 C110 140, 170 170, 220 130 S 300 110, 330 140" stroke="var(--coral)" stroke-width="12" opacity=".75"/>
+        <path d="M120 40 C150 20, 190 30, 210 55" stroke="var(--leaf)" stroke-width="10" opacity=".8"/>
+      </svg>
+      <div class="labs-mark">
+        <svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15" fill="var(--marigold)"/><path d="M8 19c3-6 6 4 9-2s6 4 9-2" stroke="var(--ink)" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>
+        Wonderful Labs
+      </div>
+      <h1>Art classes where everyone gets to make something.</h1>
+      <p>Wonderful Labs is Oselu's art education practice. We run drawing and painting classes for kids and adults, starting from simple sketching and building up to colour.</p>
+      <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap">
+        <a class="btn labs-btn" href="#join" data-go="join">Join the next class</a>
+        <a class="btn labs-ghost" href="#lagos-class" data-go="lagos-class">Read the Lagos case study</a>
+      </div>
+    </div>
+
+    <div class="stops">
+      <div class="stop">
+        <span class="tag paid">Paid class</span>
+        <div class="where">Lagos</div>
+        <p>12 participants, from first sketches to finished oil pastel paintings.</p>
+        <a href="#lagos-class" data-go="lagos-class">Read the case study →</a>
+      </div>
+      <div class="stop">
+        <span class="tag free">Free lessons</span>
+        <div class="where">Kaduna</div>
+        <p>Free art and drawing lessons open to the community.</p>
+      </div>
+      <div class="stop">
+        <span class="tag school">Summer school</span>
+        <div class="where">Summer 2026</div>
+        <p>Art teacher for a summer school programme for children.</p>
+      </div>
+    </div>
+
+    <div class="believe">
+      <h2>How a Wonderful Labs class works</h2>
+      <ul>
+        <li><span class="dot" style="background:var(--marigold)"></span><span><b>No experience needed.</b> We start with simple sketching exercises that anyone can do.</span></li>
+        <li><span class="dot" style="background:var(--coral)"></span><span><b>Small steps.</b> Each exercise builds on the last, so confidence grows before the hard parts arrive.</span></li>
+        <li><span class="dot" style="background:var(--leaf)"></span><span><b>Real materials.</b> Everyone works with proper drawing tools and oil pastels.</span></li>
+        <li><span class="dot" style="background:var(--indigo)"></span><span><b>You leave with your own work.</b> Every participant goes home with something they made.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CASE STUDY ============ -->
+<section class="view labs" id="v-lagos-class" data-view="lagos-class" hidden>
+  <div class="wrap">
+    <a href="#labs" data-go="labs" style="font-weight:600;text-decoration:none;color:var(--muted)">← Wonderful Labs</a>
+    <div class="cs-head" style="margin-top:18px">
+      <div class="labs-mark">Case study</div>
+      <h1>From first lines to oil pastel: the Lagos class</h1>
+      <p>A paid class in Lagos where twelve participants moved from simple sketching exercises to their own drawings and oil pastel paintings.</p>
+    </div>
+
+    <dl class="facts">
+      <div><dt>Where</dt><dd>Lagos</dd></div>
+      <div><dt>When</dt><dd>October 2026</dd></div>
+      <div><dt>Participants</dt><dd>12</dd></div>
+      <div><dt>Medium</dt><dd>Pencil &amp; oil pastel</dd></div>
+    </dl>
+
+    <div class="cs-body">
+      <nav class="toc" aria-label="Case study sections">
+        <a href="#cs-brief">The brief</a>
+        <a href="#cs-approach">The approach</a>
+        <a href="#cs-outcome">What they made</a>
+        <a href="#cs-learned">What I learned</a>
+      </nav>
+      <div class="cs-sections">
+        <div id="cs-brief">
+          <h2>The brief</h2>
+          <p>Introduce a group of twelve people to drawing and help each of them make their own work, starting from simple exercises rather than a blank page.</p>
+        </div>
+        <div id="cs-approach">
+          <h2>The approach</h2>
+          <p>Instead of starting with a blank page and a big subject, the class moved in stages.</p>
+          <ol class="flow">
+            <li><b>Warm-up sketching</b><span>Simple, low-pressure exercises to loosen the hand and get past the fear of the first mark.</span></li>
+            <li><b>Easing in</b><span>Building from those exercises toward looking closely and drawing a real subject.</span></li>
+            <li><b>Drawing</b><span>Each participant developed their own drawing.</span></li>
+            <li><b>Painting with oil pastel</b><span>Adding colour, layering and blending with oil pastels to finish the piece.</span></li>
+          </ol>
+        </div>
+        <div id="cs-outcome">
+          <h2>What they made</h2>
+          <p>Participants left with their drawings and oil pastel paintings.</p>
+          <div class="photo-row">
+            <div class="slot">Class photo</div>
+            <div class="slot">Participant artwork</div>
+            <div class="slot">Participant artwork</div>
+          </div>
+        </div>
+        <div id="cs-learned">
+          <h2>What I learned</h2>
+          <div class="todo"><b>To add:</b> a few lines on what surprised you, what you'd change next time, and one or two quotes from participants.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ JOIN ============ -->
+<section class="view labs" id="v-join" data-view="join" hidden>
+  <div class="wrap join">
+    <div class="intro">
+      <div class="labs-mark">
+        <svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15" fill="var(--marigold)"/><path d="M8 19c3-6 6 4 9-2s6 4 9-2" stroke="var(--ink)" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>
+        Wonderful Labs
+      </div>
+      <h1>Join the next class</h1>
+      <p>Dates for the next classes aren't set yet. Tell us you're interested and where you'd like to attend, and you'll hear first when they open.</p>
+      <p>Classes so far have run in Lagos and Kaduna, for children and adults.</p>
+    </div>
+
+    <form class="reg" id="reg" novalidate>
+      <div class="field"><label for="r-name">Your name</label><input type="text" id="r-name" autocomplete="name" required></div>
+      <div class="two">
+        <div class="field"><label for="r-phone">Phone / WhatsApp</label><input type="tel" id="r-phone" autocomplete="tel"></div>
+        <div class="field"><label for="r-email">Email</label><input type="email" id="r-email" autocomplete="email"></div>
+      </div>
+      <p class="hint" style="font-size:.85rem;color:var(--muted);margin-top:-8px">Give at least one way to reach you.</p>
+      <div class="field"><label for="r-city">City</label>
+        <select id="r-city"><option>Lagos</option><option>Kaduna</option><option>Abuja</option><option>Other</option></select>
+      </div>
+      <fieldset class="field"><legend>Who is the class for?</legend>
+        <div class="chips">
+          <label><input type="checkbox" id="r-for-me" value="Me (adult)"> Me (adult)</label>
+          <label><input type="checkbox" id="r-for-kid" value="My child"> My child</label>
+          <label><input type="checkbox" id="r-for-group" value="A group / school"> A group or school</label>
+        </div>
+      </fieldset>
+      <div class="field"><label for="r-note">Anything else? <span class="hint">(optional)</span></label><textarea id="r-note" placeholder="Age of your child, experience level, best days for you…"></textarea></div>
+      <p class="err" id="r-err" hidden></p>
+      <button class="btn labs-btn" type="submit" style="align-self:flex-start">Register my interest</button>
+
+      <div class="done" id="r-done" hidden>
+        <h3>Almost done. Send this to Oselu.</h3>
+        <p>Your details are ready below. Send them on WhatsApp or copy them into a message.</p>
+        <pre id="r-msg"></pre>
+        <div class="actions">
+          <a class="btn labs-btn" id="r-wa" href="#" target="_blank" rel="noopener" hidden>Send on WhatsApp</a>
+          <button class="btn labs-ghost" type="button" id="r-copy">Copy details</button>
+        </div>
+        <p class="hint" id="r-contact" style="font-size:.88rem;color:var(--muted)"></p>
+      </div>
+    </form>
+  </div>
+</section>
+</main>
+
+<div class="lightbox" id="lb" hidden role="dialog" aria-modal="true" aria-label="Illustration viewer">
+  <button class="lb-btn lb-close" id="lb-close" type="button" aria-label="Close">✕</button>
+  <button class="lb-btn lb-prev" id="lb-prev" type="button" aria-label="Previous">←</button>
+  <img id="lb-img" alt="">
+  <p id="lb-cap"></p>
+  <button class="lb-btn lb-next" id="lb-next" type="button" aria-label="Next">→</button>
+</div>
+<footer><div class="wrap"><span>© 2026 Oselu Irabor</span><span>iraborianlu@gmail.com · <a href="https://www.instagram.com/oselucoded/" target="_blank" rel="noopener">Instagram</a> · Wonderful Labs is the art education practice of Oselu.</span></div></footer>
+
+<script>
+/* Set Oselu's WhatsApp number (international format, digits only, e.g. 2348012345678) to turn on the WhatsApp button. */
+const WHATSAPP = "2348103645200";
+const CONTACT_TEXT = "You can also email Oselu at iraborianlu@gmail.com or call +234 810 364 5200.";
+
+const views = [...document.querySelectorAll('.view')];
+const navLinks = [...document.querySelectorAll('nav.main a')];
+const labsViews = ['labs','lagos-class','join'];
+const workViews = ['world-cup','coventry'];
+function show(name){
+  const proj=PROJECTS.find(p=>p.id===name);
+  const iproj=typeof ILL_PROJECTS!=='undefined' && ILL_PROJECTS.find(p=>p.id===name);
+  if(proj){renderProject(proj)}
+  else if(iproj){renderIllProject(iproj)}
+  else if(!views.some(v=>v.dataset.view===name)) name='home';
+  const viewName=proj?'project':iproj?'illproject':name;
+  views.forEach(v=>v.hidden = v.dataset.view!==viewName);
+  navLinks.forEach(a=>{
+    const on = a.dataset.go===name || ((proj||iproj||workViews.includes(name)) && a.dataset.go==='work') || (a.dataset.go==='labs' && labsViews.includes(name));
+    on ? a.setAttribute('aria-current','page') : a.removeAttribute('aria-current');
+  });
+  window.scrollTo(0,0);
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-go]'); if(!a) return;
+  e.preventDefault(); show(a.dataset.go); if(a.dataset.tab) selectTab(a.dataset.tab);
+  try{history.replaceState(null,'','#'+a.dataset.go)}catch(_){}
+});
+
+/* portfolio */
+const PROJECTS=[
+ {id:'sports',title:'Sinner vs Alcaraz',kind:'Sports Editorial Design',cover:'img/cover-sports.jpg',images:['img/page-04.jpg'],
+  sections:[['Overview',['This collection explores how graphic design and illustration can capture the emotion, rivalry and identity of modern sport. Rather than relying on photography, each poster combines geometric illustration, bold typography and simplified compositions to communicate the drama and personality behind major sporting moments.']],
+   ['Objectives',['Explore expressive typography','Build hierarchy through scale','Investigate modular compositions','Test readability versus abstraction','Develop multiple visual interpretations from the same content'],1],
+   ['Deliverables',['Typographic poster series','Event promotion concepts','Editorial layout studies','Experimental print graphics'],1]]},
+ {id:'voiture',title:'Voiture',kind:'Editorial & Sports Illustration',cover:'img/cover-voiture.jpg',images:['img/page-07.jpg','img/page-08.jpg'],
+  sections:[['Overview',['This collection explores illustration as a storytelling tool across editorial publishing and sports media. Each piece combines simplified geometric forms, expressive colour and layered textures to communicate movement, emotion and narrative while supporting strong editorial layouts.']],
+   ['Design concept',['Rather than pursuing realism, the illustrations reduce athletes and subjects to essential shapes and colour relationships. This emphasises gesture, rhythm and composition, so the imagery carries energy and personality while staying adaptable across covers, posters and digital media.']]]},
+ {id:'roland',title:'Roland Garros 2026',kind:'Typographic Identity Systems',cover:'img/cover-roland.jpg',images:['img/page-11.jpg'],
+  sections:[['Overview',['This series explores typography as both language and form. Rather than treating type as a neutral container for information, each composition investigates how scale, orientation, repetition and negative space can shape meaning and create visual rhythm. Readability and expression are deliberately balanced.']],
+   ['Objectives',['Explore expressive typography','Build hierarchy through scale','Investigate modular compositions','Test readability versus abstraction','Develop multiple visual interpretations'],1],
+   ['Deliverables',['Typographic poster series','Event promotion concepts','Editorial layout studies','Experimental print graphics'],1]]},
+ {id:'doom',title:'Doom Scrolling',kind:'Editorial & Poster Design',cover:'img/cover-doom.jpg',images:['img/page-14.jpg'],
+  sections:[['The brief',['Excessive screen time has become one of the defining habits of modern childhood. This campaign visualises the quiet consequences of doom scrolling through bold typography, expressive illustration and repeated imagery.']],
+   ['The idea',['A single recurring child illustration works as a visual metaphor for repetition and digital dependency. A limited colour palette, distressed textures and oversized typography make the posters feel both urgent and familiar, and adaptable across formats.']],
+   ['Deliverables',['Campaign poster series','Awareness graphics','Social media assets','Print-ready posters','Experimental typographic compositions'],1]]},
+ {id:'conditioning',title:'Deep Conditioning vs Your Dry Hair',kind:'Editorial & Poster Design',cover:'img/cover-conditioning.jpg',images:['img/page-17.jpg'],
+  sections:[['The challenge',['Hair care advertising often relies on beauty photography and product shots. This campaign asks whether the benefits of deep conditioning can be communicated using only typography, shape and visual metaphor.']],
+   ['The concept',['Inspired by competitive sports graphics, healthy hair and dryness are framed as opposing forces. Salon hood dryers become symbolic stand-ins for the battle between nourishment and damage, carrying a familiar beauty message through bold, minimal design.']],
+   ['Deliverables',['Poster series','Social campaign graphics','Print advertisements','Experimental layout explorations'],1]]},
+ {id:'grupe',title:'Grupe',kind:'Typography & Editorial Design',cover:'img/cover-grupe.jpg',images:['img/page-20.jpg'],
+  sections:[['Overview',['This series explores typography as both language and form. Each composition investigates how scale, orientation, repetition and negative space can shape meaning and create visual rhythm, with readability and expression deliberately balanced.']],
+   ['Objectives',['Explore expressive typography','Build hierarchy through scale','Investigate modular compositions','Test readability versus abstraction','Develop multiple visual interpretations from the same content'],1],
+   ['Deliverables',['Typographic poster series','Event promotion concepts','Editorial layout studies','Experimental print graphics'],1]]},
+ {id:'birds',title:"Birds Don't Sing",kind:'Album Identity & Packaging',cover:'img/cover-birds.jpg',dark:true,images:['img/page-24.jpg','img/page-25.jpg'],
+  sections:[['Overview',["Birds Don't Sing is a conceptual visual identity for an experimental music release. It explores how typography, abstract imagery and minimal colour can communicate mood without literal symbolism. Inspired by independent record labels and contemporary editorial design, the system extends across album packaging, promotional graphics and digital assets."]],
+   ['Objectives',['Explore expressive typography','Build hierarchy through scale','Investigate modular compositions','Test readability versus abstraction','Develop multiple visual interpretations from the same content'],1],
+   ['Deliverables',['Typographic poster series','Event promotion concepts','Editorial layout studies','Experimental print graphics'],1]]},
+ {id:'explorations',title:'Design Explorations',kind:'Graphic Design Explorations',cover:'img/cover-kraftwerk.jpg',images:['img/page-22.jpg','img/page-21.jpg'],
+  sections:[['Overview',['A series of self-initiated studies exploring influential approaches to typography, editorial composition and poster design. Each piece investigates a different visual language, from Swiss modernism to expressive concert posters, to understand how hierarchy, proportion and form communicate information.']]]}
+];
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+document.getElementById('projects').innerHTML=PROJECTS.map(p=>`
+  <a class="proj" href="#${p.id}" data-go="${p.id}">
+    <div class="thumb${p.dark?' contain':''}"><img src="${p.cover}" alt="${esc(p.title)}, ${esc(p.kind)}" loading="lazy"></div>
+    <div class="meta"><b>${esc(p.title)}</b><span>${esc(p.kind)}</span></div>
+  </a>`).join('');
+function renderProject(p){
+  const i=PROJECTS.indexOf(p), prev=PROJECTS[(i+PROJECTS.length-1)%PROJECTS.length], next=PROJECTS[(i+1)%PROJECTS.length];
+  const first=p.sections[0][1][0];
+  document.getElementById('project-detail').innerHTML=`
+    <a class="pd-back" href="#work" data-go="work">← Graphic Design</a>
+    <div class="pd-head">
+      <div><div class="eyebrow">${esc(p.kind)}</div><h1>${esc(p.title)}</h1></div>
+      <p class="lede">${esc(first.split('. ')[0])}.</p>
+    </div>
+    <div class="pd-cover${p.dark?' dark':''}"><img src="${p.cover}" alt="${esc(p.title)}"></div>
+    <div class="pd-text">${p.sections.map(([h,items,list])=>`<div><h2>${esc(h)}</h2>${list?`<ul>${items.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:items.map(t=>`<p>${esc(t)}</p>`).join('')}</div>`).join('')}</div>
+    <div class="pd-gallery">${p.images.map((src,k)=>`<img src="${src}" alt="${esc(p.title)}, project page ${k+1}" loading="lazy">`).join('')}</div>
+    <nav class="pd-nav" aria-label="More projects">
+      <a href="#${prev.id}" data-go="${prev.id}">← ${esc(prev.title)}</a>
+      <a href="#${next.id}" data-go="${next.id}">${esc(next.title)} →</a>
+    </nav>`;
+}
+/* illustration portfolio */
+const ILL_DATA={"product": [], "editorial": [{"src": "img/ill/editorial-01.jpg", "w": 1600, "h": 1600, "cap": "Narrative illustration", "link": null}, {"src": "img/ill/editorial-02.jpg", "w": 1200, "h": 1600, "cap": "Editorial illustration celebrating world record high jumper Mondo Duplantis", "link": null}, {"src": "img/ill/editorial-03.jpg", "w": 1600, "h": 1600, "cap": "Farm Boy", "link": null}, {"src": "img/ill/editorial-04.jpg", "w": 1360, "h": 1600, "cap": "Issue 21 for Voiture Magazine", "link": null}, {"src": "img/ill/editorial-05.jpg", "w": 1360, "h": 1600, "cap": "Issue 21 for Voiture Magazine", "link": null}, {"src": "img/ill/editorial-06.jpg", "w": 1600, "h": 1600, "cap": "Flower Boy, narrative illustration", "link": null}, {"src": "img/ill/editorial-07.jpg", "w": 1600, "h": 1600, "cap": "iPhone 17 ohhs and ahhs", "link": null}, {"src": "img/ill/editorial-08.jpg", "w": 1600, "h": 1600, "cap": "Every day feels like match day", "link": null}, {"src": "img/ill/editorial-09.jpg", "w": 1600, "h": 1600, "cap": "Stats are like bikinis", "link": null}, {"src": "img/ill/editorial-10.jpg", "w": 1600, "h": 1600, "cap": "It's not me, it's you", "link": null}, {"src": "img/ill/editorial-11.jpg", "w": 1600, "h": 1600, "cap": "Quality time is my love language", "link": null}, {"src": "img/ill/editorial-12.jpg", "w": 1600, "h": 1215, "cap": "Winning Eleven craze", "link": null}, {"src": "img/ill/editorial-13.jpg", "w": 1600, "h": 1122, "cap": "How solar panels replaced the roar of generators", "link": null}, {"src": "img/ill/editorial-14.jpg", "w": 1600, "h": 1600, "cap": "Surrender to the unknown", "link": null}, {"src": "img/ill/editorial-15.jpg", "w": 1206, "h": 1600, "cap": "Cherish the days of humble beginnings", "link": null}, {"src": "img/ill/editorial-16.jpg", "w": 1206, "h": 1600, "cap": "I have no prime. I will evolve until I die", "link": null}, {"src": "img/ill/editorial-17.jpg", "w": 1206, "h": 1600, "cap": "Voiture Magazine cover", "link": null}, {"src": "img/ill/editorial-18.jpg", "w": 1600, "h": 1586, "cap": "Voiture Magazine cover", "link": null}, {"src": "img/ill/editorial-19.jpg", "w": 1394, "h": 1600, "cap": "", "link": null}, {"src": "img/ill/editorial-20.jpg", "w": 1536, "h": 1536, "cap": "", "link": null}, {"src": "img/ill/bh-conceptual-02.jpg", "w": 1400, "h": 1050, "cap": "", "link": null}, {"src": "img/ill/bh-conceptual-03.jpg", "w": 1050, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-conceptual-04.jpg", "w": 1200, "h": 1200, "cap": "", "link": null}, {"src": "img/ill/bh-conceptual-05.jpg", "w": 1200, "h": 1200, "cap": "", "link": null}, {"src": "img/ill/bh-conceptual-08.jpg", "w": 1400, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-conceptual-10.jpg", "w": 1400, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-conceptual-11.jpg", "w": 1400, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-conceptual-12.jpg", "w": 1400, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-conceptual-13.jpg", "w": 1400, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-conceptual-15.jpg", "w": 1400, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-editorial2-04.jpg", "w": 1013, "h": 1400, "cap": "This is culturally inappropriate", "link": null}, {"src": "img/ill/bh-editorial2-06.jpg", "w": 1066, "h": 1400, "cap": "Diogo Jota farewell poster", "link": null}], "info": [{"src": "img/ill/info-01.jpg", "w": 1206, "h": 1600, "cap": "Voiture Magazine infographic illustration", "link": null}, {"src": "img/ill/info-02.jpg", "w": 1281, "h": 1600, "cap": "Anatomy of a learning algorithm", "link": null}, {"src": "img/ill/info-03.jpg", "w": 1281, "h": 1600, "cap": "Anatomy of a learning algorithm 2", "link": null}, {"src": "img/ill/info-04.jpg", "w": 1280, "h": 1600, "cap": "AI vs machine learning vs deep learning vs generative AI", "link": null}, {"src": "img/ill/info-05.jpg", "w": 1600, "h": 1106, "cap": "AI engineering roadmap for beginners", "link": null}, {"src": "img/ill/info-06.jpg", "w": 1395, "h": 1600, "cap": "Valentin Vacherot infographic", "link": null}, {"src": "img/ill/info-07.jpg", "w": 1204, "h": 1600, "cap": "Alsofits shop opening illustrated poster", "link": null}, {"src": "img/ill/info-08.jpg", "w": 1206, "h": 1600, "cap": "Barcelona 2024/25 season infographic: Pedri", "link": null}, {"src": "img/ill/info-09.jpg", "w": 1204, "h": 1600, "cap": "Barcelona 2024/25 season infographic: Dr. Carles Miñarro", "link": null}, {"src": "img/ill/info-10.jpg", "w": 1204, "h": 1600, "cap": "Barcelona 2024/25 season infographic: Fermín López", "link": null}, {"src": "img/ill/info-11.jpg", "w": 1204, "h": 1600, "cap": "Barcelona 2024/25 season infographic: Lewandowski", "link": null}, {"src": "img/ill/info-12.jpg", "w": 1204, "h": 1600, "cap": "Barcelona 2024/25 season infographic: Lewandowski 2", "link": null}, {"src": "img/ill/info-13.jpg", "w": 1204, "h": 1600, "cap": "Barcelona 2024/25 season infographic: Iñaki Peña", "link": null}, {"src": "img/ill/info-14.jpg", "w": 1204, "h": 1600, "cap": "Barcelona 2024/25 season infographic: Lamine Yamal", "link": null}, {"src": "img/ill/info-15.jpg", "w": 1204, "h": 1600, "cap": "Barcelona 2024/25 season infographic: Marc Bernal", "link": null}, {"src": "img/ill/info-16.jpg", "w": 1204, "h": 1600, "cap": "Barcelona 2024/25 season infographic: Ter Stegen", "link": null}, {"src": "img/ill/info-17.jpg", "w": 1204, "h": 1600, "cap": "Barcelona 2024/25 season infographic: Raphinha", "link": null}, {"src": "img/ill/info-18.jpg", "w": 1204, "h": 1600, "cap": "Barcelona 2024/25 season infographic: Raphinha 2", "link": null}], "food": [{"src": "img/ill/food-01.jpg", "w": 1600, "h": 1600, "cap": "How to cook jollof rice", "link": null}, {"src": "img/ill/food-02.jpg", "w": 1600, "h": 1600, "cap": "A plate of jollof", "link": null}, {"src": "img/ill/food-03.jpg", "w": 1600, "h": 1600, "cap": "Seasoning cubes", "link": null}, {"src": "img/ill/food-04.jpg", "w": 1600, "h": 1600, "cap": "Curry and thyme", "link": null}, {"src": "img/ill/food-05.jpg", "w": 1600, "h": 1600, "cap": "Bay leaves", "link": null}, {"src": "img/ill/food-06.jpg", "w": 1600, "h": 1600, "cap": "Tomato paste", "link": null}, {"src": "img/ill/food-07.jpg", "w": 1600, "h": 1600, "cap": "Habanero pepper", "link": null}, {"src": "img/ill/food-08.jpg", "w": 1600, "h": 1600, "cap": "Rice", "link": null}, {"src": "img/ill/food-09.jpg", "w": 1600, "h": 1600, "cap": "Bell pepper", "link": null}, {"src": "img/ill/food-10.jpg", "w": 1280, "h": 1600, "cap": "Watermelon", "link": null}, {"src": "img/ill/food-11.jpg", "w": 1308, "h": 1600, "cap": "Watermelon", "link": null}, {"src": "img/ill/food-12.jpg", "w": 1308, "h": 1600, "cap": "Cucumber", "link": null}, {"src": "img/ill/food-13.jpg", "w": 1280, "h": 1600, "cap": "Pineapple", "link": null}, {"src": "img/ill/food-14.jpg", "w": 1280, "h": 1600, "cap": "Apple", "link": null}]};
+const PRODUCT_PROJECTS=[{"id": "bitnob", "name": "Bitnob", "sub": "Fintech · product illustration system", "text": "A scalable illustration system for a global fintech, built to communicate trust, infrastructure and security across features like two-factor authentication, compliance, virtual cards, APIs and global payments.", "link": "https://www.behance.net/gallery/226926073/Bitnob-Visual-System-Scalable-Product-Illustrations", "items": [{"src": "img/ill/bh-bitnob-01.jpg", "w": 1400, "h": 1007, "cap": "Bitnob product illustrations", "link": null}, {"src": "img/ill/bh-bitnob-06.jpg", "w": 1400, "h": 1400, "cap": "Two-factor authentication", "link": null}, {"src": "img/ill/bh-bitnob-07.jpg", "w": 1400, "h": 1400, "cap": "Secure servers", "link": null}, {"src": "img/ill/bh-bitnob-08.jpg", "w": 1376, "h": 1400, "cap": "Compliance with regulators", "link": null}, {"src": "img/ill/bh-bitnob-09.jpg", "w": 1400, "h": 1400, "cap": "Regular security audits", "link": null}, {"src": "img/ill/bh-bitnob-10.jpg", "w": 1400, "h": 1400, "cap": "Data encryption", "link": null}, {"src": "img/ill/bh-bitnob-11.jpg", "w": 1400, "h": 1400, "cap": "Secure payment processing", "link": null}, {"src": "img/ill/bh-bitnob-12.jpg", "w": 1400, "h": 1400, "cap": "Payment infrastructure for every business", "link": null}, {"src": "img/ill/bh-bitnob-13.jpg", "w": 1400, "h": 1400, "cap": "Virtual cards for global shopping", "link": null}, {"src": "img/ill/bh-bitnob-14.jpg", "w": 1400, "h": 1400, "cap": "API infrastructure for developers", "link": null}, {"src": "img/ill/bh-bitnob-15.jpg", "w": 1400, "h": 1400, "cap": "Accept crypto payments globally", "link": null}, {"src": "img/ill/bh-bitnob-16.jpg", "w": 1400, "h": 1400, "cap": "Global payments at the speed of thought", "link": null}, {"src": "img/ill/bh-bitnob-17.jpg", "w": 1400, "h": 1400, "cap": "Bitnob Markets", "link": null}]}, {"id": "oko", "name": "Oko Insurance", "sub": "Insurtech · mobile & print", "text": "Explainer illustrations for a farm insurance product, showing everyday scenarios where insurance protects a farmer's harvest. African-inspired characters and scenes in a semi-abstract style with no outlines.", "link": "https://www.behance.net/gallery/220048321/illustration-Assets-for-Mobile-Print-%28Oko-Insurance%29", "items": [{"src": "img/ill/bh-oko-01.jpg", "w": 1155, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-oko-02.jpg", "w": 1155, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-oko-03.jpg", "w": 1155, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-oko-04.jpg", "w": 1155, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-oko-05.jpg", "w": 1155, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-oko-06.jpg", "w": 1155, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-oko-07.jpg", "w": 1155, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-oko-08.jpg", "w": 1155, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-oko-09.jpg", "w": 1155, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-oko-10.jpg", "w": 1155, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-oko-11.jpg", "w": 1155, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-oko-12.jpg", "w": 1155, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-oko-13.jpg", "w": 1155, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-oko-14.jpg", "w": 1155, "h": 1400, "cap": "", "link": null}]}, {"id": "roqqu", "name": "Roqqu", "sub": "Web3 & crypto · website", "text": "Hero, spot and icon illustrations for the website of a Nigerian web3 and crypto product.", "link": "https://roqqu.io/", "items": [{"src": "img/ill/product-01.jpg", "w": 1600, "h": 900, "cap": "Website hero, spot and icon illustrations", "link": null}]}, {"id": "cismetrics", "name": "Cismetrics", "sub": "Data & surveys · landing page and merch", "text": "Landing page illustrations and merch designs for a business data and survey product. The brand's guiding idea of precisionism shaped the style.", "link": "https://www.behance.net/gallery/196084759/Cismetrics-Landing-Page-Illustrations", "items": [{"src": "img/ill/bh-cismetrics-01.jpg", "w": 1400, "h": 788, "cap": "", "link": null}, {"src": "img/ill/bh-cismetrics-02.jpg", "w": 1400, "h": 788, "cap": "", "link": null}, {"src": "img/ill/bh-cismetrics-03.jpg", "w": 1400, "h": 788, "cap": "", "link": null}, {"src": "img/ill/bh-cismetrics-04.jpg", "w": 1400, "h": 788, "cap": "", "link": null}, {"src": "img/ill/bh-cismetrics-05.jpg", "w": 1400, "h": 788, "cap": "", "link": null}, {"src": "img/ill/bh-cismetrics-06.jpg", "w": 1400, "h": 788, "cap": "", "link": null}, {"src": "img/ill/bh-cismetrics-07.jpg", "w": 1400, "h": 788, "cap": "", "link": null}, {"src": "img/ill/bh-cismetrics-08.jpg", "w": 1400, "h": 788, "cap": "", "link": null}, {"src": "img/ill/bh-cismetrics-09.jpg", "w": 1400, "h": 788, "cap": "", "link": null}, {"src": "img/ill/bh-cismetrics-10.jpg", "w": 1400, "h": 788, "cap": "", "link": null}, {"src": "img/ill/bh-cismetrics-11.jpg", "w": 1400, "h": 788, "cap": "", "link": null}, {"src": "img/ill/bh-cismetrics-12.jpg", "w": 1400, "h": 788, "cap": "", "link": null}, {"src": "img/ill/bh-cismetrics-13.jpg", "w": 1400, "h": 788, "cap": "", "link": null}, {"src": "img/ill/bh-cismetrics-14.jpg", "w": 1400, "h": 788, "cap": "", "link": null}, {"src": "img/ill/bh-cismetrics-17.jpg", "w": 1400, "h": 1008, "cap": "Merch: stickers, T-shirts and tote bags", "link": null}]}, {"id": "ruwah", "name": "Ruwah", "sub": "Family savings app · avatars and UI", "text": "Avatars and in-app illustrations for an app that helps parents build saving habits for their children, with characters for kids, teenagers, mothers and fathers.", "link": "https://www.behance.net/gallery/196091953/Ruwah-Mobile-App-Illustrations", "items": [{"src": "img/ill/bh-ruwah-01.jpg", "w": 1400, "h": 945, "cap": "Ruwah avatars", "link": null}, {"src": "img/ill/bh-ruwah-07.jpg", "w": 1400, "h": 862, "cap": "Kids", "link": null}, {"src": "img/ill/bh-ruwah-08.jpg", "w": 1400, "h": 862, "cap": "Teenagers", "link": null}, {"src": "img/ill/bh-ruwah-09.jpg", "w": 1400, "h": 862, "cap": "Mothers", "link": null}, {"src": "img/ill/bh-ruwah-10.jpg", "w": 1400, "h": 862, "cap": "Fathers", "link": null}, {"src": "img/ill/bh-ruwah-02.jpg", "w": 1400, "h": 862, "cap": "In-app illustrations", "link": null}, {"src": "img/ill/bh-ruwah-03.jpg", "w": 1400, "h": 862, "cap": "In-app illustrations", "link": null}]}, {"id": "nothing", "name": "Nothing to See Here", "sub": "Self-initiated · empty states", "text": "A set of empty-state illustrations for web and mobile screens, each built on a visual metaphor for emptiness and explored in several illustration styles.", "link": "https://www.behance.net/gallery/179198013/Crafting-the-Nothing-to-See-Here-Illustration-Set", "items": [{"src": "img/ill/bh-nothing-03.jpg", "w": 1400, "h": 1400, "cap": "Looking into nothing", "link": null}, {"src": "img/ill/bh-nothing-02.jpg", "w": 1400, "h": 1400, "cap": "Line version", "link": null}, {"src": "img/ill/bh-nothing-07.jpg", "w": 1400, "h": 1400, "cap": "The empty gallery", "link": null}, {"src": "img/ill/bh-nothing-05.jpg", "w": 1400, "h": 1400, "cap": "Line version", "link": null}, {"src": "img/ill/bh-nothing-10.jpg", "w": 1400, "h": 1400, "cap": "Nothing to see here", "link": null}, {"src": "img/ill/bh-nothing-09.jpg", "w": 1400, "h": 1400, "cap": "Without background", "link": null}, {"src": "img/ill/bh-nothing-04.jpg", "w": 1400, "h": 1050, "cap": "In use on a mobile screen", "link": null}]}, {"id": "lendsqr", "name": "Lendsqr", "sub": "Lending fintech · illustration pack and characters", "text": "A reusable illustration pack and a cast of characters for a lending-as-a-service fintech, made to support its storytelling and social media.", "link": "https://www.behance.net/gallery/153135189/LENDSQR-ILLUSTRATION-SET", "items": [{"src": "img/ill/product-02.jpg", "w": 1600, "h": 1047, "cap": "Website illustration and creative direction", "link": null}, {"src": "img/ill/bh-lendsqr-01.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-02.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-03.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-04.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-05.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-06.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-07.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-08.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-09.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-10.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-11.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-12.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-13.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-14.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-15.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-16.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-17.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-18.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-19.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-20.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-21.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-22.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-23.jpg", "w": 1080, "h": 1080, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-24.jpg", "w": 1033, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-25.jpg", "w": 1033, "h": 1400, "cap": "", "link": null}, {"src": "img/ill/bh-lendsqr-26.jpg", "w": 1033, "h": 1400, "cap": "", "link": null}]}, {"id": "genx", "name": "Gen X", "sub": "Fintech · web and app", "text": "Brand illustrations for a fintech, made within an existing brand guide and inspired by the broken-glass light and shade of Picasso's cubist drawings.", "link": "https://www.behance.net/gallery/148805123/Gen-X-Web-and-App-Illustrations", "items": [{"src": "img/ill/bh-genx-05.jpg", "w": 1080, "h": 1076, "cap": "", "link": null}, {"src": "img/ill/bh-genx-06.jpg", "w": 1080, "h": 1076, "cap": "", "link": null}, {"src": "img/ill/bh-genx-07.jpg", "w": 1080, "h": 1076, "cap": "", "link": null}, {"src": "img/ill/bh-genx-08.jpg", "w": 1080, "h": 1076, "cap": "", "link": null}, {"src": "img/ill/bh-genx-09.jpg", "w": 1080, "h": 1076, "cap": "", "link": null}]}, {"id": "pressure", "name": "Pressure Is a Privilege", "sub": "Streetwear · merch illustration", "text": "Tennis-inspired spot illustrations for a streetwear shirt brand.", "link": "https://www.behance.net/gallery/233905071/Pressure-Is-A-Privilege-Collection", "items": [{"src": "img/ill/bh-pressure-04.jpg", "w": 1400, "h": 1305, "cap": "Pressure is a privilege", "link": null}, {"src": "img/ill/bh-pressure-05.jpg", "w": 1400, "h": 1305, "cap": "", "link": null}, {"src": "img/ill/bh-pressure-01.jpg", "w": 1400, "h": 1305, "cap": "", "link": null}, {"src": "img/ill/bh-pressure-02.jpg", "w": 1400, "h": 1305, "cap": "", "link": null}, {"src": "img/ill/bh-pressure-03.jpg", "w": 1400, "h": 1305, "cap": "", "link": null}]}];
+const T_ILL=['Adobe Illustrator'], T_BOTH=['Procreate','Adobe Illustrator'];
+const PP=Object.fromEntries(PRODUCT_PROJECTS.map(p=>[p.id,p]));
+const ILL_PROJECTS=[
+ {id:'i-editorial',name:'Editorial illustrations',kind:'Editorial illustration & book covers',tools:T_BOTH,cover:'img/ill/editorial-06.jpg',layout:'masonry',items:ILL_DATA.editorial,
+  text:"Story-driven visuals made to accompany writing in magazines, newspapers, blogs and reports. They interpret, amplify and add perspective to an article's message."},
+ {id:'i-bitnob',name:'Bitnob',kind:PP.bitnob.sub,tools:T_ILL,cover:'img/ill/bh-bitnob-12.jpg',text:PP.bitnob.text,link:PP.bitnob.link,items:PP.bitnob.items},
+ {id:'i-roqqu',name:'Roqqu',kind:'Web3 & crypto · live website',tools:T_ILL,cover:'img/ill/product-01.jpg',text:PP.roqqu.text,link:PP.roqqu.link,items:PP.roqqu.items},
+ {id:'i-info',name:'Infographics & data',kind:'Information illustration',tools:T_ILL,cover:'img/ill/info-01.jpg',layout:'masonry',items:ILL_DATA.info,
+  text:'Visual tools that explain, clarify and teach. They turn data, processes and abstract ideas into visuals people can grasp quickly, from AI explainers to football season cards.'},
+ {id:'i-genx',name:'Gen X',kind:PP.genx.sub,tools:T_ILL,cover:'img/ill/bh-genx-08.jpg',text:PP.genx.text,link:PP.genx.link,items:PP.genx.items},
+ {id:'i-food',name:'Food illustration',kind:'Jollof rice, ingredients and fruit',tools:T_BOTH,cover:'img/ill/food-01.jpg',items:ILL_DATA.food,
+  text:'Clear, appealing drawings of ingredients, dishes and cooking processes, balancing accuracy with style so recipes are easy to understand at a glance.'},
+ {id:'i-cismetrics',earlier:1,name:'Cismetrics',kind:PP.cismetrics.sub,tools:T_ILL,cover:'img/ill/bh-cismetrics-03.jpg',text:PP.cismetrics.text,link:PP.cismetrics.link,items:PP.cismetrics.items},
+ {id:'i-ruwah',earlier:1,name:'Ruwah',kind:PP.ruwah.sub,tools:T_ILL,cover:'img/ill/bh-ruwah-01.jpg',text:PP.ruwah.text,link:PP.ruwah.link,items:PP.ruwah.items},
+ {id:'i-pressure',earlier:1,name:'Pressure Is a Privilege',kind:PP.pressure.sub,tools:T_ILL,cover:'img/ill/bh-pressure-04.jpg',text:PP.pressure.text,link:PP.pressure.link,items:PP.pressure.items},
+ {id:'i-nothing',earlier:1,name:'Nothing to See Here',kind:PP.nothing.sub,tools:T_ILL,cover:'img/ill/bh-nothing-03.jpg',text:PP.nothing.text,link:PP.nothing.link,items:PP.nothing.items},
+ {id:'i-oko',earlier:1,name:'Oko Insurance',kind:PP.oko.sub,tools:T_ILL,cover:'img/ill/bh-oko-07.jpg',text:PP.oko.text,link:PP.oko.link,items:PP.oko.items},
+ {id:'i-lendsqr',earlier:1,name:'Lendsqr',kind:PP.lendsqr.sub,tools:T_ILL,cover:'img/ill/bh-lendsqr-18.jpg',text:PP.lendsqr.text,link:PP.lendsqr.link,items:PP.lendsqr.items}
+];
+const illCard=p=>`<a class="proj" href="#${p.id}" data-go="${p.id}"><div class="thumb ill-thumb"><img src="${p.cover}" alt="${esc(p.name)}" loading="lazy"></div><div class="meta"><b>${esc(p.name)}</b><span>${esc(p.kind)} · ${p.items.length} ${p.items.length===1?'piece':'pieces'}</span></div></a>`;
+document.getElementById('ill-featured').innerHTML=ILL_PROJECTS.filter(p=>!p.earlier).map(illCard).join('');
+document.getElementById('ill-earlier').innerHTML=ILL_PROJECTS.filter(p=>p.earlier).map(illCard).join('');
+const earlierBtn=document.getElementById('earlier-btn');
+earlierBtn.addEventListener('click',()=>{const el=document.getElementById('ill-earlier');el.hidden=!el.hidden;earlierBtn.setAttribute('aria-expanded',!el.hidden);earlierBtn.textContent=el.hidden?'Read earlier projects':'Hide earlier projects'});
+let LB_LIST=[],CUR_ILL=[];
+function renderIllProject(p){
+  CUR_ILL=LB_LIST=p.items.map(it=>({...it,cap:it.cap||''}));
+  const i=ILL_PROJECTS.indexOf(p), prev=ILL_PROJECTS[(i+ILL_PROJECTS.length-1)%ILL_PROJECTS.length], next=ILL_PROJECTS[(i+1)%ILL_PROJECTS.length];
+  const tile=(it,k)=>`<button type="button" data-lb="${k}" aria-label="View larger${it.cap?': '+esc(it.cap):''}"><img src="${it.src}" alt="${esc(it.cap||p.name)}" loading="lazy"></button>`;
+  const grid=p.layout==='masonry'
+    ? `<div class="masonry">${p.items.map((it,k)=>`<figure>${tile(it,k).replace('<img ',`<img width="${it.w}" height="${it.h}" `)}${it.cap?`<figcaption>${esc(it.cap)}</figcaption>`:''}</figure>`).join('')}</div>`
+    : `<div class="pp-grid">${p.items.map(tile).join('')}</div>`;
+  document.getElementById('ill-detail').innerHTML=`
+    <a class="pd-back" href="#work" data-go="work" data-tab="t-illustration">← Illustration</a>
+    <div class="pd-head">
+      <div><div class="eyebrow">${esc(p.kind)}</div><h1>${esc(p.name)}</h1></div>
+      <div class="ill-intro"><div class="ill-tags">${p.tools.map(t=>`<span>${esc(t)}</span>`).join('')}<span class="yrs">${p.items.length} ${p.items.length===1?'piece':'pieces'}</span></div>
+      <p class="lede">${esc(p.text)}</p>${p.link?`<a class="ext" href="${p.link}" target="_blank" rel="noopener">${/behance/.test(p.link)?'Full case study on Behance':'Visit site'} ↗</a>`:''}</div>
+    </div>
+    <div class="ill-body">${grid}</div>
+    <nav class="pd-nav" aria-label="More illustration projects">
+      <a href="#${prev.id}" data-go="${prev.id}">← ${esc(prev.name)}</a>
+      <a href="#${next.id}" data-go="${next.id}">${esc(next.name)} →</a>
+    </nav>`;
+}
+function selectTab(id){const t=document.getElementById(id);t&&t.click()}
+const lb=document.getElementById('lb'),lbImg=document.getElementById('lb-img'),lbCap=document.getElementById('lb-cap');let lbI=0,lbFrom=null;
+function lbShow(i){lbI=(i+LB_LIST.length)%LB_LIST.length;const it=LB_LIST[lbI];lbImg.src=it.src;lbImg.alt=it.cap||'Illustration';lbCap.textContent=it.cap||''}
+document.getElementById('ill-detail').addEventListener('click',e=>{const b=e.target.closest('[data-lb]');if(!b)return;LB_LIST=CUR_ILL;lbFrom=b;lbShow(+b.dataset.lb);lb.hidden=false;document.getElementById('lb-close').focus()});
+function lbClose(){lb.hidden=true;lbFrom&&lbFrom.focus()}
+document.getElementById('lb-close').onclick=lbClose;
+document.getElementById('lb-prev').onclick=()=>lbShow(lbI-1);
+document.getElementById('lb-next').onclick=()=>lbShow(lbI+1);
+lb.addEventListener('click',e=>{if(e.target===lb)lbClose()});
+addEventListener('keydown',e=>{if(lb.hidden)return;if(e.key==='Escape')lbClose();if(e.key==='ArrowLeft')lbShow(lbI-1);if(e.key==='ArrowRight')lbShow(lbI+1)});
+
+/* visual art */
+const ART_BASE=[{"src": "img/art/art-29.jpg", "w": 1017, "h": 1400, "cap": "Dortmund v Bayern, German Super Cup", "cat": "sports", "medium": "Digital illustration", "added": "2026-10-22"}, {"src": "img/art/art-01.jpg", "w": 974, "h": 1400, "cap": "Rooster", "cat": "animals"}, {"src": "img/art/art-02.jpg", "w": 1400, "h": 999, "cap": "Red roof on the hill", "cat": "people"}, {"src": "img/art/art-03.jpg", "w": 956, "h": 1400, "cap": "Sneakers on pink", "cat": "still"}, {"src": "img/art/art-04.jpg", "w": 987, "h": 1400, "cap": "Flamingo", "cat": "animals"}, {"src": "img/art/art-05.jpg", "w": 986, "h": 1400, "cap": "Doberman", "cat": "animals"}, {"src": "img/art/art-06.jpg", "w": 1120, "h": 1400, "cap": "L. Messi", "cat": "sports"}, {"src": "img/art/art-07.jpg", "w": 987, "h": 1400, "cap": "Fish seller", "cat": "people"}, {"src": "img/art/art-08.jpg", "w": 969, "h": 1400, "cap": "Sneakers on green", "cat": "still"}, {"src": "img/art/art-09.jpg", "w": 1070, "h": 1400, "cap": "Two number tens", "cat": "sports"}, {"src": "img/art/art-10.jpg", "w": 976, "h": 1400, "cap": "Red car in the green", "cat": "people"}, {"src": "img/art/art-11.jpg", "w": 987, "h": 1400, "cap": "Stag", "cat": "animals"}, {"src": "img/art/art-12.jpg", "w": 1120, "h": 1400, "cap": "Z. Zidane", "cat": "sports"}, {"src": "img/art/art-13.jpg", "w": 1026, "h": 1400, "cap": "Duck", "cat": "animals"}, {"src": "img/art/art-14.jpg", "w": 997, "h": 1400, "cap": "Still life: mug, bottle and orange", "cat": "still"}, {"src": "img/art/art-15.jpg", "w": 1120, "h": 1400, "cap": "Gabriel vs Haaland", "cat": "sports"}, {"src": "img/art/art-16.jpg", "w": 1120, "h": 1400, "cap": "Mbappé", "cat": "sports"}, {"src": "img/art/art-17.jpg", "w": 1400, "h": 1120, "cap": "Ronaldo, yellow card", "cat": "sports"}, {"src": "img/art/art-18.jpg", "w": 1400, "h": 1120, "cap": "Saka", "cat": "sports"}, {"src": "img/art/art-19.jpg", "w": 1400, "h": 1119, "cap": "Osimhen, red card", "cat": "sports"}, {"src": "img/art/art-20.jpg", "w": 1400, "h": 1119, "cap": "Ronaldo, the tackle", "cat": "sports"}, {"src": "img/art/art-21.jpg", "w": 1049, "h": 1400, "cap": "Portrait with medal", "cat": "people"}, {"src": "img/art/art-22.jpg", "w": 1009, "h": 1400, "cap": "Pelé", "cat": "sports"}, {"src": "img/art/art-23.jpg", "w": 1001, "h": 1400, "cap": "Toucan", "cat": "animals"}, {"src": "img/art/art-24.jpg", "w": 1400, "h": 935, "cap": "Cow in the field", "cat": "animals"}, {"src": "img/art/art-25.jpg", "w": 945, "h": 1400, "cap": "Cow, close up", "cat": "animals"}, {"src": "img/art/art-26.jpg", "w": 1014, "h": 1400, "cap": "Still life: blue bottle and oranges", "cat": "still"}, {"src": "img/art/art-27.jpg", "w": 963, "h": 1400, "cap": "Football boots", "cat": "sports"}, {"src": "img/art/art-28.jpg", "w": 1004, "h": 1400, "cap": "Blue car with a full load", "cat": "people"}];
+const ART_EXTRA=/*EXTRA*/[]/*END*/;
+const ART_CATS=[['all','All'],['sports','Sports'],['animals','Animals'],['people','People & places'],['still','Still life']];
+const DAY=864e5;
+ART_EXTRA.forEach(a=>{if(a.cat==='football')a.cat='sports'});
+const ART=[...ART_EXTRA.slice().sort((a,b)=>(b.added||'').localeCompare(a.added||'')),...ART_BASE];
+let artFilter='all', artVisible=ART, artAdmin=null;
+const isNew=it=>it.added && (Date.now()-new Date(it.added+'T00:00:00').getTime())<14*DAY;
+function renderArtFilters(){
+  document.getElementById('art-filters').innerHTML=ART_CATS.map(([id,label])=>{
+    const n=id==='all'?ART.length:ART.filter(a=>a.cat===id).length;
+    return `<button type="button" data-cat="${id}" aria-pressed="${artFilter===id}">${esc(label)}<span>${n}</span></button>`}).join('');
+}
+function renderArt(){
+  artVisible=artFilter==='all'?ART:ART.filter(a=>a.cat===artFilter);
+  document.getElementById('art-grid').innerHTML=artVisible.map((it,k)=>`<figure><button type="button" data-art="${k}" aria-label="View larger: ${esc(it.cap)}"><img src="${esc(it.src)}" width="${it.w}" height="${it.h}" alt="${esc(it.cap)}, ${esc(it.medium||'oil pastel')}" loading="lazy"></button><figcaption>${isNew(it)?'<span class="new-badge">New</span>':''}<span>${esc(it.cap)}</span>${it.medium&&it.medium!=='Oil pastel'?`<span class="art-medium">· ${esc(it.medium)}</span>`:''}${artAdmin&&it.id?`<button type="button" class="rm-btn" data-rm="${esc(it.id)}">Remove</button>`:''}</figcaption></figure>`).join('');
+  renderArtFilters();
+}
+renderArt();
+document.getElementById('art-filters').addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(!b)return;artFilter=b.dataset.cat;renderArt()});
+document.getElementById('art-grid').addEventListener('click',e=>{
+  const rm=e.target.closest('[data-rm]');
+  if(rm){removeArt(rm);return}
+  const b=e.target.closest('[data-art]');if(!b)return;LB_LIST=artVisible;lbFrom=b;lbShow(+b.dataset.art);lb.hidden=false;document.getElementById('lb-close').focus()});
+
+/* owner-only: add and remove artwork; the page republishes itself */
+const aa={form:document.getElementById('aa-form'),file:document.getElementById('aa-file'),prev:document.getElementById('aa-preview'),dropText:document.getElementById('aa-drop-text'),
+  title:document.getElementById('aa-title'),cat:document.getElementById('aa-cat'),medium:document.getElementById('aa-medium'),status:document.getElementById('aa-status'),save:document.getElementById('aa-save')};
+let aaBlob=null,aaSize=null;
+function aaMsg(t,err){aa.status.textContent=t;aa.status.classList.toggle('err',!!err)}
+async function loadBitmap(file){
+  try{return await createImageBitmap(file)}catch(_){}
+  const url=URL.createObjectURL(file);
+  try{return await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url})}finally{setTimeout(()=>URL.revokeObjectURL(url),1000)}
+}
+async function prepImage(file){
+  const img=await loadBitmap(file);
+  const w0=img.width||img.naturalWidth,h0=img.height||img.naturalHeight,sc=Math.min(1,1800/Math.max(w0,h0));
+  const c=document.createElement('canvas');c.width=Math.round(w0*sc);c.height=Math.round(h0*sc);
+  const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);
+  const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.86));
+  if(!blob)throw new Error('encode');
+  return {blob,w:c.width,h:c.height};
+}
+aa.file.addEventListener('change',async()=>{
+  const f=aa.file.files[0];if(!f)return;
+  aaMsg('Preparing image…');
+  try{const r=await prepImage(f);aaBlob=r.blob;aaSize=[r.w,r.h];aa.prev.src=URL.createObjectURL(r.blob);aa.prev.hidden=false;aa.dropText.hidden=true;aaMsg('');
+    if(!aa.title.value)aa.title.value=f.name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').replace(/^IMG \d+$/i,'');}
+  catch(_){aaBlob=null;aaMsg("This image type can't be read here. Export it as JPG or PNG and try again.",true)}
+});
+document.getElementById('aa-open').addEventListener('click',()=>{aa.form.hidden=false;document.getElementById('aa-open').hidden=true;aa.title.focus()});
+function aaReset(){aa.form.reset();aa.medium.value='Oil pastel';aaBlob=null;aa.prev.hidden=true;aa.dropText.hidden=false;aaMsg('');aa.form.hidden=true;document.getElementById('aa-open').hidden=false}
+document.getElementById('aa-cancel').addEventListener('click',aaReset);
+async function publishData(art,cov){
+  const res=await fetch('tpl/page.html',{cache:'no-store'});
+  if(!res.ok)throw {code:'template'};
+  let tpl=await res.text();
+  const m1='/*EXTRA'+'*/[]/*END*/', m2='/*COV'+'*/[]/*END*/';
+  if(!tpl.includes(m1)||!tpl.includes(m2))throw {code:'template'};
+  const j=v=>JSON.stringify(v).replace(/</g,'\\u003c');
+  tpl=tpl.replace(m1,()=>'/*EXTRA*/'+j(art)+'/*END*/').replace(m2,()=>'/*COV*/'+j(cov)+'/*END*/');
+  await artAdmin.artifact.publish(tpl);
+}
+const publishExtras=next=>publishData(next,COV_POSTERS);
+function publishError(e){
+  const c=e&&e.code;
+  if(c==='conflict')return 'A newer version of the site was just saved, so the page is reloading. Add the piece again once it loads.';
+  if(c==='not_writer'||c==='not_granted'||c==='capability_disabled')return 'Saving is not available in this view. Open the site from your own Claude account to add artwork.';
+  if(c==='rate_limited')return 'Too many saves in a short time. Wait a minute, then try again.';
+  if(c==='too_large'||c==='quota_or_state')return 'The site has reached its storage limit. Remove an older piece, then try again.';
+  if(c==='template')return 'The site template could not be loaded. Ask Claude to republish the site.';
+  return 'Something went wrong while saving. Try again in a moment.';
+}
+aa.form.addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!aaBlob){aaMsg('Choose an image first.',true);return}
+  const title=aa.title.value.trim();if(!title){aaMsg('Add a title.',true);aa.title.focus();return}
+  aa.save.disabled=true;aaMsg('Uploading image…');
+  try{
+    const up=await artAdmin.assets.upload(aaBlob,{type:'image/jpeg'});
+    aaMsg('Publishing to the site…');
+    const today=new Date();const added=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+    const item={id:up.id,src:up.url,w:aaSize[0],h:aaSize[1],cap:title,cat:aa.cat.value,medium:aa.medium.value.trim()||'Oil pastel',added};
+    await publishExtras([...ART_EXTRA,item]);
+    aaMsg('Published. The page is reloading with your new piece.');
+  }catch(err){aa.save.disabled=false;aaMsg(publishError(err),true)}
+});
+async function removeArt(btn){
+  if(!btn.classList.contains('armed')){btn.classList.add('armed');btn.textContent='Confirm remove';setTimeout(()=>{btn.classList.remove('armed');btn.textContent='Remove'},4000);return}
+  const id=btn.dataset.rm;btn.disabled=true;btn.textContent='Removing…';
+  try{await publishExtras(ART_EXTRA.filter(a=>a.id!==id));artAdmin.assets.delete(id).catch(()=>{})}
+  catch(err){btn.disabled=false;btn.textContent='Remove';btn.classList.remove('armed');alertInline(publishError(err))}
+}
+function alertInline(t){const el=document.getElementById('art-admin');el.hidden=false;aaMsg(t,true);aa.form.hidden=false}
+/* owner-only: Coventry posters */
+const cv={form:document.getElementById('cov-form'),file:document.getElementById('cov-file'),prev:document.getElementById('cov-preview'),dropText:document.getElementById('cov-drop-text'),
+  opp:document.getElementById('cov-opp'),date:document.getElementById('cov-date'),ha:document.getElementById('cov-ha'),comp:document.getElementById('cov-comp'),score:document.getElementById('cov-score'),status:document.getElementById('cov-status'),save:document.getElementById('cov-save')};
+let cvBlob=null,cvSize=null;
+const todayISO=()=>{const t=new Date();return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')};
+function cvMsg(t,err){cv.status.textContent=t;cv.status.classList.toggle('err',!!err)}
+cv.file.addEventListener('change',async()=>{const f=cv.file.files[0];if(!f)return;cvMsg('Preparing image…');
+  try{const r=await prepImage(f);cvBlob=r.blob;cvSize=[r.w,r.h];cv.prev.src=URL.createObjectURL(r.blob);cv.prev.hidden=false;cv.dropText.hidden=true;cvMsg('')}
+  catch(_){cvBlob=null;cvMsg("This image type can't be read here. Export it as JPG or PNG and try again.",true)}});
+document.getElementById('cov-open').addEventListener('click',()=>{cv.form.hidden=false;document.getElementById('cov-open').hidden=true;if(!cv.date.value)cv.date.value=todayISO();cv.opp.focus()});
+document.getElementById('cov-cancel').addEventListener('click',()=>{cv.form.reset();cv.comp.value='League';cvBlob=null;cv.prev.hidden=true;cv.dropText.hidden=false;cvMsg('');cv.form.hidden=true;document.getElementById('cov-open').hidden=false});
+cv.form.addEventListener('submit',async e=>{e.preventDefault();
+  if(!cvBlob){cvMsg('Choose the poster image first.',true);return}
+  const opp=cv.opp.value.trim();if(!opp){cvMsg('Add the opponent.',true);cv.opp.focus();return}
+  if(!cv.date.value){cvMsg('Add the match date.',true);cv.date.focus();return}
+  cv.save.disabled=true;cvMsg('Uploading poster…');
+  try{const up=await artAdmin.assets.upload(cvBlob,{type:'image/jpeg'});cvMsg('Publishing to the site…');
+    const item={id:up.id,src:up.url,w:cvSize[0],h:cvSize[1],opp,date:cv.date.value,ha:cv.ha.value,comp:cv.comp.value.trim()||'League',score:cv.score.value.trim()};
+    await publishData(ART_EXTRA,[...COV_POSTERS,item]);cvMsg('Published. The page is reloading with the new poster.');}
+  catch(err){cv.save.disabled=false;cvMsg(publishError(err),true)}});
+async function removeCov(btn){
+  if(!btn.classList.contains('armed')){btn.classList.add('armed');btn.textContent='Confirm remove';setTimeout(()=>{btn.classList.remove('armed');btn.textContent='Remove'},4000);return}
+  const id=btn.dataset.covrm;btn.disabled=true;btn.textContent='Removing…';
+  try{await publishData(ART_EXTRA,COV_POSTERS.filter(p=>p.id!==id));artAdmin.assets.delete(id).catch(()=>{})}
+  catch(err){btn.disabled=false;btn.textContent='Remove';btn.classList.remove('armed');cv.form.hidden=false;cvMsg(publishError(err),true)}
+}
+(async()=>{
+  const use=window.claude&&window.claude.use;if(!use)return;
+  const user=await window.claude.use('user');if(!user)return;
+  const can=await user.canEdit().catch(()=>false);if(!can)return;
+  const [artifact,assets]=await Promise.all([window.claude.use('artifact'),window.claude.use('assets')]);
+  if(!artifact||!assets)return;
+  artAdmin={artifact,assets};document.getElementById('art-admin').hidden=false;document.getElementById('cov-admin').hidden=false;renderArt();renderCov();
+})();
+
+/* poster series */
+const WC=[{"n": 1, "t": ["Mexico", "South Africa"], "s": "group", "src": "img/wc/1-mexico-v-south-africa.jpg", "th": "img/wc/t-1-mexico-v-south-africa.jpg", "w": 1043, "h": 1500}, {"n": 2, "t": ["Bosnia and Herzegovina", "Canada"], "s": "group", "src": "img/wc/2-bosnia-v-canada.jpg", "th": "img/wc/t-2-bosnia-v-canada.jpg", "w": 1200, "h": 1500}, {"n": 3, "t": ["Czechia", "South Korea"], "s": "group", "src": "img/wc/czeck-south-korea.jpg", "th": "img/wc/t-czeck-south-korea.jpg", "w": 1027, "h": 1500}, {"n": 4, "t": ["USA", "Paraguay"], "s": "group", "src": "img/wc/4-usa-v-paraguay.jpg", "th": "img/wc/t-4-usa-v-paraguay.jpg", "w": 1200, "h": 1500}, {"n": 5, "t": ["Qatar", "Switzerland"], "s": "group", "src": "img/wc/5-qatar-v-switzerland.jpg", "th": "img/wc/t-5-qatar-v-switzerland.jpg", "w": 1200, "h": 1500}, {"n": 6, "t": ["Brazil", "Morocco"], "s": "group", "src": "img/wc/6-brazil-vs-morroco.jpg", "th": "img/wc/t-6-brazil-vs-morroco.jpg", "w": 1200, "h": 1500}, {"n": 7, "t": ["Haiti", "Scotland"], "s": "group", "src": "img/wc/7-haiti-vs-scotland.jpg", "th": "img/wc/t-7-haiti-vs-scotland.jpg", "w": 1200, "h": 1500}, {"n": 8, "t": ["Australia", "Turkey"], "s": "group", "src": "img/wc/8-australian-vs-turkey.jpg", "th": "img/wc/t-8-australian-vs-turkey.jpg", "w": 1200, "h": 1500}, {"n": 9, "t": ["Germany", "Curaçao"], "s": "group", "src": "img/wc/9-germany-vs-curacao.jpg", "th": "img/wc/t-9-germany-vs-curacao.jpg", "w": 1200, "h": 1500}, {"n": 10, "t": ["Netherlands", "Japan"], "s": "group", "src": "img/wc/10-netherlands-vs-japan.jpg", "th": "img/wc/t-10-netherlands-vs-japan.jpg", "w": 1200, "h": 1500}, {"n": 11, "t": ["Ivory Coast", "Ecuador"], "s": "group", "src": "img/wc/11-ivory-coast-vs-ecuador.jpg", "th": "img/wc/t-11-ivory-coast-vs-ecuador.jpg", "w": 1200, "h": 1500}, {"n": 12, "t": ["Sweden", "Tunisia"], "s": "group", "src": "img/wc/12-sweden-vs-tunisia.jpg", "th": "img/wc/t-12-sweden-vs-tunisia.jpg", "w": 1200, "h": 1500}, {"n": 13, "t": ["Spain", "Cape Verde"], "s": "group", "src": "img/wc/13-spain-vs-capeverde.jpg", "th": "img/wc/t-13-spain-vs-capeverde.jpg", "w": 1200, "h": 1500}, {"n": 14, "t": ["Belgium", "Egypt"], "s": "group", "src": "img/wc/14-belgium-vs-egypt.jpg", "th": "img/wc/t-14-belgium-vs-egypt.jpg", "w": 1200, "h": 1500}, {"n": 15, "t": ["Uruguay", "Saudi Arabia"], "s": "group", "src": "img/wc/15-uruguay-saudi-arabia.jpg", "th": "img/wc/t-15-uruguay-saudi-arabia.jpg", "w": 595, "h": 842}, {"n": 16, "t": ["Iran", "New Zealand"], "s": "group", "src": "img/wc/16-iran-vs-new-zealand.jpg", "th": "img/wc/t-16-iran-vs-new-zealand.jpg", "w": 1200, "h": 1500}, {"n": 17, "t": ["France", "Senegal"], "s": "group", "src": "img/wc/17-france-vs-senegal.jpg", "th": "img/wc/t-17-france-vs-senegal.jpg", "w": 1200, "h": 1500}, {"n": 18, "t": ["Iraq", "Norway"], "s": "group", "src": "img/wc/18-iraq-vs-norway.jpg", "th": "img/wc/t-18-iraq-vs-norway.jpg", "w": 1200, "h": 1500}, {"n": 19, "t": ["Argentina", "Algeria"], "s": "group", "src": "img/wc/19-argentina-v-algeria.jpg", "th": "img/wc/t-19-argentina-v-algeria.jpg", "w": 1200, "h": 1500}, {"n": 20, "t": ["Austria", "Jordan"], "s": "group", "src": "img/wc/20-austria-vs-jordan.jpg", "th": "img/wc/t-20-austria-vs-jordan.jpg", "w": 595, "h": 842}, {"n": 21, "t": ["Portugal", "DR Congo"], "s": "group", "src": "img/wc/21-portugal-vs-dr-congo.jpg", "th": "img/wc/t-21-portugal-vs-dr-congo.jpg", "w": 1200, "h": 1500}, {"n": 22, "t": ["England", "Croatia"], "s": "group", "src": "img/wc/22-england-vs-croatia.jpg", "th": "img/wc/t-22-england-vs-croatia.jpg", "w": 1200, "h": 1500}, {"n": 23, "t": ["Ghana", "Panama"], "s": "group", "src": "img/wc/23-ghana-vs-panama.jpg", "th": "img/wc/t-23-ghana-vs-panama.jpg", "w": 1200, "h": 1500}, {"n": 24, "t": ["Uzbekistan", "Colombia"], "s": "group", "src": "img/wc/24-uzbekistan-vs-colombia.jpg", "th": "img/wc/t-24-uzbekistan-vs-colombia.jpg", "w": 1200, "h": 1500}, {"n": 25, "t": ["Czechia", "South Africa"], "s": "group", "src": "img/wc/25-czech-vs-south-africa.jpg", "th": "img/wc/t-25-czech-vs-south-africa.jpg", "w": 1200, "h": 1500}, {"n": 26, "t": ["Switzerland", "Bosnia and Herzegovina"], "s": "group", "src": "img/wc/26-switzerland-vs-bosnia.jpg", "th": "img/wc/t-26-switzerland-vs-bosnia.jpg", "w": 1200, "h": 1500}, {"n": 27, "t": ["Canada", "Qatar"], "s": "group", "src": "img/wc/27-canada-vs-qatar.jpg", "th": "img/wc/t-27-canada-vs-qatar.jpg", "w": 1200, "h": 1500}, {"n": 28, "t": ["Mexico", "South Korea"], "s": "group", "src": "img/wc/28-mexico-s-korea.jpg", "th": "img/wc/t-28-mexico-s-korea.jpg", "w": 1200, "h": 1500}, {"n": 29, "t": ["USA", "Australia"], "s": "group", "src": "img/wc/29-usa-vs-australia.jpg", "th": "img/wc/t-29-usa-vs-australia.jpg", "w": 1200, "h": 1500}, {"n": 30, "t": ["Scotland", "Morocco"], "s": "group", "src": "img/wc/30-scotland-vs-morrocco.jpg", "th": "img/wc/t-30-scotland-vs-morrocco.jpg", "w": 1200, "h": 1500}, {"n": 31, "t": ["Turkey", "Paraguay"], "s": "group", "src": "img/wc/31-turkey-vs-paraguay.jpg", "th": "img/wc/t-31-turkey-vs-paraguay.jpg", "w": 1200, "h": 1500}, {"n": 32, "t": ["Brazil", "Haiti"], "s": "group", "src": "img/wc/32-brazil-haiti.jpg", "th": "img/wc/t-32-brazil-haiti.jpg", "w": 1200, "h": 1500}, {"n": 33, "t": ["Switzerland", "Netherlands"], "s": "group", "src": "img/wc/33-switzerland-vs-netherlands.jpg", "th": "img/wc/t-33-switzerland-vs-netherlands.jpg", "w": 1200, "h": 1500}, {"n": 34, "t": ["Germany", "Ivory Coast"], "s": "group", "src": "img/wc/34-germany-vs-ivory-coast.jpg", "th": "img/wc/t-34-germany-vs-ivory-coast.jpg", "w": 1200, "h": 1500}, {"n": 35, "t": ["Ecuador", "Curaçao"], "s": "group", "src": "img/wc/35-ecuador-vs-curacao.jpg", "th": "img/wc/t-35-ecuador-vs-curacao.jpg", "w": 1200, "h": 1500}, {"n": 36, "t": ["Tunisia", "Japan"], "s": "group", "src": "img/wc/36-tunisia-vs-japan.jpg", "th": "img/wc/t-36-tunisia-vs-japan.jpg", "w": 595, "h": 842}, {"n": 37, "t": ["Spain", "Saudi Arabia"], "s": "group", "src": "img/wc/37-spain-vs-saudi-arabia.jpg", "th": "img/wc/t-37-spain-vs-saudi-arabia.jpg", "w": 1200, "h": 1500}, {"n": 38, "t": ["Belgium", "Iran"], "s": "group", "src": "img/wc/38-belgium-vs-iran.jpg", "th": "img/wc/t-38-belgium-vs-iran.jpg", "w": 1200, "h": 1500}, {"n": 39, "t": ["Uruguay", "Cape Verde"], "s": "group", "src": "img/wc/39-uruguay-vs-capeverde.jpg", "th": "img/wc/t-39-uruguay-vs-capeverde.jpg", "w": 1200, "h": 1500}, {"n": 40, "t": ["New Zealand", "Egypt"], "s": "group", "src": "img/wc/40-new-zealand-v-vs-egypt.jpg", "th": "img/wc/t-40-new-zealand-v-vs-egypt.jpg", "w": 1200, "h": 1500}, {"n": 41, "t": ["Argentina", "Austria"], "s": "group", "src": "img/wc/41-argentina-vs-austria.jpg", "th": "img/wc/t-41-argentina-vs-austria.jpg", "w": 1200, "h": 1500}, {"n": 42, "t": ["France", "Iraq"], "s": "group", "src": "img/wc/42-france-vs-iraq.jpg", "th": "img/wc/t-42-france-vs-iraq.jpg", "w": 1200, "h": 1500}, {"n": 43, "t": ["Algeria", "Jordan"], "s": "group", "src": "img/wc/43-algeria-vs-jordan.jpg", "th": "img/wc/t-43-algeria-vs-jordan.jpg", "w": 1200, "h": 1500}, {"n": 44, "t": ["Senegal", "Norway"], "s": "group", "src": "img/wc/44-senegal-norway.jpg", "th": "img/wc/t-44-senegal-norway.jpg", "w": 1200, "h": 1500}, {"n": 45, "t": ["England", "Ghana"], "s": "group", "src": "img/wc/45-england-vs-ghana.jpg", "th": "img/wc/t-45-england-vs-ghana.jpg", "w": 1200, "h": 1500}, {"n": 46, "t": ["Uzbekistan", "Portugal"], "s": "group", "src": "img/wc/46-uzbekistan-vs-portugal.jpg", "th": "img/wc/t-46-uzbekistan-vs-portugal.jpg", "w": 1200, "h": 1500}, {"n": 47, "t": ["Panama", "Croatia"], "s": "group", "src": "img/wc/47-panama-croatia.jpg", "th": "img/wc/t-47-panama-croatia.jpg", "w": 1200, "h": 1500}, {"n": 48, "t": ["Colombia", "DR Congo"], "s": "group", "src": "img/wc/48-colombia-congo.jpg", "th": "img/wc/t-48-colombia-congo.jpg", "w": 1200, "h": 1500}, {"n": 49, "t": ["Canada", "Switzerland"], "s": "group", "src": "img/wc/49-canada-vs-switzerland.jpg", "th": "img/wc/t-49-canada-vs-switzerland.jpg", "w": 1200, "h": 1500}, {"n": 50, "t": ["Bosnia and Herzegovina", "Qatar"], "s": "group", "src": "img/wc/50-bosnia-vs-qatar.jpg", "th": "img/wc/t-50-bosnia-vs-qatar.jpg", "w": 1200, "h": 1500}, {"n": 51, "t": ["Brazil", "Scotland"], "s": "group", "src": "img/wc/51-brazil-vs-scotland.jpg", "th": "img/wc/t-51-brazil-vs-scotland.jpg", "w": 1200, "h": 1500}, {"n": 52, "t": ["Haiti", "Morocco"], "s": "group", "src": "img/wc/52-haiti-vs-morocco.jpg", "th": "img/wc/t-52-haiti-vs-morocco.jpg", "w": 1200, "h": 1500}, {"n": 53, "t": ["South Africa", "South Korea"], "s": "group", "src": "img/wc/53-south-africa-vs-south-korea.jpg", "th": "img/wc/t-53-south-africa-vs-south-korea.jpg", "w": 1200, "h": 1500}, {"n": 54, "t": ["Mexico", "Czechia"], "s": "group", "src": "img/wc/54-mexico-vs-czech-republic.jpg", "th": "img/wc/t-54-mexico-vs-czech-republic.jpg", "w": 1200, "h": 1500}, {"n": 55, "t": ["Germany", "Ecuador"], "s": "group", "src": "img/wc/55-germany-vs-ecuador.jpg", "th": "img/wc/t-55-germany-vs-ecuador.jpg", "w": 1200, "h": 1500}, {"n": 56, "t": ["Ivory Coast", "Curaçao"], "s": "group", "src": "img/wc/56-ivory-coast-vs-curacao.jpg", "th": "img/wc/t-56-ivory-coast-vs-curacao.jpg", "w": 1200, "h": 1500}, {"n": 58, "t": ["Netherlands", "Tunisia"], "s": "group", "src": "img/wc/58-holland-vs-tunisia.jpg", "th": "img/wc/t-58-holland-vs-tunisia.jpg", "w": 1200, "h": 1500}, {"n": 59, "t": ["Sweden", "Japan"], "s": "group", "src": "img/wc/59-sweden-vs-japan.jpg", "th": "img/wc/t-59-sweden-vs-japan.jpg", "w": 1200, "h": 1500}, {"n": 60, "t": ["Tunisia", "Turkey"], "s": "group", "src": "img/wc/60-tunisia-vs-turkey.jpg", "th": "img/wc/t-60-tunisia-vs-turkey.jpg", "w": 1200, "h": 1500}, {"n": 61, "t": ["Australia", "Paraguay"], "s": "group", "src": "img/wc/61-australia-vs-paraguay.jpg", "th": "img/wc/t-61-australia-vs-paraguay.jpg", "w": 1200, "h": 1500}, {"n": 62, "t": ["Norway", "France"], "s": "group", "src": "img/wc/62-norway-france.jpg", "th": "img/wc/t-62-norway-france.jpg", "w": 1200, "h": 1500}, {"n": 63, "t": ["Senegal", "Iran"], "s": "group", "src": "img/wc/63-senegal-vs-iran.jpg", "th": "img/wc/t-63-senegal-vs-iran.jpg", "w": 1200, "h": 1500}, {"n": 64, "t": ["Belgium", "New Zealand"], "s": "group", "src": "img/wc/64-belgium-new-zealand.jpg", "th": "img/wc/t-64-belgium-new-zealand.jpg", "w": 1200, "h": 1500}, {"n": 65, "t": ["Egypt", "Iran"], "s": "group", "src": "img/wc/65-egypt-vs-iran.jpg", "th": "img/wc/t-65-egypt-vs-iran.jpg", "w": 1200, "h": 1500}, {"n": 66, "t": ["Saudi Arabia", "Cape Verde"], "s": "group", "src": "img/wc/66-saudi-arabia-vs-cape-verde.jpg", "th": "img/wc/t-66-saudi-arabia-vs-cape-verde.jpg", "w": 1200, "h": 1500}, {"n": 67, "t": ["Croatia", "Ghana"], "s": "group", "src": "img/wc/67-croatia-vs-ghana.jpg", "th": "img/wc/t-67-croatia-vs-ghana.jpg", "w": 1200, "h": 1500}, {"n": 68, "t": ["Panama", "England"], "s": "group", "src": "img/wc/68-panama-vs-england.jpg", "th": "img/wc/t-68-panama-vs-england.jpg", "w": 1200, "h": 1500}, {"n": 69, "t": ["South Africa", "Canada"], "s": "group", "src": "img/wc/69-south-africa-vs-canada.jpg", "th": "img/wc/t-69-south-africa-vs-canada.jpg", "w": 1027, "h": 1500}, {"n": 70, "t": ["Germany", "Paraguay"], "s": "group", "src": "img/wc/70-germany-vs-paraguay.jpg", "th": "img/wc/t-70-germany-vs-paraguay.jpg", "w": 1027, "h": 1500}, {"n": 71, "t": ["Morocco", "Netherlands"], "s": "group", "src": "img/wc/71-morocco-v-netherlands.jpg", "th": "img/wc/t-71-morocco-v-netherlands.jpg", "w": 1027, "h": 1500}, {"n": 72, "t": ["Brazil", "Japan"], "s": "group", "src": "img/wc/72-brazil-vs-japan.jpg", "th": "img/wc/t-72-brazil-vs-japan.jpg", "w": 1027, "h": 1500}, {"n": 73, "t": ["France", "Sweden"], "s": "ko", "src": "img/wc/73-france-sweden.jpg", "th": "img/wc/t-73-france-sweden.jpg", "w": 1027, "h": 1500}, {"n": 74, "t": ["Ivory Coast", "Norway"], "s": "ko", "src": "img/wc/74-ivory-coast-vs-norway.jpg", "th": "img/wc/t-74-ivory-coast-vs-norway.jpg", "w": 1027, "h": 1500}, {"n": 75, "t": ["Mexico", "Ecuador"], "s": "ko", "src": "img/wc/75-mexico-vs-ecuador.jpg", "th": "img/wc/t-75-mexico-vs-ecuador.jpg", "w": 1027, "h": 1500}, {"n": 76, "t": ["England", "DR Congo"], "s": "ko", "src": "img/wc/76-england-vs-dr-congo.jpg", "th": "img/wc/t-76-england-vs-dr-congo.jpg", "w": 1027, "h": 1500}, {"n": 77, "t": ["USA", "Bosnia and Herzegovina"], "s": "ko", "src": "img/wc/77-usa-v-bosnia.jpg", "th": "img/wc/t-77-usa-v-bosnia.jpg", "w": 1027, "h": 1500}, {"n": 78, "t": ["Belgium", "Senegal"], "s": "ko", "src": "img/wc/78-belgium-vs-senegal.jpg", "th": "img/wc/t-78-belgium-vs-senegal.jpg", "w": 1027, "h": 1500}, {"n": 79, "t": ["Spain", "Austria"], "s": "ko", "src": "img/wc/79-spain-vs-austria.jpg", "th": "img/wc/t-79-spain-vs-austria.jpg", "w": 1027, "h": 1500}, {"n": 80, "t": ["Portugal", "Croatia"], "s": "ko", "src": "img/wc/80-portugal-vs-croatia.jpg", "th": "img/wc/t-80-portugal-vs-croatia.jpg", "w": 1027, "h": 1500}, {"n": 81, "t": ["Switzerland", "Algeria"], "s": "ko", "src": "img/wc/81-switzerland-vs-algeria.jpg", "th": "img/wc/t-81-switzerland-vs-algeria.jpg", "w": 1027, "h": 1500}, {"n": 82, "t": ["Ghana", "Colombia"], "s": "ko", "src": "img/wc/82-ghana-vs-colombia.jpg", "th": "img/wc/t-82-ghana-vs-colombia.jpg", "w": 1027, "h": 1500}, {"n": 83, "t": ["Argentina", "Cape Verde"], "s": "ko", "src": "img/wc/83-argentina-vs-cape-verde.jpg", "th": "img/wc/t-83-argentina-vs-cape-verde.jpg", "w": 1027, "h": 1500}, {"n": 84, "t": ["Egypt", "Australia"], "s": "ko", "src": "img/wc/84-egypt-vs-australia.jpg", "th": "img/wc/t-84-egypt-vs-australia.jpg", "w": 1027, "h": 1500}, {"n": 85, "t": ["Canada", "Morocco"], "s": "ko", "src": "img/wc/85-canada-vs-morrocco.jpg", "th": "img/wc/t-85-canada-vs-morrocco.jpg", "w": 1027, "h": 1500}, {"n": 86, "t": ["France", "Paraguay"], "s": "ko", "src": "img/wc/86-france-vs-paraguay.jpg", "th": "img/wc/t-86-france-vs-paraguay.jpg", "w": 1027, "h": 1500}, {"n": 87, "t": ["England", "Mexico"], "s": "ko", "src": "img/wc/87-england-vs-mexico.jpg", "th": "img/wc/t-87-england-vs-mexico.jpg", "w": 1027, "h": 1500}, {"n": 88, "t": ["Brazil", "Norway"], "s": "ko", "src": "img/wc/88-brazil-vs-norway.jpg", "th": "img/wc/t-88-brazil-vs-norway.jpg", "w": 1027, "h": 1500}, {"n": 89, "t": ["USA", "Belgium"], "s": "ko", "src": "img/wc/89-usa-vs-belgium.jpg", "th": "img/wc/t-89-usa-vs-belgium.jpg", "w": 1027, "h": 1500}, {"n": 90, "t": ["Portugal", "Spain"], "s": "ko", "src": "img/wc/90-portugal-vs-spain.jpg", "th": "img/wc/t-90-portugal-vs-spain.jpg", "w": 1027, "h": 1500}, {"n": 91, "t": ["Argentina", "Egypt"], "s": "ko", "src": "img/wc/91-argentina-vs-egypt.jpg", "th": "img/wc/t-91-argentina-vs-egypt.jpg", "w": 1027, "h": 1500}, {"n": 92, "t": ["Switzerland", "Colombia"], "s": "ko", "src": "img/wc/92-switzeland-vs-colombia.jpg", "th": "img/wc/t-92-switzeland-vs-colombia.jpg", "w": 1027, "h": 1500}, {"n": 93, "t": ["France", "Morocco"], "s": "ko", "src": "img/wc/93-france-vs-morocco.jpg", "th": "img/wc/t-93-france-vs-morocco.jpg", "w": 1027, "h": 1500}, {"n": 94, "t": ["Spain", "Belgium"], "s": "ko", "src": "img/wc/94-spain-vs-belgium.jpg", "th": "img/wc/t-94-spain-vs-belgium.jpg", "w": 1027, "h": 1500}, {"n": 95, "t": ["England", "Norway"], "s": "ko", "src": "img/wc/95-england-vs-norway.jpg", "th": "img/wc/t-95-england-vs-norway.jpg", "w": 1027, "h": 1500}, {"n": 96, "t": ["Switzerland", "Argentina"], "s": "ko", "src": "img/wc/96-switzerland-vs-argentina.jpg", "th": "img/wc/t-96-switzerland-vs-argentina.jpg", "w": 1027, "h": 1500}, {"n": 97, "t": ["Spain", "France"], "s": "ko", "src": "img/wc/97-spain-vs-france.jpg", "th": "img/wc/t-97-spain-vs-france.jpg", "w": 1027, "h": 1500}, {"n": 98, "t": ["Argentina", "England"], "s": "ko", "src": "img/wc/98-argentina-vs-england.jpg", "th": "img/wc/t-98-argentina-vs-england.jpg", "w": 1027, "h": 1500}, {"n": 100, "t": ["Jordan", "Austria"], "s": "group", "src": "img/wc/100-jordan-vs-austria.jpg", "th": "img/wc/t-100-jordan-vs-austria.jpg", "w": 1200, "h": 1500}, {"n": 102, "t": ["France", "England"], "s": "ko", "src": "img/wc/102-france-vs-england.jpg", "th": "img/wc/t-102-france-vs-england.jpg", "w": 1027, "h": 1500}, {"n": 103, "t": ["Argentina", "Spain"], "s": "ko", "src": "img/wc/103-argentina-vs-spain.jpg", "th": "img/wc/t-103-argentina-vs-spain.jpg", "w": 1027, "h": 1500}];
+const COV_BASE=[{"src": "img/cov/md1-arsenal.jpg", "th": "img/cov/t-md1-arsenal.jpg", "w": 1112, "h": 1600, "md": 1, "opp": "Arsenal", "ha": "away", "date": "2026-08-21", "comp": "Premier League", "alts": [{"src": "img/cov/md1-arsenal-alt1.jpg", "th": "img/cov/t-md1-arsenal-alt1.jpg", "w": 1112, "h": 1600}]}, {"src": "img/cov/md2-manchester-city.jpg", "th": "img/cov/t-md2-manchester-city.jpg", "w": 1179, "h": 1421, "md": 2, "opp": "Manchester City", "ha": "away", "date": "2026-09-05", "comp": "Premier League", "alts": []}, {"src": "img/cov/md3-brighton.jpg", "th": "img/cov/t-md3-brighton.jpg", "w": 1080, "h": 1350, "md": 3, "opp": "Brighton", "ha": "home", "date": "2026-09-13", "comp": "Premier League", "alts": []}, {"src": "img/cov/md4-aston-villa.jpg", "th": "img/cov/t-md4-aston-villa.jpg", "w": 1228, "h": 1600, "md": 4, "opp": "Aston Villa", "ha": "home", "date": "2026-09-16", "comp": "Premier League", "alts": []}, {"src": "img/cov/md5-nottingham-forest.jpg", "th": "img/cov/t-md5-nottingham-forest.jpg", "w": 1138, "h": 1600, "md": 5, "opp": "Nottingham Forest", "ha": "away", "date": "2026-09-19", "comp": "Premier League", "alts": [{"src": "img/cov/md5-nottingham-forest-alt1.jpg", "th": "img/cov/t-md5-nottingham-forest-alt1.jpg", "w": 1138, "h": 1600}]}, {"src": "img/cov/md6-newcastle-united.jpg", "th": "img/cov/t-md6-newcastle-united.jpg", "w": 1138, "h": 1600, "md": 6, "opp": "Newcastle United", "ha": "home", "date": "2026-10-12", "comp": "Premier League", "alts": [{"src": "img/cov/md6-newcastle-united-alt1.jpg", "th": "img/cov/t-md6-newcastle-united-alt1.jpg", "w": 1138, "h": 1600}]}, {"src": "img/cov/md7-tottenham-hotspur.jpg", "th": "img/cov/t-md7-tottenham-hotspur.jpg", "w": 1236, "h": 1600, "md": 7, "opp": "Tottenham Hotspur", "ha": "away", "date": "2026-10-19", "comp": "Premier League", "alts": []}];
+const COV_POSTERS=/*COV*/[]/*END*/;
+const covSorted=()=>[...COV_BASE,...COV_POSTERS].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+const covTitle=p=>p.ha==='away'?`${p.opp} v Coventry`:`Coventry v ${p.opp}`;
+const wcTitle=p=>p.t.join(' v ');
+function seriesCards(){
+  const pick=[1,13,22,30,41,62,71,77,85,88,94,103].map(n=>WC.find(p=>p.n===n)).filter(Boolean);
+  const latest=covSorted()[0];
+  return `<a class="sc" href="#coventry" data-go="coventry">
+      ${latest?`<div class="sc-latest"><img src="${esc(latest.th||latest.src)}" alt="Latest Coventry matchday poster" loading="lazy"><span class="new-badge">Latest</span></div>`
+        :`<div class="sc-empty"><span>Matchday</span><small>New poster after every Coventry game</small></div>`}
+      <div class="sc-body"><div class="sc-big">${covSorted().length||'Live'}</div><div><b>Coventry matchday</b><span>${latest?`Latest: ${esc(covTitle(latest))}`:'Ongoing through the season'}</span></div></div></a>
+    <a class="sc" href="#world-cup" data-go="world-cup">
+      <div class="sc-mosaic">${pick.map(p=>`<img src="${p.th}" alt="" loading="lazy">`).join('')}</div>
+      <div class="sc-body"><div class="sc-big">${WC.length}</div><div><b>World Cup 2026</b><span>A poster for every match, in oil pastel</span></div></div></a>`;
+}
+function renderSeriesCards(){document.getElementById('series-home').innerHTML=seriesCards();document.getElementById('series-work').innerHTML=seriesCards()}
+renderSeriesCards();
+
+/* homepage: a random World Cup poster, changing every 30–60 seconds */
+(function(){
+  const imgs=[document.getElementById('ha-a'),document.getElementById('ha-b')],cap=document.getElementById('ha-cap');
+  let cur=0,last=-1,timer=null;
+  const pick=()=>{let i;do{i=Math.floor(Math.random()*WC.length)}while(WC.length>1&&i===last);last=i;return WC[i]};
+  function show(p,first){
+    const next=imgs[first?0:1-cur];
+    let fired=false;
+    const done=()=>{if(fired)return;fired=true;if(!first)imgs[cur].classList.remove('on');next.classList.add('on');cur=first?0:1-cur;
+      cap.innerHTML=`<b>No. ${p.n}</b>${esc(wcTitle(p))}`;};
+    next.onload=done;next.onerror=()=>schedule();next.src=p.src;
+    if(next.complete&&next.naturalWidth)done();
+  }
+  function schedule(){clearTimeout(timer);timer=setTimeout(()=>{if(!document.hidden)show(pick());schedule()},30000+Math.random()*30000)}
+  show(pick(),true);schedule();
+})();
+
+let wcStage='all',wcQ='',wcVisible=WC;
+function renderWC(){
+  const q=wcQ.trim().toLowerCase();
+  wcVisible=WC.filter(p=>(wcStage==='all'||p.s===wcStage)&&(!q||p.t.some(t=>t.toLowerCase().includes(q))));
+  const cnt=id=>id==='all'?WC.length:WC.filter(p=>p.s===id).length;
+  document.getElementById('wc-stages').innerHTML=[['all','All'],['group','Group stage'],['ko','Knockout rounds']].map(([id,l])=>`<button type="button" data-stage="${id}" aria-pressed="${wcStage===id}">${l}<span>${cnt(id)}</span></button>`).join('');
+  document.getElementById('wc-num').textContent=WC.length;
+  document.getElementById('wc-count').textContent=q||wcStage!=='all'?`${wcVisible.length} ${wcVisible.length===1?'poster':'posters'}`:'';
+  document.getElementById('wc-wall').innerHTML=wcVisible.length?wcVisible.map((p,k)=>`<button type="button" class="wc-tile" data-wc="${k}" aria-label="View poster ${p.n}: ${esc(wcTitle(p))}"><img src="${p.th}" alt="" loading="lazy"><span class="wc-cap"><b>${p.n}</b>${esc(wcTitle(p))}</span></button>`).join('')
+    :`<p class="wc-none">No posters match “${esc(wcQ)}”. Try another team name.</p>`;
+}
+renderWC();
+document.getElementById('wc-stages').addEventListener('click',e=>{const b=e.target.closest('[data-stage]');if(!b)return;wcStage=b.dataset.stage;renderWC()});
+document.getElementById('wc-q').addEventListener('input',e=>{wcQ=e.target.value;renderWC()});
+document.getElementById('wc-wall').addEventListener('click',e=>{const b=e.target.closest('[data-wc]');if(!b)return;
+  LB_LIST=wcVisible.map(p=>({src:p.src,cap:`No. ${p.n} · ${wcTitle(p)}`}));lbFrom=b;lbShow(+b.dataset.wc);lb.hidden=false;document.getElementById('lb-close').focus()});
+
+const seasonOf=d=>{const y=+d.slice(0,4),m=+d.slice(5,7);return m>=7?`${y}/${String(y+1).slice(2)}`:`${y-1}/${String(y).slice(2)}`};
+const fmtDate=d=>new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+let covList=[],covLB=[],covStart=[];
+function renderCov(){
+  covList=covSorted();covLB=[];covStart=[];
+  covList.forEach(p=>{covStart.push(covLB.length);const cap=`${p.md?`Matchday ${p.md} · `:''}${covTitle(p)} · ${fmtDate(p.date)}${p.score?' · '+p.score:''}`;
+    covLB.push({src:p.src,cap});(p.alts||[]).forEach((a,i)=>covLB.push({src:a.src,cap:`${cap} · alternate version ${i+1}`}))});
+  const el=document.getElementById('cov-feed');
+  if(!covList.length){el.innerHTML=`<div class="empty"><b>First posters coming soon</b><p>A new poster goes up here after every Coventry match.</p></div>`;return}
+  const groups={};covList.forEach((p,k)=>{(groups[seasonOf(p.date)]=groups[seasonOf(p.date)]||[]).push([p,k])});
+  el.innerHTML=Object.entries(groups).map(([season,items])=>`<section class="cov-season"><h2>${season} season <span>${items.length} ${items.length===1?'poster':'posters'}</span></h2>
+    <div class="cov-grid">${items.map(([p,k])=>`<figure class="cov-card"><button type="button" data-cov="${k}" aria-label="View poster: ${esc(covTitle(p))}"><img src="${esc(p.th||p.src)}" width="${p.w}" height="${p.h}" alt="" loading="lazy">${p.md?`<span class="md-tag">MD ${p.md}</span>`:''}</button>
+      <figcaption><b>${esc(covTitle(p))}</b><span>${fmtDate(p.date)} · ${esc(p.comp||'League')}${p.score?` · ${esc(p.score)}`:''}</span>${p.alts&&p.alts.length?`<span class="alt-note">+${p.alts.length} alternate ${p.alts.length===1?'version':'versions'}</span>`:''}${artAdmin&&p.id?`<button type="button" class="rm-btn" data-covrm="${esc(p.id)}">Remove</button>`:''}</figcaption></figure>`).join('')}</div></section>`).join('');
+}
+renderCov();
+document.getElementById('cov-feed').addEventListener('click',e=>{
+  const rm=e.target.closest('[data-covrm]');if(rm){removeCov(rm);return}
+  const b=e.target.closest('[data-cov]');if(!b)return;
+  LB_LIST=covLB;lbFrom=b;lbShow(covStart[+b.dataset.cov]);lb.hidden=false;document.getElementById('lb-close').focus()});
+
+/* copy buttons */
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-copy]');if(!b)return;
+  try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent='Copied'}
+  catch(_){const t=b.previousElementSibling;const r=document.createRange();r.selectNodeContents(t);const sl=getSelection();sl.removeAllRanges();sl.addRange(r);b.textContent='Selected'}
+  setTimeout(()=>b.textContent='Copy',2000)});
+/* tabs */
+const tabs=[...document.querySelectorAll('[role=tab]')];
+tabs.forEach(t=>t.addEventListener('click',()=>{
+  tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);document.getElementById(x.getAttribute('aria-controls')).hidden=!on});
+}));
+
+show((location.hash||'#home').slice(1));
+
+/* hero: indigo ink strokes, drawn once */
+(function(){
+  const c=document.getElementById('ink'); if(!c) return;
+  const draw=()=>{
+    const r=c.getBoundingClientRect(); if(!r.width) return;
+    const d=window.devicePixelRatio||1; c.width=r.width*d; c.height=r.height*d;
+    const x=c.getContext('2d'); x.scale(d,d);
+    const css=getComputedStyle(document.documentElement);
+    const ink=css.getPropertyValue('--indigo').trim(), gold=css.getPropertyValue('--marigold').trim();
+    let s=7; const rnd=()=>{s=(s*9301+49297)%233280;return s/233280};
+    x.lineCap='round';
+    for(let i=0;i<26;i++){
+      x.strokeStyle=ink; x.globalAlpha=.12+rnd()*.35; x.lineWidth=1+rnd()*5;
+      x.beginPath(); let px=rnd()*r.width, py=rnd()*r.height; x.moveTo(px,py);
+      for(let k=0;k<4;k++){ x.quadraticCurveTo(px+(rnd()-.5)*160,py+(rnd()-.5)*160,px+=(rnd()-.5)*140,py+=(rnd()-.5)*140); }
+      x.stroke();
+    }
+    x.globalAlpha=.95; x.fillStyle=gold; x.beginPath(); x.arc(r.width*.68,r.height*.3,Math.min(r.width,r.height)*.11,0,Math.PI*2); x.fill();
+  };
+  draw(); addEventListener('resize',draw);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',draw);
+  new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  new ResizeObserver(draw).observe(c);
+})();
+
+/* registration */
+const form=document.getElementById('reg');
+form.addEventListener('submit',e=>{
+  e.preventDefault();
+  const v=id=>document.getElementById(id).value.trim();
+  const err=document.getElementById('r-err');
+  const name=v('r-name'), phone=v('r-phone'), email=v('r-email');
+  if(!name){err.textContent='Please add your name.';err.hidden=false;document.getElementById('r-name').focus();return}
+  if(!phone && !email){err.textContent='Please add a phone number or an email so Oselu can reach you.';err.hidden=false;document.getElementById('r-phone').focus();return}
+  if(email && !/^\S+@\S+\.\S+$/.test(email)){err.textContent='That email address looks incomplete. Check it and try again.';err.hidden=false;document.getElementById('r-email').focus();return}
+  err.hidden=true;
+  const who=[...form.querySelectorAll('.chips input:checked')].map(i=>i.value).join(', ')||'Not specified';
+  const msg=`Hello Oselu, I'd like to join the next Wonderful Labs class.\n\nName: ${name}\nPhone/WhatsApp: ${phone||'-'}\nEmail: ${email||'-'}\nCity: ${v('r-city')}\nFor: ${who}`+(v('r-note')?`\nNote: ${v('r-note')}`:'');
+  document.getElementById('r-msg').textContent=msg;
+  const wa=document.getElementById('r-wa');
+  if(WHATSAPP){wa.href='https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(msg);wa.hidden=false}
+  document.getElementById('r-contact').textContent=CONTACT_TEXT||'Oselu\'s contact details will appear here.';
+  document.getElementById('r-done').hidden=false;
+  document.getElementById('r-done').scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+document.getElementById('r-copy').addEventListener('click',async e=>{
+  const pre=document.getElementById('r-msg');
+  try{await navigator.clipboard.writeText(pre.textContent);e.target.textContent='Copied'}
+  catch(_){const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r);e.target.textContent='Selected, press copy'}
+});
+</script>

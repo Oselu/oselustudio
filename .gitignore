@@ -1,0 +1,9 @@
+# build output for Claude (regenerate with: python3 build.py)
+build/
+
+# owner data copied from the live Claude page for a one-off build
+src/live/
+
+__pycache__/
+*.pyc
+.DS_Store
