@@ -508,7 +508,7 @@ function show(name,initial){
   document.body.dataset.world=world;document.body.dataset.view=view;
   current=route;currentView=view;
   const nk=NAVKEY[view]||'';$$('[data-nav]').forEach(a=>{a.dataset.nav===nk?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current')});
-  $('#ftr-name').textContent=world==='play'?'Play Inquiry':'Oselu Irabor';fitFooter();
+  $('#ftr-name').textContent=world==='play'?'Play Inquiry':'Oselu Irabor.';fitFooter();
   if(initial){try{history.replaceState(null,'','#'+route)}catch(_){}}
   Preview.hide(true);closeMenu();scrollTop(false);
   if(lenis)lenis.resize();
