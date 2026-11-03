@@ -382,12 +382,43 @@ const Play=(()=>{
   };
 })();
 
-/* ---------- curved strips of session photos: the studio's strip, with Play Inquiry's people in it ---------- */
-(()=>{
-  const lag=i=>{const p=PILOT_BASE[i];return p&&{src:p.th||p.src,go:'lagos-session',label:'Lagos session',alt:p.alt,cursor:'Open'}};
-  const club=i=>{const p=CLUB[i];return p&&{src:p.th||p.src,go:'art-club',label:'Art club · Kaduna',alt:p.alt,cursor:'Open'}};
-  const kids=i=>{const p=KIDS[i];return p&&{src:p.th||p.src,go:'summer-school',label:'Summer programme',alt:p.alt,cursor:'Open'}};
-  PiStrip=Cylinder($('#pi-strip'),[lag(0),club(0),lag(5),kids(0),lag(2),club(3),kids(4),lag(7),club(5),kids(7),lag(9),club(8)].filter(Boolean),{tags:true,link:.4});
-  PiFtrCyl=Cylinder($('#pi-ftr-cyl'),[club(2),lag(4),kids(2),lag(6),club(6),kids(9),lag(8),club(9),kids(11),lag(10),club(4),kids(5)].filter(Boolean),{auto:.45,link:.25,tab:false});
+/* ---------- the photo table: prints from recent sessions, scattered; with a mouse you can pick them up and move
+   them around, on a phone they sit in a row you swipe. A click (not a drag) opens the session. ---------- */
+const PhotoTable=(()=>{
+  const table=$('#pi-table');if(!table)return null;
+  const lag=i=>{const p=PILOT_BASE[i];return p&&{src:p.th||p.src,go:'lagos-session',cap:'Lagos · Oct 2026',alt:p.alt}};
+  const club=i=>{const p=CLUB[i];return p&&{src:p.th||p.src,go:'art-club',cap:'Art club · Kaduna',alt:p.alt}};
+  const kids=i=>{const p=KIDS[i];return p&&{src:p.th||p.src,go:'summer-school',cap:'Summer · Kaduna',alt:p.alt}};
+  const items=[lag(0),club(0),kids(0),lag(5),club(3),lag(2),kids(4),club(5),lag(7)].filter(Boolean);
+  /* where each print lands on the table: left %, top %, turn */
+  const SPOT=[[1,16,-7],[13,46,5],[24,6,-3],[36,40,8],[47,10,-5],[58,44,3],[68,4,7],[79,38,-6],[86,6,4]];
+  const surf=document.createElement('div');surf.className='pi-table-surface';table.appendChild(surf);
+  surf.innerHTML=items.map((it,i)=>`<a class="pi-print" href="#${it.go}" data-go="${it.go}" draggable="false" style="--r:${SPOT[i%SPOT.length][2]}deg"><img src="${esc(it.src)}" alt="${esc(it.alt||'')}" loading="lazy" draggable="false"><span class="pi-print-cap" aria-hidden="true">${esc(it.cap)}</span></a>`).join('');
+  const prints=$$('.pi-print',surf);let free=false,z=10,drag=null,moved=false;
+  function layout(){
+    const want=finePointer&&window.innerWidth>=900;
+    if(want===free&&!want)return;free=want;table.classList.toggle('is-free',free);
+    prints.forEach((p,i)=>{if(free){const [l,t,r]=SPOT[i%SPOT.length];p.style.left=l+'%';p.style.top=t+'%';p.style.setProperty('--r',r+'deg')}else{p.style.left='';p.style.top='';p.style.zIndex=''}});
+  }
+  surf.addEventListener('pointerdown',e=>{
+    if(!free||e.button!==0)return;const p=e.target.closest('.pi-print');if(!p)return;
+    const sr=surf.getBoundingClientRect(),pr=p.getBoundingClientRect();
+    drag={p,dx:e.clientX-pr.left,dy:e.clientY-pr.top,sx:e.clientX,sy:e.clientY,sr};moved=false;
+    p.style.zIndex=++z;p.classList.add('is-lifted');try{p.setPointerCapture(e.pointerId)}catch(_){}e.preventDefault();
+  });
+  surf.addEventListener('pointermove',e=>{
+    if(!drag)return;const {p,dx,dy,sr}=drag;
+    if(Math.abs(e.clientX-drag.sx)+Math.abs(e.clientY-drag.sy)>5)moved=true;if(!moved)return;
+    const x=clamp(e.clientX-sr.left-dx,-p.offsetWidth*.3,sr.width-p.offsetWidth*.7),y=clamp(e.clientY-sr.top-dy,-20,sr.height-p.offsetHeight*.6);
+    p.style.left=(x/sr.width*100).toFixed(2)+'%';p.style.top=(y/sr.height*100).toFixed(2)+'%';
+  });
+  const drop=()=>{if(!drag)return;const {p}=drag;p.classList.remove('is-lifted');if(moved)p.style.setProperty('--r',(Math.random()*14-7).toFixed(1)+'deg');drag=null};
+  surf.addEventListener('pointerup',drop);surf.addEventListener('pointercancel',drop);
+  surf.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();moved=false}},true);
+  layout();window.addEventListener('resize',layout);
+  return {layout};
 })();
-
+/* a strip of phrases from the page, running across like a banner */
+(()=>{const el=$('#pi-marquee');if(!el)return;
+  const W=['No art experience required','Curiosity, not skill','Draw a line that changes its mind','Just a willingness to try','Make something of your own','Try things, explore ideas'];
+  const once=W.map((w,i)=>`<span>${esc(w)}</span><i style="--c:var(--pi-${['coral','green','blue','yellow'][i%4]})"></i>`).join('');el.innerHTML=once+once})();

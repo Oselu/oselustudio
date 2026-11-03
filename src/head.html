@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mona+Sans:ital,wdth,wght@0,75..125,200..900;1,75..125,200..900&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wdth,wght@75..125,300..700&family=Figtree:ital,wght@0,300..900;1,300..900&family=Caveat:wght@400..700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wdth,wght@75..112.5,300..600&display=swap">
 <style>
 @property --tint{syntax:'<color>';inherits:true;initial-value:#ff5b3a}
@@ -29,14 +30,14 @@
   --signal:#ff5b3a; --tint:#ff5b3a;
   /* Play Inquiry: warm paper, ink, and four crayon accents. Roles: yellow = public workshops and primary actions,
      blue = teams, green = partners, coral = community and children's education. Tints are for stickers and panels. */
-  --pi-paper:#f6f1e6; --pi-card:#fcfaf5; --pi-ink:#1e1a13; --pi-ink-2:#665b48; --pi-line:rgba(30,26,19,.12); --pi-dot:rgba(30,26,19,.1);
+  --pi-paper:#fff6e4; --pi-card:#ffffff; --pi-ink:#1f1a14; --pi-ink-2:#5c5142; --pi-line:rgba(31,26,20,.16); --pi-dot:rgba(31,26,20,.1);
   --pi-yellow:#f4b32b; --pi-coral:#e8634a; --pi-green:#3e9a62; --pi-blue:#3f97d8;
-  --pi-yellow-t:#fbe3a6; --pi-coral-t:#f7cdc3; --pi-green-t:#cbe8d4; --pi-blue-t:#d2e5f6;
-  --pi-on-ink:#ebe4d4; --pi-on-ink-2:#b4aa96;
+  --pi-yellow-t:#ffd75e; --pi-coral-t:#ffb39f; --pi-green-t:#a9dcb9; --pi-blue-t:#a7d2f4; --pi-sun:#ffd75e; --pi-sky:#a7d2f4; --pi-peach:#ffb39f;
+  --pi-on-ink:#fff6e4; --pi-on-ink-2:#d6cbb6;
   --f-d:'Mona Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
   --f-s:'Newsreader',Georgia,'Times New Roman',serif;
   --f-m:'Martian Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  --f-pi:'Mona Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --f-pi:'Fredoka','Arial Rounded MT Bold','Helvetica Neue',Arial,sans-serif; --f-pi-t:'Figtree','Helvetica Neue',Helvetica,Arial,sans-serif; --f-pi-h:'Caveat','Comic Sans MS',cursive;
   --pad:clamp(16px,4.2vw,64px); --g:clamp(14px,1.8vw,28px); --sec:clamp(4.5rem,10vw,9rem); --hh:64px; --cell:40px;
   --ease:cubic-bezier(.2,.7,.1,1); --ease-io:cubic-bezier(.7,0,.2,1);
   color-scheme:dark;
@@ -759,6 +760,7 @@ body:not([data-world=play]) .btn-ghost{border-color:var(--s-line-2)}
 .st-form .pi-privacy{background:transparent;border:1px dashed var(--s-line-2);border-radius:12px;color:var(--s-ink-2)}
 .st-form .pi-btn{font-family:var(--f-d);font-size:.95rem;font-weight:550;letter-spacing:0;text-transform:none;background:var(--s-ink);color:var(--s-bg);border:1px solid var(--s-ink);border-radius:999px;padding:1rem 1.5rem}
 .st-form .pi-btn:hover{background:var(--s-red);border-color:var(--s-red);color:var(--s-ink);transform:none}
+.st-form .pi-btn,.st-form .pi-btn:hover,.st-form .pi-btn:active{box-shadow:none;transform:none}
 .st-form .pi-btn-ghost{background:transparent;color:var(--s-ink);border-color:var(--s-line-2)}
 .st-form .pi-chip{box-shadow:none;border-radius:999px;background:transparent;color:var(--s-ink);border:1px solid var(--s-line-2);font-family:var(--f-d);font-size:.86rem;font-weight:500;letter-spacing:0;text-transform:none}
 .st-form .pi-chip:hover{background:var(--s-bg)}

@@ -36,10 +36,13 @@
   </div>
 
   <!-- A2. People first: photos from recent sessions, then the next public session (the owner sets the date) -->
-  <div class="pi-photos" role="group" aria-label="Photos from recent sessions">
-    <div class="cyl" id="pi-strip" data-cursor="Drag"></div>
-    <div class="wrap pi-photos-foot"><p class="mono">From recent sessions · drag to look around</p><a class="pi-link" href="#field-notes" data-go="field-notes">Read the field notes <span aria-hidden="true">→</span></a></div>
-  </div>
+  <!-- A2. a strip of phrases, then people first: photos from recent sessions, scattered on a table -->
+  <div class="pi-marquee" aria-hidden="true"><div class="pi-marquee-track" id="pi-marquee"></div></div>
+  <section class="pi-table-wrap" aria-labelledby="pi-table-h">
+    <div class="pi-table" id="pi-table">
+      <h2 class="pi-table-h" id="pi-table-h">From recent sessions <span class="pi-hand">pick them up, move them around</span></h2>
+    </div>
+  </section>
   <div class="pi-next-wrap wrap">
     <div class="pi-next" data-next data-tone="yellow"></div>
     <div class="admin pi-admin" id="next-admin" hidden>

@@ -383,7 +383,7 @@ const DoCard=(()=>{
 })();
 
 /* selected work on the curved strip */
-let SelCyl=null,FtrCyl=null,PiStrip=null,PiFtrCyl=null;
+let SelCyl=null,FtrCyl=null;
 (()=>{
   const items=SELECTED.map(id=>byId[id]).filter(Boolean).map(e=>({src:e.pv,go:e.id,label:e.name,alt:e.name,cursor:'View'}));
   SelCyl=Cylinder($('#sel-cyl'),items,{tags:true,link:.5,onActive:i=>{const e=byId[SELECTED[i]];if(!e)return;$('#sel-name').textContent=e.name;$('#sel-cat').textContent=`${pad(i+1,2)} / ${pad(items.length,2)} · ${CAT[e.cat]}`}});
@@ -454,12 +454,10 @@ function studioFrame(t,sy){
   if(SeriesHome)SeriesHome.frame();
   if(ArtWheel)ArtWheel.frame();
   if(FtrCyl)FtrCyl.frame(t,sy,document.body.dataset.world!=='play');
-  if(PiStrip)PiStrip.frame(t,sy,v==='play-inquiry');
-  if(PiFtrCyl)PiFtrCyl.frame(t,sy,document.body.dataset.world==='play');
   if(WcFlip&&v==='world-cup')WcFlip.frame();
 }
-function studioShow(){requestAnimationFrame(()=>{[SelCyl,FtrCyl,PiStrip,PiFtrCyl].forEach(c=>c&&c.measure())})}
-window.addEventListener('resize',()=>{[SelCyl,FtrCyl,PiStrip,PiFtrCyl].forEach(c=>c&&c.measure())});
+function studioShow(){requestAnimationFrame(()=>{[SelCyl,FtrCyl].forEach(c=>c&&c.measure())})}
+window.addEventListener('resize',()=>{[SelCyl,FtrCyl].forEach(c=>c&&c.measure())});
 /* About: the notes drift a little with the pointer */
 (()=>{const st=$('#ab-stage');if(!st||!finePointer||reduced)return;st.addEventListener('pointermove',e=>{const r=st.getBoundingClientRect();st.style.setProperty('--mx',((e.clientX-r.left)/r.width*2-1).toFixed(3));st.style.setProperty('--my',((e.clientY-r.top)/r.height*2-1).toFixed(3))});st.addEventListener('pointerleave',()=>{st.style.setProperty('--mx','0');st.style.setProperty('--my','0')})})();
 
@@ -664,7 +662,7 @@ function show(name,initial){
   document.body.dataset.world=world;document.body.dataset.view=view;
   current=route;currentView=view;
   const nk=NAVKEY[view]||'';$$('[data-nav]').forEach(a=>{a.dataset.nav===nk?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current')});
-  $('#ftr-name').innerHTML=world==='play'?'Play Inquiry<span>.</span>':'Oselu Irabor<span>.</span>';fitFooter();
+  $('#ftr-name').innerHTML=world==='play'?'Play Inquiry':'Oselu Irabor<span>.</span>';fitFooter();
   $('#hdr').removeAttribute('data-hide');studioShow(view);
   if(initial){try{history.replaceState(null,'','#'+route)}catch(_){}}
   Preview.hide(true);closeMenu();scrollTop(false);
