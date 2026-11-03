@@ -29,9 +29,9 @@ python3 build.py
 
 | File | What it holds |
 | --- | --- |
-| `src/head.html` | Title, meta tags, fonts and the studio styles |
+| `src/head.html` | Title, meta tags, fonts and the styles: the shared shell first, then the studio (portfolio) layer, scoped so Play Inquiry keeps its own look |
 | `src/body.html` | Header, menu, footer and the studio pages |
-| `src/app.js` | Routing, page transitions, the 3D and hover effects, galleries, the studio's owner tools |
+| `src/app.js` | Routing, page transitions, the studio's motion (the ring of work in the hero, the curved strips, the folding poster stack, the art wheel), galleries, the studio's owner tools |
 | `src/play.html`, `src/play.css`, `src/play.js` | Play Inquiry pages, styles and behaviour, including the enquiry forms |
 | `src/data/` | Project data, World Cup posters and hover previews |
 | `img/` | Every image the site uses |
@@ -43,6 +43,7 @@ python3 build.py
 
 - **Forms** don't send anything themselves. They prepare the message and open it in WhatsApp or the visitor's email app.
 - **Owner tools** (adding artwork and Coventry posters, Lagos photos and reflections, and announcing the next public session) only work when the site is published as a Claude artifact. On any other host they stay hidden.
-- **Fonts** load from Google Fonts. **three.js** (r128, desktop only) and **Lenis** load from public CDNs.
+- **Fonts** load from Google Fonts (Instrument Serif and Mona Sans for the studio, Bricolage Grotesque for Play Inquiry, Martian Mono and Newsreader for small labels). **three.js** (r128, desktop only, for the hover preview and page-change veil) and **Lenis** load from public CDNs.
+- **Motion** respects the visitor's reduced-motion setting: the hero ring, strips, poster stack and art wheel settle into still arrangements.
 - **Link previews**: `img/share.jpg` is the preview image. Once the site has its own domain, change the `og:image` tag in `src/head.html` to the full address, for example `https://yourdomain.com/img/share.jpg`, so WhatsApp, LinkedIn and X can show it.
 - **Privacy**: photos have their location data removed. In the summer programme photos, children's faces are blurred and the names on their drawings are removed.
