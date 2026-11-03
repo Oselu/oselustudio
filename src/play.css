@@ -19,8 +19,7 @@
 .play,.pf{--pi-draw-ease:cubic-bezier(.45,.05,.25,1);--pi-r:clamp(20px,2vw,28px);--pi-r-s:16px;--pi-b:2px solid var(--pi-ink);--pi-sh:5px 5px 0 var(--pi-ink);--pi-sh-h:8px 8px 0 var(--pi-ink);--pi-sec:clamp(4.5rem,9vw,8rem);--pi-pad:clamp(1.3rem,2.4vw,2rem);--pi-inset:clamp(8px,1.2vw,16px);--pi-sheet:clamp(26px,3vw,44px);--pi-spring:cubic-bezier(.34,1.56,.64,1)}
 
 /* ---------- world shell ---------- */
-body[data-world=play]{background:var(--pi-paper);color:var(--pi-ink);color-scheme:light;
-  --crayon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg transform='rotate(45 16 16)' stroke='%231f1a14' stroke-width='1.6' stroke-linejoin='round'%3E%3Crect x='12' y='4' width='8' height='18' rx='2' fill='%23f4b32b'/%3E%3Cpath d='M12 10h8M12 17h8' stroke-width='1.1'/%3E%3Cpath d='M12 22h8l-4 8z' fill='%23f6dcb4'/%3E%3Cpath d='M14.5 27h3L16 30z' fill='%231f1a14'/%3E%3C/g%3E%3C/svg%3E") 6 26,auto}
+body[data-world=play]{background:var(--pi-paper);color:var(--pi-ink);color-scheme:light}
 body[data-world=play] .mat{background-color:var(--pi-paper);background-image:linear-gradient(var(--pi-grid) 1px,transparent 1px),linear-gradient(90deg,var(--pi-grid) 1px,transparent 1px);background-size:30px 30px;background-position:-1px -1px}
 body[data-world=play] ::selection{background:var(--pi-sun);color:var(--pi-ink)}
 body[data-world=play] :focus-visible{outline:3px solid var(--pi-ink);outline-offset:3px}
@@ -35,11 +34,8 @@ body:not([data-world=play]) .play-only,body[data-world=play] .studio-only{displa
 .play p{text-wrap:pretty}
 .pi-hand{font-family:var(--f-pi-h);font-weight:700;font-size:1.55rem;line-height:1.02;letter-spacing:0;color:var(--pi-coral)}
 
-/* the cursor is a crayon; links keep the hand */
+/* the studio's label cursor is hidden here: Play Inquiry uses the normal mouse */
 body[data-world=play] .cur{display:none}
-html.has-cursor body[data-world=play],html.has-cursor body[data-world=play] *{cursor:var(--crayon)}
-html.has-cursor body[data-world=play] :is(a,button,[role=slider],[role=button],label,select,summary){cursor:pointer}
-html.has-cursor body[data-world=play] :is(input,textarea){cursor:text}
 html.has-cursor body[data-world=play] .pi-table.is-free .pi-print{cursor:grab}
 html.has-cursor body[data-world=play] .pi-table.is-free .pi-print.is-lifted{cursor:grabbing}
 .veil-label.play{font-family:var(--f-pi);font-weight:600;font-style:normal;font-stretch:100%;letter-spacing:-.02em;color:var(--pi-ink)}
@@ -561,9 +557,29 @@ fieldset[aria-invalid=true] .pi-option{border-color:#b2321a}
 .pi-bloom{position:absolute;z-index:0;left:var(--x,0);top:var(--y,0);width:var(--s,200px);aspect-ratio:1/1;pointer-events:none;filter:blur(11px);opacity:.85;animation:pi-bloom 24s ease-in-out infinite alternate}
 .pi-bloom::before{content:"";position:absolute;inset:0;background:var(--tone,var(--pi-cherry));-webkit-mask:var(--flower) center/contain no-repeat;mask:var(--flower) center/contain no-repeat}
 @keyframes pi-bloom{from{transform:rotate(0) scale(1)}to{transform:rotate(55deg) scale(1.08)}}
-.pi-hero-copy,.pi-hero-art{z-index:1}
-.pi-hero .pi-h1{font-size:clamp(2.8rem,6.3vw,6.7rem)}
+/* hero: the line on the left; three folders on the right, their tabs carry the supporting line */
+.pi-hero{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(2rem,5vw,5rem);padding-top:clamp(2.4rem,5vw,4.6rem);padding-bottom:clamp(3rem,6vw,5rem)}
+.pi-hero-copy{z-index:1;gap:1.5rem}
+.pi-hero .pi-h1{font-size:clamp(2.9rem,5.9vw,6.4rem);line-height:.94;letter-spacing:-.035em}
+.pi-hero .pi-h1 em{--hl:var(--pi-sun);white-space:nowrap}
 .pi-h1-b{display:block}
+.pi-hero .pi-lede{font-size:clamp(1.12rem,1.45vw,1.35rem);max-width:28em}
+.pi-hero-files{position:relative;height:clamp(440px,64vh,600px);--tab-h:46px}
+.pi-hf{position:absolute;left:calc(var(--k) * 8%);top:calc(var(--tab-h) + var(--k) * 21%);width:84%;height:calc(100% - var(--tab-h) - 42%);color:var(--f-ink);transform:rotate(calc((var(--k) - 1) * -1.6deg));transition:transform .5s var(--pi-spring)}
+.pi-hf:hover{transform:translateY(-9%) rotate(calc((var(--k) - 1) * -1.6deg))}
+.play .pi-hf-tab{position:absolute;bottom:calc(100% - 1px);left:var(--tl,0);text-wrap:nowrap;height:var(--tab-h);display:flex;align-items:center;padding:0 .4rem 0 1.15rem;background:var(--f);color:var(--f-ink);border-radius:14px 0 0 0;font-family:var(--f-pi);font-weight:600;font-size:clamp(.98rem,1.2vw,1.12rem);letter-spacing:-.01em;line-height:1;white-space:nowrap}
+.pi-hf-tab::after{content:"";position:absolute;z-index:-1;left:calc(100% - 18px);top:0;bottom:0;width:46px;background:var(--f);border-top-right-radius:16px;transform:skewX(26deg);transform-origin:0 100%}
+.pi-hf-body{position:relative;height:100%;padding:12px;background:var(--f);border-radius:calc(min(var(--k),1) * 18px) 18px 18px 18px;box-shadow:0 -14px 30px -20px rgba(31,26,20,.6),0 26px 40px -30px rgba(31,26,20,.55)}
+.pi-hf-body img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 40%;border-radius:10px}
+.pi-hf:nth-child(2){--tl:27%}
+.pi-hf:nth-child(3){--tl:9%}
+.pi-hf:nth-child(1) .pi-hf-body img{object-position:50% 58%}
+.pi-hf:nth-child(3) .pi-hf-body img{object-position:50% 30%}
+.pi-anim .pi-hf{animation:pi-hf-in 1s var(--ease) calc(var(--pi-d,0s) + .15s + var(--k) * .14s) both}
+@keyframes pi-hf-in{from{opacity:0;transform:translateY(70px) rotate(calc((var(--k) - 1) * -1.6deg))}to{opacity:1;transform:rotate(calc((var(--k) - 1) * -1.6deg))}}
+@media (max-width:899px){.pi-hero{grid-template-columns:minmax(0,1fr)}.pi-hero-files{order:0;height:clamp(380px,108vw,480px);margin-top:.5rem}.pi-hf{width:88%;left:calc(var(--k) * 6%)}.pi-hf:nth-child(2){--tl:30%}.pi-hf:nth-child(3){--tl:0px}}
+@media (max-width:520px){.play .pi-hf-tab{font-size:.9rem;padding-left:.9rem}}
+@media (prefers-reduced-motion:reduce){.pi-anim .pi-hf{animation:none}.pi-hf{transition:none}}
 
 /* the proposition: "not another art class" struck through, on a stamp */
 .pi-idea-text p.pi-stamp{display:inline-flex;flex-wrap:wrap;gap:.25rem .5rem;align-self:flex-start;margin-top:.5rem;padding:.75rem 1.15rem;border:2px solid var(--pi-ink);border-radius:999px;background:#fff;box-shadow:4px 4px 0 var(--pi-ink);transform:rotate(-1.5deg);font-family:var(--f-pi);font-weight:600;font-size:clamp(1.05rem,1.5vw,1.3rem);line-height:1.1;color:var(--pi-ink)}

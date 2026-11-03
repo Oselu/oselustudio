@@ -809,8 +809,7 @@ body:not([data-world=play]) .cur.lab .cur-label{opacity:1;transform:translate(-5
 .play,.pf{--pi-draw-ease:cubic-bezier(.45,.05,.25,1);--pi-r:clamp(20px,2vw,28px);--pi-r-s:16px;--pi-b:2px solid var(--pi-ink);--pi-sh:5px 5px 0 var(--pi-ink);--pi-sh-h:8px 8px 0 var(--pi-ink);--pi-sec:clamp(4.5rem,9vw,8rem);--pi-pad:clamp(1.3rem,2.4vw,2rem);--pi-inset:clamp(8px,1.2vw,16px);--pi-sheet:clamp(26px,3vw,44px);--pi-spring:cubic-bezier(.34,1.56,.64,1)}
 
 /* ---------- world shell ---------- */
-body[data-world=play]{background:var(--pi-paper);color:var(--pi-ink);color-scheme:light;
-  --crayon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg transform='rotate(45 16 16)' stroke='%231f1a14' stroke-width='1.6' stroke-linejoin='round'%3E%3Crect x='12' y='4' width='8' height='18' rx='2' fill='%23f4b32b'/%3E%3Cpath d='M12 10h8M12 17h8' stroke-width='1.1'/%3E%3Cpath d='M12 22h8l-4 8z' fill='%23f6dcb4'/%3E%3Cpath d='M14.5 27h3L16 30z' fill='%231f1a14'/%3E%3C/g%3E%3C/svg%3E") 6 26,auto}
+body[data-world=play]{background:var(--pi-paper);color:var(--pi-ink);color-scheme:light}
 body[data-world=play] .mat{background-color:var(--pi-paper);background-image:linear-gradient(var(--pi-grid) 1px,transparent 1px),linear-gradient(90deg,var(--pi-grid) 1px,transparent 1px);background-size:30px 30px;background-position:-1px -1px}
 body[data-world=play] ::selection{background:var(--pi-sun);color:var(--pi-ink)}
 body[data-world=play] :focus-visible{outline:3px solid var(--pi-ink);outline-offset:3px}
@@ -825,11 +824,8 @@ body:not([data-world=play]) .play-only,body[data-world=play] .studio-only{displa
 .play p{text-wrap:pretty}
 .pi-hand{font-family:var(--f-pi-h);font-weight:700;font-size:1.55rem;line-height:1.02;letter-spacing:0;color:var(--pi-coral)}
 
-/* the cursor is a crayon; links keep the hand */
+/* the studio's label cursor is hidden here: Play Inquiry uses the normal mouse */
 body[data-world=play] .cur{display:none}
-html.has-cursor body[data-world=play],html.has-cursor body[data-world=play] *{cursor:var(--crayon)}
-html.has-cursor body[data-world=play] :is(a,button,[role=slider],[role=button],label,select,summary){cursor:pointer}
-html.has-cursor body[data-world=play] :is(input,textarea){cursor:text}
 html.has-cursor body[data-world=play] .pi-table.is-free .pi-print{cursor:grab}
 html.has-cursor body[data-world=play] .pi-table.is-free .pi-print.is-lifted{cursor:grabbing}
 .veil-label.play{font-family:var(--f-pi);font-weight:600;font-style:normal;font-stretch:100%;letter-spacing:-.02em;color:var(--pi-ink)}
@@ -1351,9 +1347,29 @@ fieldset[aria-invalid=true] .pi-option{border-color:#b2321a}
 .pi-bloom{position:absolute;z-index:0;left:var(--x,0);top:var(--y,0);width:var(--s,200px);aspect-ratio:1/1;pointer-events:none;filter:blur(11px);opacity:.85;animation:pi-bloom 24s ease-in-out infinite alternate}
 .pi-bloom::before{content:"";position:absolute;inset:0;background:var(--tone,var(--pi-cherry));-webkit-mask:var(--flower) center/contain no-repeat;mask:var(--flower) center/contain no-repeat}
 @keyframes pi-bloom{from{transform:rotate(0) scale(1)}to{transform:rotate(55deg) scale(1.08)}}
-.pi-hero-copy,.pi-hero-art{z-index:1}
-.pi-hero .pi-h1{font-size:clamp(2.8rem,6.3vw,6.7rem)}
+/* hero: the line on the left; three folders on the right, their tabs carry the supporting line */
+.pi-hero{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(2rem,5vw,5rem);padding-top:clamp(2.4rem,5vw,4.6rem);padding-bottom:clamp(3rem,6vw,5rem)}
+.pi-hero-copy{z-index:1;gap:1.5rem}
+.pi-hero .pi-h1{font-size:clamp(2.9rem,5.9vw,6.4rem);line-height:.94;letter-spacing:-.035em}
+.pi-hero .pi-h1 em{--hl:var(--pi-sun);white-space:nowrap}
 .pi-h1-b{display:block}
+.pi-hero .pi-lede{font-size:clamp(1.12rem,1.45vw,1.35rem);max-width:28em}
+.pi-hero-files{position:relative;height:clamp(440px,64vh,600px);--tab-h:46px}
+.pi-hf{position:absolute;left:calc(var(--k) * 8%);top:calc(var(--tab-h) + var(--k) * 21%);width:84%;height:calc(100% - var(--tab-h) - 42%);color:var(--f-ink);transform:rotate(calc((var(--k) - 1) * -1.6deg));transition:transform .5s var(--pi-spring)}
+.pi-hf:hover{transform:translateY(-9%) rotate(calc((var(--k) - 1) * -1.6deg))}
+.play .pi-hf-tab{position:absolute;bottom:calc(100% - 1px);left:var(--tl,0);text-wrap:nowrap;height:var(--tab-h);display:flex;align-items:center;padding:0 .4rem 0 1.15rem;background:var(--f);color:var(--f-ink);border-radius:14px 0 0 0;font-family:var(--f-pi);font-weight:600;font-size:clamp(.98rem,1.2vw,1.12rem);letter-spacing:-.01em;line-height:1;white-space:nowrap}
+.pi-hf-tab::after{content:"";position:absolute;z-index:-1;left:calc(100% - 18px);top:0;bottom:0;width:46px;background:var(--f);border-top-right-radius:16px;transform:skewX(26deg);transform-origin:0 100%}
+.pi-hf-body{position:relative;height:100%;padding:12px;background:var(--f);border-radius:calc(min(var(--k),1) * 18px) 18px 18px 18px;box-shadow:0 -14px 30px -20px rgba(31,26,20,.6),0 26px 40px -30px rgba(31,26,20,.55)}
+.pi-hf-body img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 40%;border-radius:10px}
+.pi-hf:nth-child(2){--tl:27%}
+.pi-hf:nth-child(3){--tl:9%}
+.pi-hf:nth-child(1) .pi-hf-body img{object-position:50% 58%}
+.pi-hf:nth-child(3) .pi-hf-body img{object-position:50% 30%}
+.pi-anim .pi-hf{animation:pi-hf-in 1s var(--ease) calc(var(--pi-d,0s) + .15s + var(--k) * .14s) both}
+@keyframes pi-hf-in{from{opacity:0;transform:translateY(70px) rotate(calc((var(--k) - 1) * -1.6deg))}to{opacity:1;transform:rotate(calc((var(--k) - 1) * -1.6deg))}}
+@media (max-width:899px){.pi-hero{grid-template-columns:minmax(0,1fr)}.pi-hero-files{order:0;height:clamp(380px,108vw,480px);margin-top:.5rem}.pi-hf{width:88%;left:calc(var(--k) * 6%)}.pi-hf:nth-child(2){--tl:30%}.pi-hf:nth-child(3){--tl:0px}}
+@media (max-width:520px){.play .pi-hf-tab{font-size:.9rem;padding-left:.9rem}}
+@media (prefers-reduced-motion:reduce){.pi-anim .pi-hf{animation:none}.pi-hf{transition:none}}
 
 /* the proposition: "not another art class" struck through, on a stamp */
 .pi-idea-text p.pi-stamp{display:inline-flex;flex-wrap:wrap;gap:.25rem .5rem;align-self:flex-start;margin-top:.5rem;padding:.75rem 1.15rem;border:2px solid var(--pi-ink);border-radius:999px;background:#fff;box-shadow:4px 4px 0 var(--pi-ink);transform:rotate(-1.5deg);font-family:var(--f-pi);font-weight:600;font-size:clamp(1.05rem,1.5vw,1.3rem);line-height:1.1;color:var(--pi-ink)}
@@ -1934,33 +1950,23 @@ fieldset[aria-invalid=true] .pi-option{border-color:#b2321a}
      possibilities, a little proof, why collaborate, then the field notes, Oselu and the invitation. -->
 <section class="view play" id="v-play-inquiry" data-view="play-inquiry" hidden>
 
-  <!-- A. Hero: the positioning line -->
+  <!-- A. Hero: the positioning line. The supporting line is written on the tabs of three folders, each holding a photo
+       from a session; a folder lifts when you point at it. -->
   <div class="pi-hero wrap" id="pi-hero">
-    <span class="pi-bloom" data-tone="cherry" style="--x:58%;--y:-4%;--s:clamp(150px,20vw,280px)" aria-hidden="true"></span>
-    <span class="pi-bloom" data-tone="blue" style="--x:-6%;--y:64%;--s:clamp(120px,15vw,210px)" aria-hidden="true"></span>
     <div class="pi-hero-copy">
       <p class="pi-eyebrow"><svg class="pi-eyebrow-mark" aria-hidden="true"><use href="#pi-mark"/></svg>Play Inquiry by Oselu</p>
-      <h1 class="pi-h1" tabindex="-1">It's not for everyone. <span class="pi-h1-b">It's for <span class="pi-loop">people like us<svg viewBox="0 0 220 90" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="1" d="M198 24C168 7 62 3 25 21C-1 34 7 69 60 80C121 93 196 81 212 57C223 39 206 21 171 14"/></svg></span>.</span></h1>
+      <h1 class="pi-h1" tabindex="-1">It's not for everyone. <span class="pi-h1-b">It's for <em>people like&nbsp;us.</em></span></h1>
       <p class="pi-lede">Playful, hands-on experiences that bring people together through art, craft and experimentation.</p>
-      <p class="pi-promise"><b>The curious. The experimental.</b> The ones who never quite outgrew play.</p>
       <div class="pi-cta">
         <a class="pi-btn" href="#join" data-go="join" data-interest="join">Come to a Play Session <span aria-hidden="true">→</span></a>
         <a class="pi-btn pi-btn-ghost" href="#collaborate" data-go="collaborate">Collaborate with us</a>
       </div>
     </div>
-    <figure class="pi-hero-art" aria-hidden="true">
-      <svg viewBox="0 0 600 520" focusable="false">
-        <g filter="url(#crayon)" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <path class="ln c1" pathLength="1" stroke="#f4b32b" stroke-width="30" d="M-6 468C78 446 92 338 170 334C238 330 248 420 300 372C330 344 334 296 360 272"/>
-          <path class="ln c2" pathLength="1" stroke="#e8634a" stroke-width="19" d="M150 -8C168 60 118 112 168 152C214 188 280 138 294 198C304 240 334 254 360 272"/>
-          <path class="ln c3" pathLength="1" stroke="#3e9a62" stroke-width="16" d="M612 96C540 82 516 152 556 192C590 226 518 272 468 244C424 220 392 252 360 272"/>
-          <path class="ln c4" pathLength="1" stroke="#3f97d8" stroke-width="14" d="M600 524C562 444 470 474 452 404C438 348 404 296 360 272"/>
-          <path class="ln c5" pathLength="1" stroke="#231d13" stroke-width="5" d="M346 254C334 238 352 220 372 228C392 236 390 266 368 280C350 291 332 280 334 264C336 250 350 244 362 246"/>
-        </g>
-        <g class="pi-hero-dots" fill="#231d13"><circle cx="360" cy="272" r="7"/><circle cx="16" cy="463" r="4"/><circle cx="151" cy="9" r="4"/><circle cx="593" cy="94" r="4"/><circle cx="588" cy="500" r="4"/></g>
-      </svg>
-      <figcaption class="mono">Fig. 1 · Four lines, four starting points, one place where they meet.</figcaption>
-    </figure>
+    <div class="pi-hero-files" role="group" aria-label="Who it's for">
+      <div class="pi-hf" data-f="ink" style="--k:0"><p class="pi-hf-tab">The curious.</p><div class="pi-hf-body"><img src="img/play/lagos/lagos-02.jpg" width="1125" height="1500" alt="Participants sketching bottles and cups in pencil at the Lagos pilot"></div></div>
+      <div class="pi-hf" data-f="cherry" style="--k:1"><p class="pi-hf-tab">The experimental.</p><div class="pi-hf-body"><img src="img/play/lagos/lagos-01.jpg" width="1125" height="1500" alt="Participants working around a long table covered with paper, pencils and oil pastels"></div></div>
+      <div class="pi-hf" data-f="sun" style="--k:2"><p class="pi-hf-tab">The ones who never quite outgrew play.</p><div class="pi-hf-body"><img src="img/play/lagos/lagos-04.jpg" width="1125" height="1500" alt="A smiling participant holds up three oil-pastel paintings she made at the Lagos pilot"></div></div>
+    </div>
   </div>
 
   <!-- A2. a strip of phrases, then people first: photos from recent sessions, scattered on a table -->
