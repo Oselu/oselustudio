@@ -4,6 +4,8 @@
    panels of crayon colour (sun yellow, sky blue, peach), rounded chunky type (Fredoka) with a friendly text
    face (Figtree) and handwritten notes (Caveat), ink outlines and buttons that press down, highlighter marks,
    stickers that wiggle, prints scattered on a table you can move around, and a crayon for a cursor.
+   From the collaboration pitch: graph paper, file folders with tabs, index dividers over photos, a grid of cells
+   with frosted tiles, soft blurred flowers, and cherry and pink alongside the crayon colours.
    Colour roles: yellow = public sessions and main actions, blue = teams, green = partners, coral = community
    and children. Component prefix: pi-.  Tones: data-tone="yellow|coral|green|blue|ink" → var(--tone)/var(--tone-t).
    The studio's "Work with me" form shares the form engine (.pi-form, .pi-field, .pi-option, .pi-btn …): those
@@ -17,9 +19,8 @@
 .play,.pf{--pi-draw-ease:cubic-bezier(.45,.05,.25,1);--pi-r:clamp(20px,2vw,28px);--pi-r-s:16px;--pi-b:2px solid var(--pi-ink);--pi-sh:5px 5px 0 var(--pi-ink);--pi-sh-h:8px 8px 0 var(--pi-ink);--pi-sec:clamp(4.5rem,9vw,8rem);--pi-pad:clamp(1.3rem,2.4vw,2rem);--pi-inset:clamp(8px,1.2vw,16px);--pi-sheet:clamp(26px,3vw,44px);--pi-spring:cubic-bezier(.34,1.56,.64,1)}
 
 /* ---------- world shell ---------- */
-body[data-world=play]{background:var(--pi-paper);color:var(--pi-ink);color-scheme:light;
-  --crayon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg transform='rotate(45 16 16)' stroke='%231f1a14' stroke-width='1.6' stroke-linejoin='round'%3E%3Crect x='12' y='4' width='8' height='18' rx='2' fill='%23f4b32b'/%3E%3Cpath d='M12 10h8M12 17h8' stroke-width='1.1'/%3E%3Cpath d='M12 22h8l-4 8z' fill='%23f6dcb4'/%3E%3Cpath d='M14.5 27h3L16 30z' fill='%231f1a14'/%3E%3C/g%3E%3C/svg%3E") 6 26,auto}
-body[data-world=play] .mat{background-color:var(--pi-paper);background-image:none}
+body[data-world=play]{background:var(--pi-paper);color:var(--pi-ink);color-scheme:light}
+body[data-world=play] .mat{background-color:var(--pi-paper);background-image:linear-gradient(var(--pi-grid) 1px,transparent 1px),linear-gradient(90deg,var(--pi-grid) 1px,transparent 1px);background-size:30px 30px;background-position:-1px -1px}
 body[data-world=play] ::selection{background:var(--pi-sun);color:var(--pi-ink)}
 body[data-world=play] :focus-visible{outline:3px solid var(--pi-ink);outline-offset:3px}
 body[data-world=play] [tabindex="-1"]:focus{outline:none}
@@ -33,11 +34,11 @@ body:not([data-world=play]) .play-only,body[data-world=play] .studio-only{displa
 .play p{text-wrap:pretty}
 .pi-hand{font-family:var(--f-pi-h);font-weight:700;font-size:1.55rem;line-height:1.02;letter-spacing:0;color:var(--pi-coral)}
 
-/* the cursor is a crayon; links keep the hand */
-body[data-world=play] .cur{display:none}
-html.has-cursor body[data-world=play],html.has-cursor body[data-world=play] *{cursor:var(--crayon)}
-html.has-cursor body[data-world=play] :is(a,button,[role=slider],[role=button],label,select,summary){cursor:pointer}
+/* the studio's label cursor is hidden here: Play Inquiry uses the normal mouse */
+html.has-cursor:has(> body[data-world=play]),html.has-cursor body[data-world=play]{cursor:auto}
+html.has-cursor body[data-world=play] :is(a,button,[role=slider],[role=button],[role=tab],label,select,summary){cursor:pointer}
 html.has-cursor body[data-world=play] :is(input,textarea){cursor:text}
+body[data-world=play] .cur{display:none}
 html.has-cursor body[data-world=play] .pi-table.is-free .pi-print{cursor:grab}
 html.has-cursor body[data-world=play] .pi-table.is-free .pi-print.is-lifted{cursor:grabbing}
 .veil-label.play{font-family:var(--f-pi);font-weight:600;font-style:normal;font-stretch:100%;letter-spacing:-.02em;color:var(--pi-ink)}
@@ -167,10 +168,6 @@ a.pi-card:hover{transform:translate(-3px,-3px) rotate(-.5deg);box-shadow:var(--p
 .pi-promise{font-family:var(--f-pi-h);font-weight:600;font-size:clamp(1.5rem,2vw,1.8rem);line-height:1.1;color:var(--pi-ink);transform:rotate(-2deg);transform-origin:left;padding-left:2.4rem;position:relative}
 .pi-promise b{font-weight:700;color:var(--pi-coral)}
 .pi-promise::before{content:"";position:absolute;left:0;top:.1em;width:1.9rem;height:1.2rem;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='38' height='24'%3E%3Cpath d='M3 4 C8 16 18 20 32 18 M26 12 L33 18 L25 22' fill='none' stroke='%231f1a14' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center/contain}
-.pi-for{display:flex;flex-wrap:wrap;gap:.55rem .6rem;align-items:center;margin-top:.2rem}
-.pi-for .mono{font-family:var(--f-pi-h);font-weight:700;font-size:1.4rem;letter-spacing:0;text-transform:none;color:var(--pi-ink-2);margin-right:.2rem}
-.pi-for .pi-tag:nth-of-type(2){transform:rotate(2deg)}
-.pi-for .pi-tag:nth-of-type(3){transform:rotate(-1deg)}
 .pi-hero-art{position:relative;margin:0;min-width:0;transform:scale(1.22) translateX(4%);transform-origin:center}
 .pi-hero-art svg{display:block;width:100%;height:auto;overflow:visible}
 .pi-hero-art .ln{stroke-dasharray:1 1.05;stroke-dashoffset:0}
@@ -261,7 +258,7 @@ a.pi-card:hover{transform:translate(-3px,-3px) rotate(-.5deg);box-shadow:var(--p
 @media (max-width:999px){.pi-idea{grid-template-columns:minmax(0,1fr)}.pi-try-card{transform:none}}
 @media (max-width:480px){.pi-examples ul{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.pi-examples li:last-child{display:none}}
 
-/* two offerings: Play Inquiry Sessions (yellow) and Play Inquiry at Work (blue) */
+/* offer cards (Collaborate): hosting a Play Session (yellow) and a Team Experience (blue) */
 .pi-offers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(1.4rem,2.8vw,2.4rem);align-items:stretch}
 .pi-offer{padding:0;gap:0;overflow:hidden}
 .pi-offer-art{background:var(--tone-t);border-bottom:var(--pi-b);padding:clamp(1rem,2.2vw,1.7rem) clamp(1rem,2.6vw,2rem) clamp(.6rem,1.3vw,1rem)}
@@ -278,26 +275,6 @@ a.pi-card:hover{transform:translate(-3px,-3px) rotate(-.5deg);box-shadow:var(--p
 .pi-card p.pi-offer-note{font-size:1rem;line-height:1.55;max-width:36em}
 .pi-offer .pi-card-foot{padding-top:.9rem}
 @media (max-width:899px){.pi-offers{grid-template-columns:minmax(0,1fr)}}
-/* also from Play Inquiry: the art club and children's programmes, on dashed paper */
-.pi-free{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:clamp(1rem,2.2vw,1.8rem);align-items:center;margin-top:clamp(1.2rem,2.4vw,2rem);padding:clamp(1.1rem,2vw,1.4rem) clamp(1.1rem,2.4vw,1.7rem);border:2px dashed var(--pi-ink);border-radius:var(--pi-r);background:#fff;transition:transform .3s var(--pi-spring),box-shadow .3s}
-.pi-free:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--pi-ink)}
-.pi-free > .pi-motif{width:clamp(56px,5vw,72px)}
-.pi-free-text{display:flex;flex-direction:column;align-items:flex-start;gap:.45rem;min-width:0}
-.pi-free-top{display:flex;flex-wrap:wrap;gap:.45rem .9rem;align-items:center}
-.pi-free-top .mono{font-family:var(--f-pi-t);font-weight:600;font-size:.78rem;letter-spacing:0;text-transform:none;color:var(--pi-ink-2)}
-.pi-free-text b{font-family:var(--f-pi);font-weight:600;letter-spacing:-.02em;font-size:clamp(1.4rem,2.1vw,1.85rem);line-height:1.02;text-wrap:balance}
-.pi-free-text > span:last-child{font-size:.98rem;line-height:1.5;color:var(--pi-ink-2)}
-.pi-free .pi-link{white-space:nowrap;align-self:center;justify-self:start}
-@media (max-width:760px){.pi-free{grid-template-columns:auto minmax(0,1fr)}.pi-free .pi-link{grid-column:2;align-self:start}}
-@media (max-width:420px){.pi-free{grid-template-columns:minmax(0,1fr)}.pi-free .pi-link{grid-column:1}.pi-free > .pi-motif{width:52px}}
-.pi-more{margin-top:clamp(1.6rem,3vw,2.6rem)}
-.pi-more-label{font-family:var(--f-pi-h)!important;font-weight:700;font-size:1.45rem!important;letter-spacing:0!important;text-transform:none!important;color:var(--pi-coral)!important;margin-bottom:.6rem}
-.pi-more-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(1rem,2vw,1.6rem)}
-.pi-more .pi-free{margin-top:0;grid-template-columns:auto minmax(0,1fr);align-items:start}
-.pi-more .pi-free .pi-link{grid-column:2;align-self:start}
-.pi-more .pi-free > .pi-motif{width:clamp(52px,4.4vw,64px)}
-@media (max-width:899px){.pi-more-grid{grid-template-columns:minmax(0,1fr)}}
-@media (max-width:420px){.pi-more .pi-free{grid-template-columns:minmax(0,1fr)}.pi-more .pi-free .pi-link{grid-column:1}}
 .pi-note-art .mp path{stroke:var(--pi-ink)}
 .pi-note-art .md{fill:var(--pi-ink)}
 
@@ -324,24 +301,6 @@ a.pi-note-link:hover .pi-note-photo > img{transform:scale(1.04)}
 .pi-prog text{font-family:var(--f-pi-t);font-weight:700;font-size:10px;letter-spacing:.04em;fill:var(--pi-ink);text-transform:uppercase}
 .pi-prog .frame{fill:#fff;stroke:var(--pi-ink);stroke-width:2}
 
-/* for organisations: a sky-blue sheet */
-.pi-band{position:relative;margin:var(--pi-sec) var(--pi-inset) 0;background:var(--pi-sky);color:var(--pi-ink);border-radius:var(--pi-sheet);overflow:hidden}
-.pi-band-in{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(2rem,5vw,5rem);align-items:center;padding-block:clamp(3.6rem,7vw,6.5rem)}
-.pi-band-in > *{min-width:0}
-.pi-band-copy{display:flex;flex-direction:column;gap:1.2rem}
-.pi-band .pi-kicker{color:var(--pi-ink)}
-.pi-band .pi-kicker::before{filter:brightness(0)}
-.pi-band .pi-h2{--hl:#fff}
-.pi-band p:not(.pi-kicker){color:var(--pi-ink);font-size:clamp(1.05rem,1.3vw,1.2rem);line-height:1.55;max-width:32em}
-.pi-band .pi-link{text-decoration-color:var(--pi-ink)}
-.pi-collab-list{display:flex;flex-direction:column;gap:.9rem}
-.pi-collab-list li{display:grid;grid-template-columns:3rem minmax(0,1fr);column-gap:.9rem;row-gap:.2rem;align-items:center;padding:1rem 1.2rem;background:#fff;border:var(--pi-b);border-radius:20px;box-shadow:4px 4px 0 var(--pi-ink)}
-.pi-collab-list li:nth-child(2){transform:rotate(-1deg)}
-.pi-collab-list .mono{grid-row:1/span 2;display:grid;place-items:center;width:3rem;height:3rem;border-radius:50%;background:var(--pi-sun);border:var(--pi-b);font-family:var(--f-pi);font-weight:700;font-size:1.05rem;letter-spacing:0;color:var(--pi-ink)}
-.pi-collab-list b{font-family:var(--f-pi);font-weight:600;letter-spacing:-.02em;font-size:clamp(1.35rem,2.1vw,1.8rem);line-height:1.05}
-.pi-collab-list span:last-child{color:var(--pi-ink-2);font-size:.96rem}
-@media (max-width:899px){.pi-band-in{grid-template-columns:minmax(0,1fr)}}
-
 /* about Oselu: an instant photo */
 .pi-about{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(2rem,5vw,5.5rem);align-items:center}
 .pi-about > *{min-width:0}
@@ -351,12 +310,6 @@ a.pi-note-link:hover .pi-note-photo > img{transform:scale(1.04)}
 .pi-about-text{display:flex;flex-direction:column;gap:1.05rem;max-width:40rem}
 .pi-about-text p:not(.pi-kicker):not(.pi-lede){font-size:1.08rem;line-height:1.65;color:var(--pi-ink-2)}
 @media (max-width:899px){.pi-about{grid-template-columns:minmax(0,1fr)}.pi-portrait{max-width:300px;margin-left:8px}}
-
-/* closing invitation: a peach sheet */
-.pi-close{display:flex;flex-direction:column;gap:2rem;align-items:center;text-align:center;margin:var(--pi-sec) var(--pi-inset) 0;padding:clamp(3.4rem,7vw,6rem) var(--pad);background:var(--pi-peach);border-radius:var(--pi-sheet)}
-.pi-close.pi-sec{padding-top:clamp(3.4rem,7vw,6rem)}
-.pi-close .pi-h2{max-width:15em;font-size:clamp(2.3rem,5vw,5rem);--hl:#fff}
-.pi-close .pi-cta{justify-content:center}
 
 /* the Play Inquiry band on the studio's home page: a yellow sheet, so the change of world is plain */
 .pi-home-band{position:relative;z-index:1;margin:var(--sec) var(--pi-inset) 0;background:var(--pi-sun);color:var(--pi-ink);overflow:hidden;color-scheme:light;border-radius:var(--pi-sheet)}
@@ -488,14 +441,6 @@ body:not([data-world=play]) .pi-home-band{margin-top:0}
 .pi-cols-text{display:flex;flex-direction:column;gap:.85rem}
 .pi-cols-text p{font-size:1.08rem;line-height:1.65;color:var(--pi-ink-2)}
 .pi-ways{margin-top:clamp(1.6rem,3vw,2.4rem)}
-.pi-room{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(2rem,5vw,5rem);align-items:center}
-.pi-room > *{min-width:0}
-.pi-room-copy{display:flex;flex-direction:column;gap:1.1rem}
-.pi-room-copy p:not(.pi-kicker){font-size:1.08rem;line-height:1.65;color:var(--pi-ink-2);max-width:34em}
-.pi-room-list{display:flex;flex-direction:column;gap:.6rem}
-.pi-room-list li{display:grid;grid-template-columns:54px minmax(0,1fr);gap:1rem;align-items:center;padding:.55rem 1rem .55rem .6rem;background:#fff;border:var(--pi-b);border-radius:18px;font-family:var(--f-pi);font-weight:600;letter-spacing:-.01em;font-size:clamp(1.15rem,1.8vw,1.5rem);line-height:1.1}
-.pi-room-list li:nth-child(even){transform:rotate(-.6deg)}
-.pi-room-list .pi-motif{width:50px}
 .pi-plan{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:clamp(1.3rem,2.4vw,2rem);align-items:stretch}
 .pi-plan > *{min-width:0}
 .pi-plan-card{background:var(--pi-sun)}
@@ -507,7 +452,7 @@ body:not([data-world=play]) .pi-home-band{margin-top:0}
 .pi-evidence-media{aspect-ratio:4/3;max-width:100%;overflow:hidden;border:var(--pi-b);border-radius:var(--pi-r-s);background:var(--pi-sun);margin-bottom:.4rem}
 .pi-evidence-media > img{width:100%;height:100%;object-fit:cover;object-position:50% 30%}
 .pi-evidence-media > svg{display:block;width:100%;height:100%}
-@media (max-width:899px){.pi-cols,.pi-room,.pi-plan{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:899px){.pi-cols,.pi-plan{grid-template-columns:minmax(0,1fr)}}
 
 /* ---------- enquiry forms ----------
    Neutral base first (shared with the studio's form, which dresses it in .st-form), then Play Inquiry's look in .play */
@@ -598,3 +543,188 @@ fieldset[aria-invalid=true] .pi-option{border-color:#b2321a}
 .play .rm-btn{border:2px solid var(--pi-ink);color:var(--pi-ink);font-family:var(--f-pi-t);border-radius:999px}
 .play .rm-btn.armed{border-color:#b2321a;color:#b2321a}
 @media (prefers-reduced-motion:reduce){.pi-marquee-track{animation:none}a:hover .pi-tag,.pi-tag:hover,.brand-play:hover .brand-mark{animation:none}}
+
+/* =========== from the collaboration pitch: graph paper, file folders, index dividers, a grid with frosted tiles ===========
+   Folders carry a tab with a label and stack on top of each other; dividers sit over photos with a sticker on each tab;
+   the grid has a small star where the lines cross; soft blurred flowers sit behind frosted tiles. */
+[data-tone=cherry]{--tone:var(--pi-cherry)}
+[data-tone=pink]{--tone:var(--pi-pink)}
+[data-f=ink]{--f:var(--pi-ink);--f-ink:var(--pi-paper);--f-ink-2:#d6cbb6}
+[data-f=cherry]{--f:var(--pi-cherry);--f-ink:#fff6e4;--f-ink-2:#f3d3d7}
+[data-f=blue]{--f:var(--pi-sky);--f-ink:var(--pi-ink);--f-ink-2:#2f3d49}
+[data-f=sun]{--f:var(--pi-sun);--f-ink:var(--pi-ink);--f-ink-2:#4d3f1b}
+[data-f=pink]{--f:var(--pi-pink);--f-ink:var(--pi-ink);--f-ink-2:#5c3a42}
+.play{--flower:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23000'%3E%3Ccircle cx='50' cy='50' r='26'/%3E%3Ccircle cx='81' cy='50' r='16'/%3E%3Ccircle cx='71.9' cy='71.9' r='16'/%3E%3Ccircle cx='50' cy='81' r='16'/%3E%3Ccircle cx='28.1' cy='71.9' r='16'/%3E%3Ccircle cx='19' cy='50' r='16'/%3E%3Ccircle cx='28.1' cy='28.1' r='16'/%3E%3Ccircle cx='50' cy='19' r='16'/%3E%3Ccircle cx='71.9' cy='28.1' r='16'/%3E%3C/g%3E%3C/svg%3E");--star:polygon(50% 0,58% 42%,100% 50%,58% 58%,50% 100%,42% 58%,0 50%,42% 42%)}
+
+/* soft blurred flowers */
+.pi-bloom{position:absolute;z-index:0;left:var(--x,0);top:var(--y,0);width:var(--s,200px);aspect-ratio:1/1;pointer-events:none;filter:blur(11px);opacity:.85;animation:pi-bloom 24s ease-in-out infinite alternate}
+.pi-bloom::before{content:"";position:absolute;inset:0;background:var(--tone,var(--pi-cherry));-webkit-mask:var(--flower) center/contain no-repeat;mask:var(--flower) center/contain no-repeat}
+@keyframes pi-bloom{from{transform:rotate(0) scale(1)}to{transform:rotate(55deg) scale(1.08)}}
+/* hero: the line on the left; three folders on the right, their tabs carry the supporting line */
+.pi-hero{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(2rem,5vw,5rem);padding-top:clamp(2.4rem,5vw,4.6rem);padding-bottom:clamp(3rem,6vw,5rem)}
+.pi-hero-copy{z-index:1;gap:1.5rem}
+.pi-hero .pi-h1{font-size:clamp(2.9rem,5.9vw,6.4rem);line-height:.94;letter-spacing:-.035em}
+.pi-hero .pi-h1 em{--hl:var(--pi-sun);white-space:nowrap}
+.pi-h1-b{display:block}
+.pi-hero .pi-lede{font-size:clamp(1.12rem,1.45vw,1.35rem);max-width:28em}
+.pi-hero-files{position:relative;height:clamp(440px,64vh,600px);--tab-h:46px}
+.pi-hf{position:absolute;left:calc(var(--k) * 8%);top:calc(var(--tab-h) + var(--k) * 21%);width:84%;height:calc(100% - var(--tab-h) - 42%);color:var(--f-ink);transform:rotate(calc((var(--k) - 1) * -1.6deg));transition:transform .5s var(--pi-spring)}
+.pi-hf:hover{transform:translateY(-9%) rotate(calc((var(--k) - 1) * -1.6deg))}
+.play .pi-hf-tab{position:absolute;bottom:calc(100% - 1px);left:var(--tl,0);text-wrap:nowrap;height:var(--tab-h);display:flex;align-items:center;padding:0 .4rem 0 1.15rem;background:var(--f);color:var(--f-ink);border-radius:14px 0 0 0;font-family:var(--f-pi);font-weight:600;font-size:clamp(.98rem,1.2vw,1.12rem);letter-spacing:-.01em;line-height:1;white-space:nowrap}
+.pi-hf-tab::after{content:"";position:absolute;z-index:-1;left:calc(100% - 18px);top:0;bottom:0;width:46px;background:var(--f);border-top-right-radius:16px;transform:skewX(26deg);transform-origin:0 100%}
+.pi-hf-body{position:relative;height:100%;padding:12px;background:var(--f);border-radius:calc(min(var(--k),1) * 18px) 18px 18px 18px;box-shadow:0 -14px 30px -20px rgba(31,26,20,.6),0 26px 40px -30px rgba(31,26,20,.55)}
+.pi-hf-body img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 40%;border-radius:10px}
+.pi-hf:nth-child(2){--tl:27%}
+.pi-hf:nth-child(3){--tl:9%}
+.pi-hf:nth-child(1) .pi-hf-body img{object-position:50% 58%}
+.pi-hf:nth-child(3) .pi-hf-body img{object-position:50% 30%}
+.pi-anim .pi-hf{animation:pi-hf-in 1s var(--ease) calc(var(--pi-d,0s) + .15s + var(--k) * .14s) both}
+@keyframes pi-hf-in{from{opacity:0;transform:translateY(70px) rotate(calc((var(--k) - 1) * -1.6deg))}to{opacity:1;transform:rotate(calc((var(--k) - 1) * -1.6deg))}}
+@media (max-width:899px){.pi-hero{grid-template-columns:minmax(0,1fr)}.pi-hero-files{order:0;height:clamp(380px,108vw,480px);margin-top:.5rem}.pi-hf{width:88%;left:calc(var(--k) * 6%)}.pi-hf:nth-child(2){--tl:30%}.pi-hf:nth-child(3){--tl:0px}}
+@media (max-width:520px){.play .pi-hf-tab{font-size:.9rem;padding-left:.9rem}}
+@media (prefers-reduced-motion:reduce){.pi-anim .pi-hf{animation:none}.pi-hf{transition:none}}
+
+/* the proposition: "not another art class" struck through, on a stamp */
+.pi-idea-text p.pi-stamp{display:inline-flex;flex-wrap:wrap;gap:.25rem .5rem;align-self:flex-start;margin-top:.5rem;padding:.75rem 1.15rem;border:2px solid var(--pi-ink);border-radius:999px;background:#fff;box-shadow:4px 4px 0 var(--pi-ink);transform:rotate(-1.5deg);font-family:var(--f-pi);font-weight:600;font-size:clamp(1.05rem,1.5vw,1.3rem);line-height:1.1;color:var(--pi-ink)}
+.pi-stamp span{color:var(--pi-ink-2);text-decoration:line-through;text-decoration-color:var(--pi-cherry);text-decoration-thickness:3px}
+
+/* the feeling: a poster with "play" running down the side */
+.pi-feel{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:clamp(1.5rem,4vw,4.5rem);align-items:stretch}
+.pi-feel-word{position:relative;display:flex;justify-content:center;align-items:flex-start}
+.pi-feel-word > span:first-child{position:relative;z-index:1;writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--f-pi);font-weight:700;font-size:clamp(7rem,13.5vw,14rem);line-height:.78;letter-spacing:-.05em;color:var(--pi-ink)}
+.pi-feel-word .pi-bloom{z-index:2;left:-25%;top:30%;width:150%;mix-blend-mode:multiply;opacity:.7}
+.pi-feel-main{display:flex;flex-direction:column;gap:1.1rem;min-width:0;align-self:center}
+.pi-feel-lede{font-size:clamp(1.08rem,1.35vw,1.25rem);line-height:1.6;color:var(--pi-ink-2);max-width:38em}
+.pi-feel-list{margin-top:1.2rem;border-top:2px solid var(--pi-ink)}
+.pi-feel-list li{display:grid;grid-template-columns:auto minmax(0,.95fr) minmax(0,1.05fr);gap:.4rem 1.4rem;align-items:center;padding:1.2rem 0;border-bottom:1.5px solid var(--pi-ink)}
+.pi-feel-o{width:24px;height:24px;border:3px solid var(--pi-cherry);border-radius:50%}
+.pi-feel-list h3{font-size:clamp(1.4rem,2.1vw,1.9rem);line-height:1.02}
+.pi-feel-list p{color:var(--pi-ink-2);line-height:1.5}
+.pi-feel-side{display:flex;align-items:center;gap:1.1rem;writing-mode:vertical-rl;font-family:var(--f-pi-t);font-weight:700;font-size:.72rem;line-height:1;letter-spacing:.16em;text-transform:uppercase;color:var(--pi-ink)}
+.pi-feel-side span+span::before{content:"";display:inline-block;inline-size:2.4rem;block-size:1.5px;background:currentColor;margin-inline-end:1.1rem;vertical-align:middle}
+@media (max-width:899px){
+  .pi-feel{grid-template-columns:minmax(0,1fr)}
+  .pi-feel-word{justify-content:flex-start}
+  .pi-feel-word > span:first-child{writing-mode:horizontal-tb;transform:none;font-size:clamp(6rem,30vw,9rem)}
+  .pi-feel-word .pi-bloom{left:30%;top:-10%;width:60%}
+  .pi-feel-side{display:none}
+  .pi-feel-list li{grid-template-columns:auto minmax(0,1fr)}
+  .pi-feel-list li p{grid-column:2}
+}
+
+/* folders: a sheet with a tab that carries a label */
+.pi-folder{position:relative;--tab-h:48px;margin-top:var(--tab-h);color:var(--f-ink)}
+.pi-folder-tab{position:absolute;z-index:1;bottom:calc(100% - 1px);left:calc(var(--i,0) * var(--tab-step,24%));height:var(--tab-h);display:inline-flex;align-items:center;gap:.6rem;padding:0 .3rem 0 1.15rem;background:var(--f);color:var(--f-ink);border-radius:14px 0 0 0;font-family:var(--f-pi-t);font-weight:700;font-size:1rem;line-height:1;white-space:nowrap}
+.pi-folder-tab::after{content:"";position:absolute;z-index:-1;left:calc(100% - 18px);top:0;bottom:0;width:46px;background:var(--f);border-top-right-radius:16px;transform:skewX(26deg);transform-origin:0 100%}
+.pi-folder-n{font-family:var(--f-pi);font-weight:700;font-size:.8rem;line-height:1;padding:.28rem .42rem;border-radius:6px;background:var(--f-ink);color:var(--f)}
+.pi-folder-body{position:relative;background:var(--f);color:var(--f-ink);border-radius:calc(min(var(--i,0),1) * var(--pi-r)) var(--pi-r) var(--pi-r) var(--pi-r)}
+
+/* the experience: three folders that file on top of each other as you scroll */
+.pi-folders{display:flex;flex-direction:column;gap:clamp(1.6rem,3vw,2.2rem)}
+.pi-folders .pi-folder-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.78fr);gap:clamp(1.2rem,3vw,3rem);align-items:center;padding:clamp(1.3rem,3vw,2.6rem);min-height:clamp(320px,50vh,480px);box-shadow:0 -16px 34px -22px rgba(31,26,20,.55)}
+.pi-folders .pi-folder-tab{box-shadow:0 -10px 24px -18px rgba(31,26,20,.5)}
+.pi-folder-text{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.pi-folder-k{font-family:var(--f-pi-h);font-weight:700;font-size:1.55rem;line-height:1;color:var(--f-ink-2)}
+.pi-folders h3{font-size:clamp(2.4rem,5vw,4.8rem);line-height:.92;letter-spacing:-.03em}
+.pi-folder-text p:not(.pi-folder-k){font-size:clamp(1.08rem,1.4vw,1.3rem);line-height:1.5;color:var(--f-ink-2);max-width:26em}
+.pi-folder-img{display:block;width:100%;height:100%;max-height:min(44vh,420px);object-fit:cover;border-radius:calc(var(--pi-r) - 8px);transform:rotate(1.5deg)}
+@media (min-width:760px) and (min-height:620px){
+  .pi-folders{gap:18vh}
+  .pi-folders > .pi-folder{position:sticky;top:calc(1rem + var(--tab-h) + var(--i) * (var(--tab-h) - 6px))}
+}
+@media (max-width:759px){.pi-folders .pi-folder-body{grid-template-columns:minmax(0,1fr);min-height:0}.pi-folder-img{max-height:none;aspect-ratio:4/3;transform:none}.pi-folder{--tab-step:28%}}
+
+/* the possibilities: folders with tabs; the chosen one comes to the front */
+.pi-files{position:relative;--tab-h:52px}
+.pi-files-tabs{position:relative;z-index:2;display:flex;align-items:flex-end;gap:5px;height:var(--tab-h);overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.pi-files-tabs::-webkit-scrollbar{display:none}
+.pi-files-tabs [role=tab]{flex:none;display:inline-flex;align-items:center;gap:.6rem;height:calc(var(--tab-h) - 9px);padding:0 1.4rem 0 1.15rem;background:var(--f);color:var(--f-ink);border-radius:14px 14px 0 0;font-family:var(--f-pi-t);font-weight:700;font-size:1rem;line-height:1;white-space:nowrap;filter:saturate(.7) brightness(.96);transition:height .3s var(--pi-spring),filter .25s}
+.pi-files-tabs [role=tab]:hover{height:calc(var(--tab-h) - 4px)}
+.pi-files-tabs [role=tab][aria-selected=true]{height:var(--tab-h);filter:none}
+.pi-files-tabs [role=tab]:focus-visible{outline-offset:-6px}
+.pi-files-stack{position:relative;isolation:isolate}
+.pi-files-stack::before,.pi-files-stack::after{content:"";position:absolute;inset:0;border-radius:var(--pi-r);z-index:-1}
+.pi-files-stack::before{background:var(--pi-ink);transform:translate(9px,9px)}
+.pi-files-stack::after{background:var(--pi-pink);transform:translate(18px,18px);z-index:-2}
+.pi-file{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.95fr);gap:clamp(1.4rem,3.5vw,3.4rem);align-items:center;padding:clamp(1.4rem,3.4vw,3rem);background:var(--f);color:var(--f-ink);border-radius:0 var(--pi-r) var(--pi-r) var(--pi-r);min-height:clamp(360px,40vw,500px)}
+.pi-file[hidden]{display:none}
+.pi-file:not([hidden]){animation:pi-file-in .45s var(--ease)}
+@keyframes pi-file-in{from{opacity:.3;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pi-file-text{display:flex;flex-direction:column;gap:1.1rem;align-items:flex-start;min-width:0}
+.pi-file-for{font-family:var(--f-pi-h);font-weight:700;font-size:1.5rem;line-height:1.05;color:var(--f-ink-2)}
+.pi-file h3{font-size:clamp(2.6rem,5.4vw,5.2rem);line-height:.9;letter-spacing:-.03em}
+.pi-file-text > p:not(.pi-file-for){font-size:clamp(1.08rem,1.4vw,1.28rem);line-height:1.5;max-width:28em;color:var(--f-ink)}
+.pi-file-img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:calc(var(--pi-r) - 8px);border:2px solid var(--pi-ink)}
+.pi-file .pi-link{text-decoration-color:currentColor}
+@media (max-width:899px){.pi-file{grid-template-columns:minmax(0,1fr);min-height:0}.pi-file-img{order:-1}}
+
+/* a little proof: index dividers over photos from the Lagos pilot, a sticker on each tab */
+.pi-proof{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(2rem,5vw,5rem);align-items:center}
+.pi-proof > *{min-width:0}
+.pi-proof-copy{display:flex;flex-direction:column;gap:1rem;align-items:flex-start}
+.pi-proof .pi-h2{font-size:clamp(2.2rem,4vw,4rem)}
+.pi-proof-copy > p:not(.pi-kicker){font-size:clamp(1.05rem,1.3vw,1.18rem);line-height:1.6;color:var(--pi-ink-2);max-width:34em}
+.pi-proof-facts{display:flex;flex-direction:column;gap:.6rem;margin:.3rem 0 .8rem}
+.pi-proof-facts li{position:relative;padding-left:1.8rem;font-weight:600;line-height:1.4}
+.pi-proof-facts li::before{content:"";position:absolute;left:0;top:.15em;width:1.1rem;height:1.1rem;background:var(--pi-cherry);clip-path:var(--star)}
+.pi-proof-facts b{font-family:var(--f-pi);font-size:1.3em}
+.pi-dividers{--band:clamp(30px,3vw,44px);position:relative;display:flex;height:clamp(440px,64vh,620px);background:var(--pi-pink);border-radius:var(--pi-sheet);overflow:hidden}
+.pi-divider{position:relative;flex:1 1 0;min-width:0;margin:0;transition:transform 1.05s var(--ease) calc(var(--i) * .09s)}
+.pi-divider img{position:absolute;top:0;left:var(--band);width:calc(100% - var(--band));height:100%;object-fit:cover}
+.pi-divider::before{content:"";position:absolute;z-index:1;left:0;top:0;bottom:0;width:var(--band);background:var(--pi-pink);box-shadow:8px 0 16px -8px rgba(90,20,40,.45)}
+.pi-divider figcaption{position:absolute;z-index:2;left:calc(var(--band) - 1px);top:calc(5% + var(--i) * 10%);writing-mode:vertical-rl;transform:rotate(180deg);background:#fff;border:7px solid var(--pi-pink);border-right-width:0;border-radius:14px 0 0 14px;padding:.8rem .32rem;font-family:var(--f-pi-t);font-weight:700;font-size:clamp(.72rem,.85vw,.84rem);line-height:1.1;color:var(--pi-ink);white-space:nowrap;box-shadow:-6px 0 12px -6px rgba(90,20,40,.4)}
+.pi-dividers.draw-pre .pi-divider{transform:translateY(104%);transition:none}
+@media (max-width:899px){.pi-proof{grid-template-columns:minmax(0,1fr)}.pi-dividers{height:clamp(380px,100vw,480px)}}
+@media (max-width:560px){.pi-divider:nth-child(n+4){display:none}}
+
+/* why collaborate: graph-paper cells with a star where the lines cross, frosted tiles over the flowers */
+.pi-why{position:relative}
+.pi-why .pi-bloom:first-of-type{left:53%;top:14%}
+.pi-why .pi-bloom:nth-of-type(2){left:28%;top:56%}
+.pi-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1.5px solid var(--pi-ink);border-left:1.5px solid var(--pi-ink)}
+.pi-cell{position:relative;min-width:0;border-right:1.5px solid var(--pi-ink);border-bottom:1.5px solid var(--pi-ink);padding:clamp(1.1rem,2vw,1.7rem);min-height:clamp(170px,15vw,220px)}
+.pi-cell::before{content:"";position:absolute;z-index:2;left:-9.5px;top:-9.5px;width:18px;height:18px;background:var(--pi-ink);clip-path:var(--star)}
+.pi-why-head{grid-column:span 2;display:flex;flex-direction:column;justify-content:space-between;gap:1rem}
+.pi-why-head .pi-h2{font-size:clamp(2rem,3.6vw,3.6rem)}
+.play .pi-why-b{display:flex;flex-direction:column;justify-content:space-between;gap:1rem;font-family:var(--f-pi);font-weight:600;font-size:clamp(1.2rem,1.7vw,1.55rem);line-height:1.12;letter-spacing:-.015em;color:var(--pi-ink)}
+.pi-why-b span{font-family:var(--f-pi-t);font-weight:700;font-size:.8rem;letter-spacing:.08em;color:var(--pi-cherry)}
+.pi-why-b.is-glass{background:rgba(255,255,255,.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4)}
+.pi-why-cta{display:flex;align-items:flex-end}
+@media (max-width:899px){.pi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pi-why-head{grid-column:1/-1}.pi-cell{min-height:140px}.pi-why .pi-bloom:first-of-type{left:52%;top:30%}.pi-why .pi-bloom:nth-of-type(2){left:-10%;top:66%}}
+
+/* collaborate: special collaborations on a cherry folder, and who brings what */
+.pi-special{position:relative;display:block;--tab-h:48px;margin-top:calc(clamp(1.4rem,2.8vw,2.4rem) + var(--tab-h));color:var(--f-ink)}
+.pi-special-body{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.6rem 2rem;align-items:center;padding:clamp(1.2rem,2.6vw,2rem);background:var(--f);border-radius:0 var(--pi-r) var(--pi-r) var(--pi-r);transition:transform .3s var(--pi-spring)}
+.pi-special:hover .pi-special-body{transform:translateY(-3px)}
+.pi-special-body b{font-family:var(--f-pi);font-weight:600;font-size:clamp(1.5rem,2.4vw,2.2rem);line-height:1;letter-spacing:-.02em}
+.pi-special-body > span:not(.pi-special-go){color:var(--f-ink-2);font-size:1.05rem;line-height:1.5}
+.pi-special-go{font-weight:700;white-space:nowrap;text-decoration:underline wavy;text-underline-offset:6px}
+@media (max-width:899px){.pi-special-body{grid-template-columns:minmax(0,1fr)}}
+.pi-roles-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(1.4rem,3vw,2.4rem);align-items:stretch}
+.pi-role{--tab-step:34%}
+.pi-role .pi-folder-body{height:100%;display:flex;flex-direction:column;gap:.6rem;padding:clamp(1.4rem,3vw,2.4rem)}
+.pi-role .pi-folder-body p{font-family:var(--f-pi-h);font-weight:700;font-size:1.5rem;line-height:1;color:var(--f-ink-2)}
+.pi-role li{font-family:var(--f-pi);font-weight:600;font-size:clamp(1.6rem,2.8vw,2.5rem);line-height:1.05;letter-spacing:-.02em;padding:.6rem 0;border-bottom:1.5px solid color-mix(in srgb,var(--f-ink) 28%,transparent)}
+@media (max-width:759px){.pi-roles-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* the invitation: a cherry sheet, bold, with one strong photo */
+.pi-close{position:relative;margin:var(--pi-sec) var(--pi-inset) 0;background:var(--pi-cherry);color:#fff6e4;border-radius:var(--pi-sheet);overflow:hidden}
+.pi-close.pi-sec{padding-top:0}
+.pi-close .pi-bloom{opacity:.42}
+.pi-close .pi-bloom:first-of-type{left:auto;right:-5%;top:auto;bottom:-16%}
+.pi-close-in{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:clamp(2rem,5vw,5rem);align-items:center;padding:clamp(3.4rem,7vw,6.5rem) var(--pad)}
+.pi-close-copy{display:flex;flex-direction:column;gap:1.1rem;align-items:flex-start;min-width:0}
+.pi-close .pi-kicker{color:var(--pi-sun)}
+.pi-close .pi-kicker::before{filter:brightness(0) invert(1)}
+.pi-close .pi-h2{font-size:clamp(2.6rem,5.6vw,5.6rem);line-height:1.06;max-width:12em;color:#fff6e4}
+.pi-close .pi-h2 em{background:var(--pi-sun);color:var(--pi-ink);padding:0 .14em;border-radius:.12em}
+.pi-close-copy > p:not(.pi-kicker):not(.pi-close-sign){font-size:clamp(1.05rem,1.3vw,1.2rem);line-height:1.6;color:#f6dfe2;max-width:34em}
+.pi-close .pi-btn-ghost{background:#fff6e4}
+.pi-close-sign{display:flex;flex-wrap:wrap;align-items:baseline;gap:.3rem 1rem;margin-top:1rem;font-family:var(--f-pi-t);font-weight:700;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:#fff6e4}
+.pi-close-sign span{font-family:var(--f-pi-h);font-size:1.7rem;letter-spacing:0;text-transform:none;color:var(--pi-sun);display:inline-block;transform:rotate(-2deg)}
+.pi-close-print{position:relative;justify-self:center;width:100%;max-width:380px;margin:0;background:#fff;padding:12px 12px 52px;border-radius:6px;transform:rotate(3deg);box-shadow:0 30px 50px -24px rgba(0,0,0,.6)}
+.pi-close-print img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:2px}
+.pi-close-print figcaption{position:absolute;left:16px;bottom:12px;font-family:var(--f-pi-h);font-weight:700;font-size:1.45rem;color:var(--pi-ink)}
+@media (max-width:899px){.pi-close-in{grid-template-columns:minmax(0,1fr)}.pi-close-print{max-width:270px;justify-self:start}}
+
+@media (prefers-reduced-motion:reduce){.pi-bloom,.pi-file:not([hidden]){animation:none}.pi-divider{transition:none}}

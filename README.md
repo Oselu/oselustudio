@@ -5,7 +5,7 @@ The website of Oselu Irabor, a designer and illustrator in Kaduna, Nigeria, and 
 The site has two parts in one page:
 
 - **The studio**: illustration, graphic design, the poster series (World Cup 2026, Coventry matchday), visual art, About, and Work with me (commission enquiries).
-- **Play Inquiry**: workshops for individuals and teams, field notes (the Lagos session, the art club, the summer programme with Spark School Studio), Collaborate, and three enquiry forms.
+- **Play Inquiry**: a creative experience studio. Its pages follow the collaboration pitch ("It's not for everyone. It's for people like us."): Play Sessions, Team Experiences and special collaborations, field notes (the Lagos pilot, the art club, the summer programme with Spark School Studio), Collaborate, and three enquiry forms.
 
 ## Viewing the site
 
@@ -43,7 +43,7 @@ python3 build.py
 
 - **Forms** don't send anything themselves. They prepare the message and open it in WhatsApp or the visitor's email app.
 - **Owner tools** (adding artwork and Coventry posters, Lagos photos and reflections, and announcing the next public session) only work when the site is published as a Claude artifact. On any other host they stay hidden.
-- **Design**: the studio and Play Inquiry are two different places. The studio is a quiet gallery: grey paper, ink, red, Instrument Serif and Mona Sans, 3D curves. Play Inquiry is the workshop table: warm cream with sun-yellow, sky-blue and peach panels, Fredoka, Figtree and handwritten Caveat notes, ink outlines, buttons that press down, prints you can drag around, and a crayon cursor.
+- **Design**: the studio and Play Inquiry are two different places. The studio is a quiet gallery: grey paper, ink, red, Instrument Serif and Mona Sans, 3D curves. Play Inquiry is the workshop table: warm cream graph paper with sun-yellow, sky-blue, cherry and pink, Fredoka, Figtree and handwritten Caveat notes, ink outlines, buttons that press down, prints you can drag around, file folders with tabs, index dividers over photos, a grid with frosted tiles, soft blurred flowers, and a crayon cursor.
 - **Fonts** load from Google Fonts (studio: Instrument Serif, Mona Sans; Play Inquiry: Fredoka, Figtree, Caveat; small labels: Martian Mono and Newsreader). **three.js** (r128, desktop only, for the hover preview and page-change veil) and **Lenis** load from public CDNs.
 - **Motion** respects the visitor's reduced-motion setting: the hero ring, strips, poster stack and art wheel settle into still arrangements.
 - **Link previews**: `img/share.jpg` is the preview image. Once the site has its own domain, change the `og:image` tag in `src/head.html` to the full address, for example `https://yourdomain.com/img/share.jpg`, so WhatsApp, LinkedIn and X can show it.
