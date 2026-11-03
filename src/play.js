@@ -381,3 +381,13 @@ const Play=(()=>{
     ownerReady(){owner=true;$('#pilot-admin').hidden=false;$('#notes-admin').hidden=false;$('#next-admin').hidden=false;renderPilot()}
   };
 })();
+
+/* ---------- curved strips of session photos: the studio's strip, with Play Inquiry's people in it ---------- */
+(()=>{
+  const lag=i=>{const p=PILOT_BASE[i];return p&&{src:p.th||p.src,go:'lagos-session',label:'Lagos session',alt:p.alt,cursor:'Open'}};
+  const club=i=>{const p=CLUB[i];return p&&{src:p.th||p.src,go:'art-club',label:'Art club · Kaduna',alt:p.alt,cursor:'Open'}};
+  const kids=i=>{const p=KIDS[i];return p&&{src:p.th||p.src,go:'summer-school',label:'Summer programme',alt:p.alt,cursor:'Open'}};
+  PiStrip=Cylinder($('#pi-strip'),[lag(0),club(0),lag(5),kids(0),lag(2),club(3),kids(4),lag(7),club(5),kids(7),lag(9),club(8)].filter(Boolean),{tags:true,link:.4});
+  PiFtrCyl=Cylinder($('#pi-ftr-cyl'),[club(2),lag(4),kids(2),lag(6),club(6),kids(9),lag(8),club(9),kids(11),lag(10),club(4),kids(5)].filter(Boolean),{auto:.45,link:.25,tab:false});
+})();
+
