@@ -35,6 +35,9 @@ body:not([data-world=play]) .play-only,body[data-world=play] .studio-only{displa
 .pi-hand{font-family:var(--f-pi-h);font-weight:700;font-size:1.55rem;line-height:1.02;letter-spacing:0;color:var(--pi-coral)}
 
 /* the studio's label cursor is hidden here: Play Inquiry uses the normal mouse */
+html.has-cursor:has(> body[data-world=play]),html.has-cursor body[data-world=play]{cursor:auto}
+html.has-cursor body[data-world=play] :is(a,button,[role=slider],[role=button],[role=tab],label,select,summary){cursor:pointer}
+html.has-cursor body[data-world=play] :is(input,textarea){cursor:text}
 body[data-world=play] .cur{display:none}
 html.has-cursor body[data-world=play] .pi-table.is-free .pi-print{cursor:grab}
 html.has-cursor body[data-world=play] .pi-table.is-free .pi-print.is-lifted{cursor:grabbing}
