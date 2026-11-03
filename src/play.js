@@ -432,4 +432,14 @@ $$('[data-files]').forEach(box=>{
       pick(tabs[k===-99?0:k===99?tabs.length-1:(i+k+tabs.length)%tabs.length],true)})});
   const on=tabs.find(t=>t.getAttribute('aria-selected')==='true')||tabs[0];if(on)box.dataset.on=on.dataset.f;
 });
+/* a little proof: choosing a photo slides it open to the left and the others fold back to their dividers;
+   choosing it again (or Escape) closes it */
+$$('.pi-dividers').forEach(box=>{
+  const items=$$('.pi-divider',box);
+  const set=open=>{items.forEach(f=>{const on=f===open,b=$('.pi-divider-open',f),cap=$('figcaption',f);f.classList.toggle('is-open',on);
+      if(b){b.setAttribute('aria-expanded',on);b.setAttribute('aria-label',(on?'Close this photo: ':'Show this photo larger: ')+(cap?cap.textContent:''))}});
+    box.classList.toggle('has-open',!!open)};
+  items.forEach(f=>{const b=$('.pi-divider-open',f);if(b)b.addEventListener('click',()=>set(f.classList.contains('is-open')?null:f))});
+  box.addEventListener('keydown',e=>{if(e.key==='Escape'&&box.classList.contains('has-open')){const o=$('.pi-divider.is-open .pi-divider-open',box);set(null);if(o)o.focus()}});
+});
 
