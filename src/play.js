@@ -6,14 +6,14 @@
 /* section routes: #workshops etc. open the Play Inquiry page at that section */
 const PI_SECTIONS={workshops:'pi-workshops','field-notes':'pi-notes','about-oselu':'pi-about'};
 const PI_SECTION_LABELS={workshops:'Workshops','field-notes':'Field notes','about-oselu':'About Oselu'};
-const PI_DESC='Play Inquiry creates playful, hands-on creative workshops using drawing, open-ended prompts and experimentation for individuals, communities and teams.';
+const PI_DESC='Play Inquiry by Oselu: playful, hands-on experiences that bring people together through art, craft and experimentation. Play Sessions, Team Experiences and special collaborations.';
 /* per-page title and description where the default ("<label> | Play Inquiry by Oselu") isn't enough */
 const PI_TITLES={'art-club':'The best part of small chops is puff puff | Play Inquiry by Oselu',
   'summer-school':'Summer art programme with Spark School Studio | Play Inquiry by Oselu',
-  'team-workshop':'Plan a team workshop | Play Inquiry at Work'};
+  'team-workshop':'Plan a Team Experience | Play Inquiry by Oselu'};
 const PI_DESCS={'art-club':'A free art club by Oselu Irabor, part of Play Inquiry. It meets in person in Kaduna once a month and online on Instagram every week.',
   'summer-school':'Art classes for children aged 4 to 16 in summer 2026, in collaboration with Spark School Studio in Kaduna. Part of Play Inquiry by Oselu Irabor.',
-  'team-workshop':'Plan a Play Inquiry at Work session: a facilitated creative workshop for companies and teams, adapted to your team\'s context, size and time.',
+  'team-workshop':'Plan a Team Experience with Play Inquiry: a custom-designed creative workshop for companies, adapted to your team\'s context, size and time.',
   'children-programme':'Start a conversation about an art programme for children with Play Inquiry by Oselu Irabor, run in collaboration with partners.'};
 
 /* Lagos session documentation (internal names say "pilot"), saved by the owner from the case study page (see the owner panels).
@@ -174,17 +174,17 @@ const Play=(()=>{
   })();
 
   /* ---------- enquiry forms: one per offer, each an honest hand-off to WhatsApp or email (the site has no backend) ----------
-     sessions (#join): join a session, co-host one or come to the art club · team (#team-workshop): Play Inquiry at Work ·
+     sessions (#join): join a Play Session, host one or come to the art club · team (#team-workshop): Team Experiences ·
      children (#children-programme). The markup drives everything: fields with name + data-label go into the message
      (textareas at the end), data-req marks a required field and holds its error, data-when="<choice>" shows a block for
      one choice of the sessions form. */
   const FORMS={
-    sessions:{submit:'Keep me in the loop',subject:'Play Inquiry Sessions',
+    sessions:{submit:'Keep me in the loop',subject:'Play Sessions',
       choices:{
-        join:{label:'Joining a Play Inquiry Session',subject:'Play Inquiry Sessions: keep me in the loop',submit:'Keep me in the loop'},
-        cohost:{label:'Co-hosting a Play Inquiry Session',subject:'Play Inquiry Sessions: co-hosting',submit:'Start a conversation'},
+        join:{label:'Joining a Play Session',subject:'Play Sessions: keep me in the loop',submit:'Keep me in the loop'},
+        cohost:{label:'Hosting a Play Session or collaborating',subject:'Play Inquiry: hosting or collaborating',submit:'Start a conversation'},
         club:{label:'Coming to the free art club',subject:'Art club: the next meetup',submit:'Ask about the next meetup',city:'Kaduna'}}},
-    team:{intro:"I'd like to plan a Play Inquiry at Work session for my team.",subject:'Play Inquiry at Work: team workshop enquiry',submit:'Start a conversation'},
+    team:{intro:"I'd like to plan a Team Experience with Play Inquiry for my team.",subject:'Play Inquiry: Team Experience enquiry',submit:'Start a conversation'},
     children:{intro:"I'd like to talk about an art programme for children.",subject:"Play Inquiry: children's programme enquiry",submit:'Start a conversation'},
     /* the studio's Work with me page (#work-with-me) */
     studio:{submit:'Start a project',subject:'Commission enquiry',from:"Oselu Irabor's website",
@@ -420,5 +420,16 @@ const PhotoTable=(()=>{
 })();
 /* a strip of phrases from the page, running across like a banner */
 (()=>{const el=$('#pi-marquee');if(!el)return;
-  const W=['No art experience required','Curiosity, not skill','Draw a line that changes its mind','Just a willingness to try','Make something of your own','Try things, explore ideas'];
+  const W=['Make room for curiosity','Not another art class','Come curious, leave with something','For the curious','For the experimental','We could all use a little more play','No art experience required'];
   const once=W.map((w,i)=>`<span>${esc(w)}</span><i style="--c:var(--pi-${['coral','green','blue','yellow'][i%4]})"></i>`).join('');el.innerHTML=once+once})();
+/* the possibilities: folders with tabs. Choosing a tab brings its folder to the front (arrow keys move between tabs). */
+$$('[data-files]').forEach(box=>{
+  const tabs=$$('[role=tab]',box);
+  const pick=(t,focus)=>{tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;const p=document.getElementById(x.getAttribute('aria-controls'));if(p)p.hidden=!on});
+    box.dataset.on=t.dataset.f;if(focus)t.focus();if(t.scrollIntoView&&box.querySelector('.pi-files-tabs').scrollWidth>box.clientWidth)t.scrollIntoView({block:'nearest',inline:'nearest'})};
+  tabs.forEach((t,i)=>{t.addEventListener('click',()=>pick(t));
+    t.addEventListener('keydown',e=>{const k={ArrowRight:1,ArrowLeft:-1,Home:-99,End:99}[e.key];if(!k)return;e.preventDefault();
+      pick(tabs[k===-99?0:k===99?tabs.length-1:(i+k+tabs.length)%tabs.length],true)})});
+  const on=tabs.find(t=>t.getAttribute('aria-selected')==='true')||tabs[0];if(on)box.dataset.on=on.dataset.f;
+});
+
