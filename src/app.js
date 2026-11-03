@@ -64,7 +64,7 @@ const scrollY_=()=>lenis?lenis.scroll:window.scrollY;
 function scrollTop(smooth){if(lenis)lenis.scrollTo(0,{immediate:!smooth,force:true});else window.scrollTo({top:0,behavior:smooth&&!reduced?'smooth':'auto'})}
 function scrollToEl(el){const y=el.getBoundingClientRect().top+scrollY_()-90;if(lenis)lenis.scrollTo(y,{duration:1.2});else window.scrollTo({top:y,behavior:reduced?'auto':'smooth'})}
 
-/* ---------- WebGL: hero poster, hover preview, page veil ---------- */
+/* ---------- WebGL: hover preview, page veil ---------- */
 let GL=null;
 function makeGL(){
   if(reduced||!window.THREE)return null;
@@ -109,42 +109,6 @@ function makeGL(){
   function release(t){if(!t||!t._url)return;cache.delete(t._url);t.dispose()}
   const blank=new T.DataTexture(new Uint8Array([242,242,238,255]),1,1,T.RGBAFormat);blank.needsUpdate=true;blank._aspect=.8;
 
-  /* hero */
-  const heroEl=$('#hero-sheet');
-  const hu={t0:{value:blank},t1:{value:blank},a0:{value:.8},a1:{value:.8},pa:{value:.8},prog:{value:0},seed:{value:1.7},mouse:{value:new T.Vector2(.5,.5)},vel:{value:new T.Vector2()},hover:{value:0},clipY:{value:1e5}};
-  const hero=mk(hu,`uniform sampler2D t0,t1;uniform float a0,a1,pa,prog,seed,hover,clipY;uniform vec2 mouse,vel;varying vec2 vUv;${NOISE}
-    void main(){
-      if(gl_FragCoord.y>clipY)discard;
-      vec2 d=vUv-mouse;d.x*=pa;float f=exp(-dot(d,d)*22.)*hover;
-      vec2 suv=vUv-vel*f*.32;
-      float streak=0.,c=0.;if(prog>0.)c=strokes(vUv,prog,pa,9.,seed,streak);
-      vec3 A=texture2D(t0,cover(suv,pa,a0)).rgb;
-      vec3 B=texture2D(t1,cover(suv,pa,a1)).rgb;
-      vec3 col=mix(A,B,c);
-      float edge=c*(1.-c)*4.;
-      col=mix(col,col*(.8+.32*streak),edge*.7);
-      col+=(hash(vUv*vec2(733.,911.))-.5)*.022;
-      gl_FragColor=vec4(col,1.);
-    }`);
-  hero.renderOrder=1;
-  let heroReady=false,heroBusy=false;
-  const hm={x:.5,y:.5,tx:.5,ty:.5,px:.5,py:.5,vx:0,vy:0,h:0};
-  async function heroTo(src,first,onStart){
-    const tex=await load(src);
-    if(first||!heroReady){hu.t0.value=tex;hu.a0.value=tex._aspect;hu.prog.value=0;heroReady=true;if(onStart)onStart();return}
-    heroBusy=true;
-    hu.t1.value=tex;hu.a1.value=tex._aspect;hu.seed.value=Math.random()*9+1;
-    if(onStart)onStart();
-    await tween(1800,k=>{hu.prog.value=k},EASE.io2);
-    const old=hu.t0.value;hu.t0.value=tex;hu.a0.value=hu.a1.value;hu.prog.value=0;
-    if(old!==tex&&old!==blank)release(old);
-    heroBusy=false;
-  }
-  if(heroEl){
-    heroEl.addEventListener('pointermove',e=>{const r=heroEl.getBoundingClientRect();hm.tx=(e.clientX-r.left)/r.width;hm.ty=1-(e.clientY-r.top)/r.height;hm.h=1});
-    heroEl.addEventListener('pointerleave',()=>{hm.h=0});
-  }
-
   /* hover preview */
   const pu={t0:{value:blank},t1:{value:blank},a0:{value:.8},a1:{value:.8},pa:{value:.8},mixv:{value:1},alpha:{value:0},vel:{value:new T.Vector2()},clipY:{value:1e5}};
   const preview=mk(pu,`uniform sampler2D t0,t1;uniform float a0,a1,pa,mixv,alpha,clipY;uniform vec2 vel;varying vec2 vUv;${NOISE}
@@ -176,28 +140,14 @@ function makeGL(){
   async function veilReveal(){vu.phase.value=1;vu.prog.value=0;vu.seed.value=Math.random()*9+1;await tween(520,k=>{vu.prog.value=k},EASE.io);veil.visible=false;canvas.style.zIndex=''}
 
   let W=0,H=0,wasMoving=true,lastSig='',force=true;
-  /* hero and preview never draw over the header, even while the canvas is raised for a page change */
+  /* the preview never draws over the header, even while the canvas is raised for a page change */
   const hdr=$('#hdr'),menuEl=$('#menu'),lbEl=$('#lb');
   function resize(){W=window.innerWidth;H=window.innerHeight;R.setSize(W,H,false);cam.right=W;cam.bottom=-H;cam.updateProjectionMatrix();place(veil,0,0,W,H);vu.aspect.value=W/H;
-    const cy=(H-hdr.getBoundingClientRect().bottom)*R.getPixelRatio();hu.clipY.value=cy;pu.clipY.value=cy;force=true}
+    const cy=(H-hdr.getBoundingClientRect().bottom)*R.getPixelRatio();pu.clipY.value=cy;force=true}
   resize();window.addEventListener('resize',resize);
 
   function frame(){
     let active=false;const overlay=!menuEl.hidden||!lbEl.hidden;
-    if(heroReady&&!overlay&&document.body.dataset.view==='home'&&heroEl){
-      const r=heroEl.getBoundingClientRect();
-      if(r.width>0&&r.bottom>0&&r.top<H){
-        hero.visible=true;place(hero,r.left-.5,r.top-.5,r.width+1,r.height+1);hu.pa.value=r.width/r.height;active=true;
-        hm.x+=(hm.tx-hm.x)*.16;hm.y+=(hm.ty-hm.y)*.16;
-        hm.vx=hm.vx*.86+(hm.x-hm.px)*1.4;hm.vy=hm.vy*.86+(hm.y-hm.py)*1.4;hm.px=hm.x;hm.py=hm.y;
-        hu.mouse.value.set(hm.x,hm.y);hu.vel.value.set(clamp(hm.vx,-.4,.4),clamp(hm.vy,-.4,.4));
-        hu.hover.value+=(hm.h-hu.hover.value)*.07;
-        if(hu.hover.value<.002&&hm.h===0)hu.hover.value=0;
-      }else hero.visible=false;
-    }else hero.visible=false;
-    /* skip drawing when the hero has not changed since the last frame */
-    let sig='';if(hero.visible){const r=heroEl.getBoundingClientRect();sig=[r.left,r.top,r.width,r.height,hu.prog.value,hu.hover.value.toFixed(4),hu.vel.value.x.toFixed(4),hu.vel.value.y.toFixed(4),hu.mouse.value.x.toFixed(3),hu.mouse.value.y.toFixed(3),hu.t0.value.id,hu.t1.value.id].join()}
-    const heroChanged=sig!==lastSig;lastSig=sig;
     const target=pv.on?1:0;
     pv.a+=(target-pv.a)*.14;
     if(pv.a>.003&&!overlay){
@@ -209,11 +159,11 @@ function makeGL(){
       const s=.86+.14*pv.a;
       place(preview,pv.x-w*s/2,pv.y-h*s/2,w*s,h*s);pu.alpha.value=pv.a;pu.pa.value=.8;preview.visible=true;active=true;
     }else{preview.visible=false;pv.init=false}
-    const moving=force||heroChanged||preview.visible||veil.visible;force=false;
+    const moving=force||preview.visible||veil.visible;force=false;
     if(moving||wasMoving)R.render(scene,cam);
     wasMoving=moving;
   }
-  const api={heroTo,frame,pvShow,pvHide,pvMove,veilCover,veilReveal,onLost:null};
+  const api={frame,pvShow,pvHide,pvMove,veilCover,veilReveal,onLost:null};
   canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();if(api.onLost)api.onLost()},{once:true});
   return api;
 }
@@ -244,10 +194,10 @@ if(finePointer){
 const Veil={
   mode:null,
   async cover(world,label){
-    const lab=$('#veil-label');lab.textContent=label;lab.classList.toggle('play',world==='play');
+    const lab=$('#veil-label');lab.textContent=label;lab.classList.toggle('play',world==='play');lab.classList.toggle('studio',world!=='play');
     if(!reduced)setTimeout(()=>{lab.style.opacity='1'},GL?260:160);
-    if(GL){this.mode='gl';await GL.veilCover(world==='play'?'#f4b32b':'#193940')}
-    else if(!reduced){this.mode='dom';const f=$('#veil-fallback');f.style.background=world==='play'?'#f4b32b':'#193940';f.style.opacity='1';await wait(240)}
+    if(GL){this.mode='gl';await GL.veilCover(world==='play'?'#f4b32b':'#121211')}
+    else if(!reduced){this.mode='dom';const f=$('#veil-fallback');f.style.background=world==='play'?'#f4b32b':'#121211';f.style.opacity='1';await wait(240)}
     if(!reduced)await wait(110);
   },
   async reveal(){
@@ -275,43 +225,244 @@ function playSplit(el,delay=0){
 const io=('IntersectionObserver' in window)&&!reduced?new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.remove('rv-pre');io.unobserve(en.target)}}),{rootMargin:'0px 0px -6% 0px'}):null;
 function armReveals(root){
   if(!io||!root)return;
-  $$('.row,.tile,.card,.cov-card,.art-grid figure,.pi-card,.pj-text > div,.pj-gallery .shot,.disc > *,.season-h,.wall button:nth-child(-n+30)',root).forEach(el=>{
+  $$('.row,.tile,.wk-card,.cov-card,.art-grid figure,.pi-card,.pj-text > div,.pj-gallery .shot,.disc > *,.season-h,.wall button:nth-child(-n+30)',root).forEach(el=>{
     const r=el.getBoundingClientRect();if(r.top>window.innerHeight&&!el.classList.contains('rv')){el.classList.add('rv','rv-pre');io.observe(el)}});
 }
 
 /* ---------- home ---------- */
 const rowHTML=e=>`<a class="row" href="#${e.id}" data-go="${e.id}" data-pv="${esc(e.pv)}" data-cursor="View"><span class="row-cat mono">${CAT[e.cat]}</span><span class="row-name">${esc(e.name)}</span><span class="row-kind mono">${esc(e.kind)}</span><img class="row-thumb" src="${esc(e.pv)}" alt="" loading="lazy"><span class="row-arrow" aria-hidden="true">→</span></a>`;
-const cardHTML=e=>`<a class="card" href="#${e.id}" data-go="${e.id}" data-cursor="View"><div class="card-media"><img src="${esc(e.pv)}" alt="" loading="lazy"></div><div class="card-meta"><b>${esc(e.name)}</b><span class="mono">${CAT[e.cat]} · ${esc(e.kind)}</span></div></a>`;
+const cardHTML=(e,k)=>`<a class="wk-card" href="#${e.id}" data-go="${e.id}" data-cursor="View"><div class="wk-media"><img src="${esc(e.pv)}" alt="" loading="lazy"></div><div class="wk-meta"><b>${esc(e.name)}</b><span class="s-mono">${pad(k+1,2)}</span><span class="wk-kind">${CAT[e.cat]} · ${esc(e.kind)}</span></div></a>`;
+const wcN=n=>WC.find(p=>p.n===n);
 function tilesHTML(){
   const all=covAll(),latest=all[0];
   const mdNum=latest&&latest.md?pad(latest.md,2):pad(all.length,2);
-  const picks=[1,6,13,17,22,30,33,41,47,62,64,71,77,85,88,94,97,103].map(k=>WC.find(p=>p.n===k)).filter(Boolean);
+  const picks=[1,6,13,17,22,30,33,41,47,62,64,71,77,85,88,94,97,103].map(wcN).filter(Boolean);
   return `<a class="tile" href="#coventry" data-go="coventry" data-cursor="Open series">
-      <span class="live mono">Live · ${latest?seasonOf(latest.date):''} season</span>
+      <span class="live">Live · ${latest?seasonOf(latest.date):''} season</span>
       <div class="tile-media">${latest?`<img class="paper" src="${esc(latest.th||latest.src)}" alt="Latest Coventry poster: ${esc(covTitle(latest))}" loading="lazy">`:''}</div>
-      <div class="tile-body"><span class="tile-num">${mdNum}</span><div><b>Coventry matchday</b><span class="mono">${latest?`Latest · ${esc(covTitle(latest))} · ${fmtDate(latest.date)}`:'A new poster every matchday'}</span></div></div></a>
+      <div class="tile-body"><span class="tile-num">${mdNum}</span><div><b>Coventry matchday</b><span>${latest?`Latest · ${esc(covTitle(latest))} · ${fmtDate(latest.date)}`:'A new poster every matchday'}</span></div></div></a>
     <a class="tile" href="#world-cup" data-go="world-cup" data-cursor="Open series">
       <div class="tile-media"><div class="mosaic">${picks.map(p=>`<img src="${p.th}" alt="" loading="lazy">`).join('')}</div></div>
-      <div class="tile-body"><span class="tile-num">${WC.length}</span><div><b>World Cup 2026</b><span class="mono">A poster for every match · oil pastel</span></div></div></a>`;
-}
-function renderHome(){
-  $('#home-rows').innerHTML=SELECTED.map(id=>byId[id]).filter(Boolean).map(rowHTML).join('');
-  $('#sel-count').textContent=`(${SELECTED.length})`;
-  $('#home-tiles').innerHTML=tilesHTML();
-  $('#series-tiles').innerHTML=tilesHTML();
-  const l=covAll()[0];
-  const items=[
-    l?`<span>Matchday ${l.md?pad(l.md,2):''} · <b>${esc(covTitle(l))}</b> · ${fmtDate(l.date)}</span>`:'',
-    `<span>World Cup 2026 · <b>${WC.length} posters</b> · one for every match</span>`,
-    `<span>Currently · <b>product illustration at Roqqu</b></span>`,
-    `<span>Open to <b>freelance commissions</b> · illustration and design</span>`,
-    `<span>Visual art · <b>${ART.length} pieces</b> in oil pastel</span>`,
-    `<span>Play Inquiry · <b>creative workshops</b> for individuals, communities and teams</span>`].join('');
-  $('#ticker').innerHTML=items+items;
+      <div class="tile-body"><span class="tile-num">${WC.length}</span><div><b>World Cup 2026</b><span>A poster for every match · oil pastel</span></div></div></a>`;
 }
 
+/* Studio motion. Every piece is drawn from the one animation loop, only while its page is showing and it is on
+   screen. Without motion (reduced motion) each one settles into a still, readable arrangement. */
+let scrollV=0;
+const onScreen=el=>{if(!el||!el.getClientRects().length)return null;const r=el.getBoundingClientRect();return r.bottom>-40&&r.top<window.innerHeight+40?r:null};
+const homeOn=()=>document.body.dataset.view==='home';
+
+/* the hero: a ring of work turning slowly around the headline; scrolling spins it on and opens it out */
+const HeroWheel=(()=>{
+  const root=$('#h-wheel'),hero=$('#h-hero'),copy=$('#h-copy');if(!root)return null;
+  const P=id=>[PV[id],id,byId[id]?byId[id].name:''];
+  const W_=n=>{const p=wcN(n);return p?[p.th,'world-cup',`World Cup · ${wcTitle(p)}`]:null};
+  const items=[P('i-bitnob'),W_(72),P('sports'),P('doom'),P('i-editorial'),P('coventry'),W_(1),P('i-food'),P('birds'),P('roland'),P('i-info'),[ART_BASE[1]&&ART_BASE[1].src,'visual-art','Visual art'],W_(53),P('i-genx'),P('voiture'),P('i-roqqu')].filter(x=>x&&x[0]);
+  root.innerHTML=items.map(([src,go,label],i)=>`<a class="hw-card" href="#${go}" data-go="${go}" tabindex="-1" draggable="false" data-cursor="${esc(label)}"><img src="${esc(src)}" alt="" draggable="false"${i>7?' loading="lazy"':''}></a>`).join('');
+  const cards=$$('.hw-card',root),N=cards.length,hov=new Array(N).fill(0);
+  let rot=-Math.PI*.98,spd=0,hoverI=-1,mx=0,my=0,tmx=0,tmy=0,lastT=0,intro=0;
+  cards.forEach((c,i)=>{c.addEventListener('pointerenter',()=>{hoverI=i});c.addEventListener('pointerleave',()=>{if(hoverI===i)hoverI=-1})});
+  hero.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;tmx=e.clientX/window.innerWidth*2-1;tmy=e.clientY/window.innerHeight*2-1},{passive:true});
+  function frame(t){
+    const dt=lastT?Math.min(64,t-lastT):16;lastT=t;
+    if(!homeOn())return;const r=onScreen(hero);if(!r)return;
+    const W=hero.clientWidth,H=hero.clientHeight,mob=W<760;
+    const p=clamp(-r.top/H,0,1);
+    intro=reduced?1:Math.min(1,intro+dt/1600);const ie=EASE.out(intro);
+    mx+=(tmx-mx)*.05;my+=(tmy-my)*.05;
+    const open=1+p*.42+(1-ie)*.25;
+    const cx=W*.5+mx*14,cy=H*(mob?.43:.735)+my*10,rx=W*(mob?.72:.42)*open,ry=H*(mob?.215:.53)*open;
+    if(!reduced){const target=hoverI>=0?0:.000052+Math.min(.0009,Math.abs(scrollV)*.00005)+(1-ie)*.0012;spd+=(target-spd)*.06;rot+=spd*dt}
+    for(let i=0;i<N;i++){
+      const th=rot+i/N*Math.PI*2,x=cx+rx*Math.cos(th),y=cy+ry*Math.sin(th);
+      let a=Math.atan2(ry*Math.cos(th),-rx*Math.sin(th))*.6;
+      hov[i]+=((i===hoverI?1:0)-hov[i])*.12;
+      const fadeY=cy-ry*(mob?-.3:.1),al=clamp(1-(y-fadeY)/(ry*.22),0,1)*ie;
+      const s=(1+hov[i]*.08)*(.92+.08*ie);
+      const c=cards[i];
+      c.style.transform=`translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${(a*(1-hov[i]*.35)).toFixed(4)}rad) scale(${s.toFixed(4)})`;
+      c.style.opacity=al.toFixed(3);c.style.pointerEvents=al>.5?'':'none';c.style.zIndex=i===hoverI?20:'';
+    }
+    if(copy){copy.style.transform=`translate(-50%,${(-p*70).toFixed(1)}px)`;copy.style.opacity=clamp(1-p*1.5,0,1).toFixed(3)}
+  }
+  return {frame};
+})();
+
+/* a curved strip, seen from inside the curve: drag it, scroll past it, or let it drift */
+function Cylinder(root,items,o={}){
+  if(!root||!items.length)return null;
+  const auto=o.auto||0,link=o.link==null?.45:o.link,tab=o.tab!==false;
+  root.innerHTML=items.map((it,i)=>`<a class="cyl-card" href="#${it.go}" data-go="${it.go}" draggable="false"${tab?'':' tabindex="-1"'}${it.cursor?` data-cursor="${esc(it.cursor)}"`:''}><img src="${esc(it.src)}" alt="${esc(it.alt||'')}" draggable="false" loading="lazy">${o.tags?`<span class="cyl-tag">${esc(it.label)}<span aria-hidden="true">↗</span></span>`:''}</a>`).join('');
+  const cards=$$('.cyl-card',root),N=cards.length;
+  let s=0,v=0,drag=null,wasDrag=false,target=null,idle=0,cw=0,step=1,R=1,L=1,active=-1,lastT=0;
+  function measure(){const W=root.clientWidth;cw=cards[0].offsetWidth||1;step=cw+Math.max(14,cw*.08);L=step*N;R=Math.max(W*(W<760?1.05:.95),cw*2.4)}
+  const nearest=i=>{const k=Math.round((s-i*step)/L);return i*step+k*L};
+  root.addEventListener('pointerdown',e=>{if(e.button!==0)return;drag={x:e.clientX,s,lx:e.clientX,lt:performance.now(),moved:0,id:e.pointerId};v=0;target=null});
+  window.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;const dx=e.clientX-drag.x;drag.moved=Math.max(drag.moved,Math.abs(dx));if(drag.moved>6)root.classList.add('is-drag');s=drag.s-dx*1.15;const now=performance.now();v=-(e.clientX-drag.lx)*1.15*(16/Math.max(8,now-drag.lt));drag.lx=e.clientX;drag.lt=now},{passive:true});
+  const up=e=>{if(!drag||(e&&e.pointerId!==drag.id))return;wasDrag=drag.moved>6;drag=null;root.classList.remove('is-drag');idle=performance.now()};
+  window.addEventListener('pointerup',up);window.addEventListener('pointercancel',up);
+  root.addEventListener('click',e=>{if(wasDrag){e.preventDefault();e.stopPropagation();wasDrag=false}},true);
+  root.addEventListener('wheel',e=>{if(Math.abs(e.deltaX)>Math.abs(e.deltaY)*1.2){s+=e.deltaX;target=null;idle=performance.now();e.preventDefault()}},{passive:false});
+  cards.forEach((c,i)=>c.addEventListener('focus',()=>{target=nearest(i)}));
+  function frame(t,sy,visible){
+    const dt=lastT?Math.min(64,t-lastT):16;lastT=t;
+    if(!visible)return;const r=onScreen(root);if(!r)return;
+    if(!cw||cw<2)measure();
+    if(!drag){
+      if(target!=null){s+=(target-s)*.12;if(Math.abs(target-s)<.4){s=target;target=null}}
+      else{
+        s+=v;v*=.93;
+        if(!reduced){s+=auto*dt/16;s+=scrollV*link;if(scrollV)idle=performance.now()}
+        if(!auto&&Math.abs(v)<.35&&performance.now()-idle>260){const g=Math.round(s/step)*step;s+=(g-s)*.09}
+      }
+    }
+    for(let i=0;i<N;i++){
+      let u=((i*step-s)%L+L)%L;if(u>L/2)u-=L;
+      const ph=u/R,c=cards[i];
+      if(Math.abs(ph)>1.05){if(c.style.visibility!=='hidden')c.style.visibility='hidden';continue}
+      const x=R*Math.sin(ph),z=R*(1-Math.cos(ph));
+      c.style.visibility='visible';
+      c.style.transform=`translate3d(${x.toFixed(1)}px,0,${z.toFixed(1)}px) rotateY(${(-ph).toFixed(4)}rad)`;
+    }
+    const a=((Math.round(s/step)%N)+N)%N;if(a!==active){active=a;if(o.onActive)o.onActive(a)}
+  }
+  return {frame,measure,go(d){target=Math.round((target!=null?target:s)/step)*step+d*step}};
+}
+
+/* posters standing in a row: the front one folds forward onto the floor and shows the next */
+function FlipStack(root,n,thumb,full){
+  if(!root||!n)return null;
+  const SL=7;root.innerHTML=Array.from({length:SL},()=>'<div class="flip-card"><img alt="" draggable="false"></div>').join('');
+  const els=$$('.flip-card',root).map(el=>({el,img:el.firstChild,idx:-1,full:false}));
+  let f=-1,settle=0;
+  function render(fv){
+    fv=clamp(fv,0,n-1);if(Math.abs(fv-f)<.0005&&f>=0){return}
+    f=fv;settle=performance.now();
+    const k=Math.floor(f);const show=new Set();
+    for(let i=k-1;i<=k+5;i++){
+      if(i<0||i>=n)continue;show.add(i%SL);
+      const E=els[i%SL];
+      if(E.idx!==i){E.idx=i;E.full=false;E.img.src=thumb(i)}
+      const d=i-f;let tr,sh,z,op=1;
+      if(d<=-1){tr='rotateX(-90deg)';sh=.62;z=30;op=clamp(2+d,0,1)}
+      else if(d<=0){tr=`rotateX(${(d*90).toFixed(2)}deg)`;sh=-d*.62;z=60}
+      else{tr=`translate3d(0,${(-d*14).toFixed(1)}px,${(-d*80).toFixed(1)}px)`;sh=Math.min(.75,d*.13);z=50-Math.ceil(d);op=clamp(5-d,0,1)}
+      E.el.style.transform=tr;E.el.style.setProperty('--sh',sh.toFixed(3));E.el.style.zIndex=z;E.el.style.opacity=op.toFixed(3);E.el.style.visibility='visible';
+    }
+    els.forEach((E,s)=>{if(!show.has(s))E.el.style.visibility='hidden'});
+    const pre=Math.min(n-1,k+7);if(pre>=0){const im=new Image();im.src=thumb(pre)}
+  }
+  function tick(){
+    if(!full||f<0||performance.now()-settle<350)return;
+    const i=Math.round(f);if(Math.abs(f-i)>.02)return;const E=els[i%SL];
+    if(E.idx===i&&!E.full){E.full=true;const im=new Image();im.onload=()=>{if(E.idx===i)E.img.src=im.src};im.src=full(i)}
+  }
+  return {render,tick,get f(){return f}};
+}
+
+/* "What I do": one red card follows the discipline under the pointer */
+const DoCard=(()=>{
+  const list=$('#do-list'),card=$('#do-card');if(!list||!card)return null;
+  const D=[
+    ['Illustration','Product, brand and editorial illustration for fintech and tech companies, from a set of spot illustrations to a whole system.',[PV['i-bitnob'],PV['i-editorial'],PV['i-roqqu']],'See illustration work'],
+    ['Graphic design','Posters, covers, campaigns and identities for sport, music and culture, and personal series like a poster for every match.',[PV.sports,PV.doom,PV.birds],'See design work'],
+    ['Visual art','Sports moments, animals, people, places and still life, built up in thick layers of oil pastel.',ART_BASE.slice(1,4).map(a=>a.src),'See the artwork'],
+    ['Play Inquiry','Hands-on creative workshops for teams, communities and children. No drawing experience required.',['img/play/lagos/t-lagos-01.jpg','img/play/lagos/t-lagos-06.jpg','img/play/club/strip-club.jpg'],'Visit Play Inquiry']];
+  let cur=-1;
+  function set(i,row){
+    if(!finePointer||window.innerWidth<900)return;
+    if(i!==cur){cur=i;const d=D[i];$('#do-card-t').textContent=d[0];$('#do-card-n').textContent=pad(i+1,2)+' / 04';$('#do-card-p').textContent=d[1];$('#do-card-imgs').innerHTML=d[2].map(s=>`<img src="${esc(s)}" alt="">`).join('');$('#do-card-more').textContent=d[3]}
+    const w=$('.h-do-w',row),lr=list.getBoundingClientRect(),wr=w.getBoundingClientRect(),cw=card.offsetWidth,par=card.offsetParent.getBoundingClientRect();
+    const x=clamp(wr.left-par.left+wr.width*.62-cw*.3,0,par.width-cw-8),y=wr.top-par.top-cw*.16;
+    card.style.transform=`translate3d(${x.toFixed(0)}px,${y.toFixed(0)}px,0) rotate(${i%2?2.5:-2.5}deg)`;card.classList.add('on');
+  }
+  $$('.h-do-row',list).forEach(r=>{r.addEventListener('pointerenter',()=>set(+r.dataset.do,r));r.addEventListener('focus',()=>set(+r.dataset.do,r))});
+  list.addEventListener('pointerleave',()=>card.classList.remove('on'));
+  $$('.h-do-row',list).forEach(r=>r.addEventListener('blur',()=>card.classList.remove('on')));
+  return {};
+})();
+
+/* selected work on the curved strip */
+let SelCyl=null,FtrCyl=null;
+(()=>{
+  const items=SELECTED.map(id=>byId[id]).filter(Boolean).map(e=>({src:e.pv,go:e.id,label:e.name,alt:e.name,cursor:'View'}));
+  SelCyl=Cylinder($('#sel-cyl'),items,{tags:true,link:.5,onActive:i=>{const e=byId[SELECTED[i]];if(!e)return;$('#sel-name').textContent=e.name;$('#sel-cat').textContent=`${pad(i+1,2)} / ${pad(items.length,2)} · ${CAT[e.cat]}`}});
+  $('#sel-prev').addEventListener('click',()=>SelCyl&&SelCyl.go(-1));
+  $('#sel-next').addEventListener('click',()=>SelCyl&&SelCyl.go(1));
+  const fItems=['i-bitnob','sports','world-cup','i-editorial','doom','coventry','i-food','birds','visual-art','roland','i-info','grupe','i-genx','voiture'].map(id=>byId[id]).filter(Boolean).map(e=>({src:e.pv,go:e.id,label:e.name}));
+  FtrCyl=Cylinder($('#ftr-cyl'),fItems,{auto:.45,link:.25,tab:false});
+})();
+
+/* the World Cup series: posters fold forward as the page scrolls */
+const SeriesHome=(()=>{
+  const sec=$('#h-series');if(!sec)return null;
+  const list=[72,1,6,13,17,22,30,33,41,47,53,62,64,71,77,85,88,94,97,103,100].map(wcN).filter(Boolean);
+  const flip=FlipStack($('#hs-flip'),list.length,i=>list[i].th,i=>list[i].src);
+  const no=$('#hs-no'),mt=$('#hs-match'),bar=$('#hs-bar');let last=-1;
+  function frame(){
+    if(!homeOn())return;const r=onScreen(sec);if(!r)return;
+    const H=window.innerHeight,p=clamp(-r.top/Math.max(1,r.height-H),0,1);
+    const f=reduced?Math.round(p*(list.length-1)):p*(list.length-1);
+    flip.render(f);flip.tick();bar.style.transform=`scaleX(${p.toFixed(4)})`;
+    const i=clamp(Math.round(f),0,list.length-1);if(i!==last){last=i;no.textContent=pad(list[i].n);mt.textContent=wcTitle(list[i])}
+  }
+  return {frame};
+})();
+
+/* visual art on a wheel: scrolling turns it, one piece at a time */
+const ArtWheel=(()=>{
+  const sec=$('#h-art'),root=$('#ha-wheel');if(!sec||!root)return null;
+  const items=ART.slice(0,16);
+  root.innerHTML=items.map(a=>`<a class="ha-card" href="#visual-art" data-go="visual-art" tabindex="-1" draggable="false" data-cursor="Visual art"><img src="${esc(a.src)}" width="${a.w}" height="${a.h}" alt="" loading="lazy" draggable="false"></a>`).join('');
+  const cards=$$('.ha-card',root),N=cards.length,cap=$('#ha-cap'),num=$('#ha-n');let last=-1,sm=-1;
+  $('#ha-total').textContent=ART.length;
+  function frame(){
+    if(!homeOn())return;const r=onScreen(sec);if(!r)return;
+    const W=window.innerWidth,H=window.innerHeight,mob=W<900;
+    const p=clamp(-r.top/Math.max(1,r.height-H),0,1),target=p*(N-1);
+    sm=sm<0||reduced?target:sm+(target-sm)*.14;
+    const st=mob?.62:.46,R=mob?W*1.08:Math.max(W*.6,H*.95),cx=mob?W*.5:Math.min(W*.4,W*.44-R*.05)-R,cy=mob?H*.36-R:H*.5,base=mob?Math.PI/2:0;
+    for(let i=0;i<N;i++){
+      const ph=(i-sm)*st,a=base+ph,c=cards[i];
+      if(Math.abs(ph)>1.35){c.style.visibility='hidden';continue}
+      const x=cx+R*Math.cos(a),y=cy+R*Math.sin(a),k=Math.min(1,Math.abs(ph)/1.2);
+      c.style.visibility='visible';
+      c.style.transform=`translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${(mob?-ph:ph).toFixed(4)}rad) scale(${(1-k*.22).toFixed(4)})`;
+      c.style.opacity=(1-k*.55).toFixed(3);c.style.zIndex=100-Math.round(Math.abs(ph)*20);
+    }
+    const i=clamp(Math.round(sm),0,N-1);if(i!==last){last=i;cap.textContent=items[i].cap;num.textContent=`${pad(i+1,2)} / ${pad(N,2)}`}
+  }
+  return {frame};
+})();
+
+function renderHome(){
+  $('#sel-count').textContent=`(${SELECTED.length})`;
+  $('#series-tiles').innerHTML=tilesHTML();
+  const C=['Bitnob','Roqqu','Lendsqr','Gen X','Oko Insurance','Cismetrics','Ruwah','Pressure Is a Privilege'];
+  const once=`<em>Illustration for</em>${C.map(c=>`<i aria-hidden="true"></i><span>${c}</span>`).join('')}<i aria-hidden="true"></i>`;
+  $('#clients').innerHTML=once+`<span class="sr">.</span>`+once.replace(/<span>/g,'<span aria-hidden="true">').replace('<em>','<em aria-hidden="true">');
+  const l=covAll()[0];
+  $('#h-cov').innerHTML=l?`<img src="${esc(l.th||l.src)}" alt=""><span><span class="live">Live</span> · Matchday ${l.md?pad(l.md,2):''}<b>${esc(covTitle(l))}</b></span>`:'';
+  $('#hs-total').textContent=WC.length;
+  const faces=['i-bitnob','i-roqqu','i-lendsqr','i-genx'].map(id=>PV[id]).filter(Boolean);
+  const fc=$('#ab-faces');if(fc)fc.innerHTML=faces.map(s=>`<img src="${esc(s)}" alt="" loading="lazy">`).join('');
+}
+function studioFrame(t,sy){
+  const v=document.body.dataset.view;
+  if(HeroWheel)HeroWheel.frame(t);
+  if(SelCyl)SelCyl.frame(t,sy,v==='home');
+  if(SeriesHome)SeriesHome.frame();
+  if(ArtWheel)ArtWheel.frame();
+  if(FtrCyl)FtrCyl.frame(t,sy,document.body.dataset.world!=='play');
+  if(WcFlip&&v==='world-cup')WcFlip.frame();
+}
+function studioShow(){requestAnimationFrame(()=>{[SelCyl,FtrCyl].forEach(c=>c&&c.measure())})}
+window.addEventListener('resize',()=>{[SelCyl,FtrCyl].forEach(c=>c&&c.measure())});
+/* About: the notes drift a little with the pointer */
+(()=>{const st=$('#ab-stage');if(!st||!finePointer||reduced)return;st.addEventListener('pointermove',e=>{const r=st.getBoundingClientRect();st.style.setProperty('--mx',((e.clientX-r.left)/r.width*2-1).toFixed(3));st.style.setProperty('--my',((e.clientY-r.top)/r.height*2-1).toFixed(3))});st.addEventListener('pointerleave',()=>{st.style.setProperty('--mx','0');st.style.setProperty('--my','0')})})();
+
 /* ---------- work index ---------- */
-const work={filter:'all',mode:'list',earlier:false};
+const work={filter:'all',mode:'grid',earlier:false};
 const WORK_INTRO={
   all:'Every project in one index: poster series, graphic design, illustration and visual art.',
   series:'Two personal, ongoing poster series built around football: one for every match of the 2026 World Cup, and one for every Coventry matchday.',
@@ -324,16 +475,16 @@ function renderWork(){
   const cnt=f=>f==='all'?ENTRIES.length:ENTRIES.filter(e=>e.cat===f).length;
   $('#work-filters').innerHTML=F.map(([f,l])=>`<button type="button" class="chip" data-wf="${f}" aria-pressed="${work.filter===f}">${l}<sup>${cnt(f)}</sup></button>`).join('');
   $$('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===work.mode)));
-  $('#work-total').textContent=`${ENTRIES.length} projects`;
+  $('#work-total').textContent=`${ENTRIES.length} projects`;$('#work-sup').textContent=`(${ENTRIES.length})`;
   $('#work-intro').textContent=WORK_INTRO[work.filter]||WORK_INTRO.all;
   const list=ENTRIES.filter(e=>!e.earlier&&(work.filter==='all'||e.cat===work.filter));
   const early=ENTRIES.filter(e=>e.earlier);
-  const wrapL=a=>work.mode==='list'?`<div class="rows">${a.map(rowHTML).join('')}</div>`:`<div class="cards">${a.map(cardHTML).join('')}</div>`;
+  const wrapL=a=>work.mode==='list'?`<div class="rows">${a.map(rowHTML).join('')}</div>`:`<div class="wk-grid">${a.map(cardHTML).join('')}</div>`;
   $('#work-list').innerHTML=wrapL(list);
   const showE=work.filter==='all'||work.filter==='ill';
   $('#earlier-wrap').hidden=!showE;
   $('#work-earlier').hidden=!showE||!work.earlier;
-  const eb=$('#earlier-btn');eb.setAttribute('aria-expanded',String(work.earlier));eb.innerHTML=work.earlier?'Hide earlier projects <span class="ar">↑</span>':'Read earlier projects <span class="ar">↓</span>';
+  const eb=$('#earlier-btn');eb.setAttribute('aria-expanded',String(work.earlier));eb.innerHTML=work.earlier?'Hide earlier projects <span class="ar" aria-hidden="true">↑</span>':'Read earlier projects <span class="ar" aria-hidden="true">↓</span>';
   $('#work-earlier-list').innerHTML=wrapL(early);
   armReveals($('#v-work'));
 }
@@ -343,18 +494,17 @@ $('#earlier-btn').addEventListener('click',()=>{work.earlier=!work.earlier;rende
 
 /* ---------- project pages ---------- */
 const LBSETS={};
-const marks='<span class="marks" aria-hidden="true"><i></i><i></i><i></i><i></i></span>';
 const sectionsHTML=s=>s.map(([h,items,list])=>`<div><h2 class="mono">${esc(h)}</h2>${list?`<ul>${items.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:items.map(t=>`<p>${esc(t)}</p>`).join('')}</div>`).join('');
-const nextHTML=(id,title,label)=>`<a class="pj-next" href="#${id}" data-go="${id}" data-cursor="Next"><span class="mono">${label}</span><b>${esc(title)} →</b></a>`;
+const nextHTML=(id,title,label)=>`<a class="pj-next" href="#${id}" data-go="${id}" data-cursor="Next"><div><span class="s-kicker">${label}</span><b>${esc(title)}</b></div><img src="${esc(PV[id]||'')}" alt="" loading="lazy"></a>`;
 function renderProject(p){
   const i=PROJECTS.indexOf(p),next=PROJECTS[(i+1)%PROJECTS.length];
   const first=p.sections[0][1][0];const lede=first.split('. ')[0].replace(/\.$/,'')+'.';
   LBSETS.project=[p.cover,...p.images].map((src,k)=>({src,cap:k?`${p.title} · page ${k}`:`${p.title} · cover`}));
   const del=(p.sections.find(s=>s[0]==='Deliverables')||[0,[]])[1];
-  $('#project-detail').innerHTML=`${marks}
-    <a class="back mono" href="#work" data-go="work" data-filter="gd">← Index</a>
+  $('#project-detail').innerHTML=`
+    <a class="s-back" href="#work" data-go="work" data-filter="gd">← Index</a>
     <header class="pj-head">
-      <p class="pj-eyebrow mono">Graphic design · ${esc(p.kind)}</p>
+      <p class="pj-eyebrow s-kicker">Graphic design · ${esc(p.kind)}</p>
       <h1 class="pj-title" tabindex="-1">${esc(p.title)}</h1>
       <p class="pj-lede">${esc(lede)}</p>
       <dl class="pj-meta"><div><dt class="mono">Discipline</dt><dd>${esc(p.kind)}</dd></div>${del.length?`<div style="grid-column:1/-1"><dt class="mono">Deliverables</dt><dd>${del.map(esc).join(' · ')}</dd></div>`:''}</dl>
@@ -370,10 +520,10 @@ function renderIll(p){
   const grid=p.layout==='masonry'
     ?`<div class="masonry">${p.items.map((it,k)=>`<figure><button class="shot" type="button" data-lb="ill" data-i="${k}" data-cursor="Enlarge"><img src="${it.src}" width="${it.w}" height="${it.h}" alt="${esc(it.cap||p.name)}" loading="lazy"></button>${it.cap?`<figcaption class="mono">${esc(it.cap)}</figcaption>`:''}</figure>`).join('')}</div>`
     :`<div class="pp-grid">${p.items.map((it,k)=>`<button class="shot" type="button" data-lb="ill" data-i="${k}" data-cursor="Enlarge"><img src="${it.src}" alt="${esc(it.cap||p.name)}" loading="lazy"></button>`).join('')}</div>`;
-  $('#ill-detail').innerHTML=`${marks}
-    <a class="back mono" href="#work" data-go="work" data-filter="ill">← Illustration</a>
+  $('#ill-detail').innerHTML=`
+    <a class="s-back" href="#work" data-go="work" data-filter="ill">← Illustration</a>
     <header class="pj-head">
-      <p class="pj-eyebrow mono">Illustration · ${esc(p.kind)}</p>
+      <p class="pj-eyebrow s-kicker">Illustration · ${esc(p.kind)}</p>
       <h1 class="pj-title" tabindex="-1">${esc(p.name)}</h1>
       <p class="pj-lede">${esc(p.text)}</p>
       <dl class="pj-meta"><div><dt class="mono">Tools</dt><dd><div class="pj-tags mono">${p.tools.map(t=>`<span>${esc(t)}</span>`).join('')}</div></dd></div><div><dt class="mono">Pieces</dt><dd>${p.items.length}</dd></div>${p.link?`<div style="grid-column:1/-1"><dt class="mono">More</dt><dd><a class="pj-ext" href="${esc(p.link)}" target="_blank" rel="noopener">${/behance/.test(p.link)?'Full case study on Behance':'Visit the live site'} ↗</a></dd></div>`:''}</dl>
@@ -395,22 +545,26 @@ function renderWC(){
 }
 $('#wc-stages').addEventListener('click',e=>{const b=e.target.closest('[data-stage]');if(!b)return;wcStage=b.dataset.stage;renderWC()});
 $('#wc-q').addEventListener('input',e=>{wcQ=e.target.value;renderWC()});
+let WcFlip=null;
 const Scrub=(()=>{
-  const ruler=$('#scrub-ruler'),head=$('#scrub-head'),img=$('#scrub-img'),no=$('#scrub-no'),title=$('#scrub-title'),stage=$('#scrub-stage');
-  const N=WC_SORTED.length;let idx=0,pre=false,drag=false;
+  const ruler=$('#scrub-ruler'),head=$('#scrub-head'),no=$('#scrub-no'),title=$('#scrub-title'),stage=$('#scrub-stage'),stack=$('#wc-flip');
+  const N=WC_SORTED.length;let idx=0,drag=false,f=0;
+  const flip=FlipStack(stack,N,i=>WC_SORTED[i].th,i=>WC_SORTED[i].src);
   let labs='';for(let i=0;i<N;i+=10)labs+=`<span class="lab mono" style="left:${(i+.5)/N*100}%">${pad(WC_SORTED[i].n)}</span>`;
   const ko=WC_SORTED.findIndex(p=>p.s==='ko');if(ko>0)labs+=`<span class="ko" style="left:${ko/N*100}%"><span class="mono">Knockouts →</span></span>`;
   ruler.insertAdjacentHTML('beforeend',labs);
   ruler.setAttribute('aria-valuemax',String(N));
-  function set(i){idx=clamp(i,0,N-1);const p=WC_SORTED[idx];if(img.getAttribute('src')!==p.th)img.src=p.th;img.alt=`Poster ${p.n}: ${wcTitle(p)}`;no.textContent=pad(p.n);title.textContent=wcTitle(p);stage.textContent=p.s==='ko'?'Knockout rounds':'Group stage';head.style.left=((idx+.5)/N*100)+'%';ruler.setAttribute('aria-valuenow',String(idx+1));ruler.setAttribute('aria-valuetext',`Poster ${p.n}, ${wcTitle(p)}`)}
-  const preload=()=>{if(pre)return;pre=true;WC_SORTED.forEach(p=>{const im=new Image();im.src=p.th})};
+  function set(i){idx=clamp(i,0,N-1);const p=WC_SORTED[idx];no.textContent=pad(p.n);title.textContent=wcTitle(p);stage.textContent=p.s==='ko'?'Knockout rounds':'Group stage';head.style.left=((idx+.5)/N*100)+'%';ruler.setAttribute('aria-valuenow',String(idx+1));ruler.setAttribute('aria-valuetext',`Poster ${p.n}, ${wcTitle(p)}`);stack.setAttribute('aria-label',`Enlarge poster ${p.n}: ${wcTitle(p)}`)}
   const fromX=x=>{const r=ruler.getBoundingClientRect();return Math.floor(clamp((x-r.left)/r.width,0,.9999)*N)};
-  ruler.addEventListener('pointerenter',preload);
-  ruler.addEventListener('pointerdown',e=>{preload();drag=true;try{ruler.setPointerCapture(e.pointerId)}catch(_){}set(fromX(e.clientX))});
+  ruler.addEventListener('pointerdown',e=>{drag=true;try{ruler.setPointerCapture(e.pointerId)}catch(_){}set(fromX(e.clientX))});
   ruler.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'||drag)set(fromX(e.clientX))});
   ['pointerup','pointercancel'].forEach(t=>ruler.addEventListener(t,()=>{drag=false}));
   ruler.addEventListener('keydown',e=>{const k=e.key,m={ArrowRight:1,ArrowUp:1,ArrowLeft:-1,ArrowDown:-1,PageUp:10,PageDown:-10};if(k in m){set(idx+m[k]);e.preventDefault()}else if(k==='Home'){set(0);e.preventDefault()}else if(k==='End'){set(N-1);e.preventDefault()}});
-  $('#scrub-sheet').addEventListener('click',e=>openLB(WC_SORTED.map(p=>({src:p.src,cap:`No. ${pad(p.n)} · ${wcTitle(p)}`})),idx,e.currentTarget));
+  const open=()=>openLB(WC_SORTED.map(p=>({src:p.src,cap:`No. ${pad(p.n)} · ${wcTitle(p)}`})),idx,stack);
+  stack.addEventListener('click',open);
+  stack.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}else if(e.key==='ArrowRight'){set(idx+1);e.preventDefault()}else if(e.key==='ArrowLeft'){set(idx-1);e.preventDefault()}});
+  /* the stack eases toward the chosen poster; a long jump folds through the posters in between, quickly */
+  WcFlip={frame(){if(!flip)return;const d=idx-f;if(reduced||Math.abs(d)<.002)f=idx;else{const st=Math.sign(d)*Math.min(Math.abs(d),Math.max(.05,Math.abs(d)*.14));f+=st}flip.render(f);flip.tick()}};
   set(0);return {set};
 })();
 
@@ -438,11 +592,11 @@ $('#art-filters').addEventListener('click',e=>{const b=e.target.closest('[data-c
 
 /* ---------- about ---------- */
 $('#disc').innerHTML=[
-  ['ill','Illustration','Editorial illustration, drawing and painting.',`${ILL_PROJECTS.length} projects`],
+  ['ill','Illustration','Product, brand and editorial illustration, drawing and painting.',`${ILL_PROJECTS.length} projects`],
   ['gd','Graphic design','Posters, editorial covers, campaigns and identity systems.',`${PROJECTS.length} projects`],
   ['series','Poster series','Posters, made one match at a time.','2 ongoing'],
   ['play','Creative workshops','Play Inquiry: guided, hands-on creative experiences for individuals, communities and teams.','Play Inquiry']
-].map(([f,t,d,s])=>`<a href="#${f==='play'?'play-inquiry':'work'}" data-go="${f==='play'?'play-inquiry':'work'}"${f==='play'?'':` data-filter="${f}"`}><b>${t}</b><p>${d}</p><span class="mono">${s} →</span></a>`).join('');
+].map(([f,t,d,s],k)=>`<a href="#${f==='play'?'play-inquiry':'work'}" data-go="${f==='play'?'play-inquiry':'work'}"${f==='play'?'':` data-filter="${f}"`}><span class="mono">${pad(k+1,2)}</span><b>${t}</b><p>${d}</p><span>${s} →</span></a>`).join('');
 
 /* ---------- lightbox ---------- */
 let lbList=[],lbI=0,lbFrom=null;
@@ -508,7 +662,8 @@ function show(name,initial){
   document.body.dataset.world=world;document.body.dataset.view=view;
   current=route;currentView=view;
   const nk=NAVKEY[view]||'';$$('[data-nav]').forEach(a=>{a.dataset.nav===nk?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current')});
-  $('#ftr-name').textContent=world==='play'?'Play Inquiry':'Oselu Irabor.';fitFooter();
+  if(world==='play')$('#ftr-name').textContent='Play Inquiry';else $('#ftr-name').innerHTML='Oselu Irabor<span>.</span>';fitFooter();
+  if(world==='play'){const h=$('#hdr');h.removeAttribute('data-hide');h.removeAttribute('data-scrolled')}else studioShow(view);
   if(initial){try{history.replaceState(null,'','#'+route)}catch(_){}}
   Preview.hide(true);closeMenu();scrollTop(false);
   if(lenis)lenis.resize();
@@ -517,7 +672,7 @@ function show(name,initial){
   if(!initial){
     const h=sec?document.getElementById(sec):v&&v.querySelector('[tabindex="-1"]');
     if(h){if(sec&&!h.hasAttribute('tabindex'))h.setAttribute('tabindex','-1');h.focus({preventScroll:true})}
-    if(!sec)playSplit(v&&v.querySelector('.page-h,.pj-title,.pi-h1,.wc-intro h1,#v-coventry h1'),80);
+    if(!sec)playSplit(v&&v.querySelector('.s-h1,.h-title,.ab-title,.pj-title,.pi-h1,.wc-intro h1,#v-coventry h1'),80);
   }
   if(world==='play')Play.onShow(view,sec,initial);
   requestAnimationFrame(()=>armReveals(v));
@@ -562,56 +717,14 @@ document.addEventListener('click',e=>{
 $('.skip').addEventListener('click',e=>{e.preventDefault();const h=$('.view:not([hidden]) [tabindex="-1"]')||$('#main');h.setAttribute('tabindex','-1');h.focus()});
 window.addEventListener('hashchange',()=>{const n=decodeURIComponent(location.hash.slice(1));if(!n||n===current)return;if(viewOf(n)==='home'&&n!=='home')return;go(n,false)});
 
-/* ---------- hero rotation (random World Cup poster every 30–60 s) ---------- */
-const Hero=(()=>{
-  const sheet=$('#hero-sheet'),imgs=[$('#hero-a'),$('#hero-b')],no=$('#hero-no'),title=$('#hero-title'),bar=$('#hero-bar');
-  let cur=0,last=-1,dur=45000,remain=45000,lastT=0,swapping=false,started=false;
-  const pick=()=>{let i;do{i=Math.floor(Math.random()*WC.length)}while(WC.length>1&&i===last);last=i;return WC[i]};
-  const caption=p=>{no.textContent='No. '+pad(p.n);title.textContent=wcTitle(p);document.documentElement.style.setProperty('--tint',p.c||'#ff5b3a')};
-  const schedule=()=>{dur=30000+Math.random()*30000;remain=dur};
-  /* plain crossfade between the two stacked images (no WebGL, or before it loads) */
-  function domSwap(p){return new Promise(res=>{const next=imgs[1-cur];
-    const done=()=>{next.onload=next.onerror=null;caption(p);imgs[cur].classList.remove('on');next.classList.add('on');cur=1-cur;res()};
-    next.onload=done;next.onerror=()=>{next.onload=next.onerror=null;res()};next.src=p.src;if(next.complete&&next.naturalWidth)done()})}
-  async function swap(p){
-    if(swapping)return;swapping=true;
-    try{
-      if(GL&&sheet.classList.contains('gl-on')){await GL.heroTo(p.src,false,()=>caption(p));imgs[cur].src=p.src}
-      else await domSwap(p);
-    }catch(_){await domSwap(p)}
-    swapping=false;schedule();
-  }
-  async function attachGL(){
-    if(!GL)return;
-    while(swapping)await wait(150);
-    swapping=true;
-    try{await GL.heroTo(imgs[cur].getAttribute('src'),true);sheet.classList.add('gl-on')}catch(_){}
-    swapping=false;
-  }
-  function start(){
-    started=true;const first=WC.find(p=>imgs[0].getAttribute('src')===p.src)||WC[0];last=WC.indexOf(first);caption(first);
-    /* open on a random poster: the first change comes a moment after load, the rest every 30–60 s */
-    dur=remain=reduced?1:2600;
-  }
-  $('#hero-next').addEventListener('click',()=>{if(!swapping)swap(pick())});
-  return {start,attachGL,frame(t){
-    const dt=lastT?Math.min(100,t-lastT):0;lastT=t;
-    if(!started||swapping||document.hidden||document.body.dataset.view!=='home')return;
-    remain-=dt;bar.style.transform=`scaleX(${clamp(1-remain/dur,0,1).toFixed(4)})`;
-    if(remain<=0)swap(pick());
-  }};
-})();
-
-/* ---------- mat ruler & cursor ---------- */
-const Ruler=(()=>{const el=$('#ruler');const sp=[];for(let i=0;i<16;i++){const s=document.createElement('span');el.appendChild(s);sp.push(s)}let last=-1;
-  return {frame(sy){if(window.innerWidth<1100)return;const y=Math.round(sy);if(y===last)return;last=y;const off=y%200;el.style.setProperty('--off',(-off)+'px');for(let i=0;i<sp.length;i++){sp[i].style.top=(i*200-off)+'px';sp[i].textContent=String(Math.round((y-off+i*200)/40))}}}})();
+/* ---------- cursor ---------- */
 const Cursor=(()=>{
   if(!finePointer||reduced)return null;
   document.documentElement.classList.add('has-cursor');
   const el=$('#cur'),xy=$('#cur-xy'),lab=$('#cur-label');let tx=-200,ty=-200,x=-200,y=-200,n=0;
   function target(node){
     const t=node&&node.closest&&node.closest('[data-cursor],a,button,[role=slider],label.drop,select');
-    if(t){el.classList.add('act');const l=t.dataset.cursor||(t.tagName==='A'?'Open':'');lab.textContent=l;lab.style.visibility=l?'':'hidden'}else el.classList.remove('act');
+    if(t){el.classList.add('act');const l=t.dataset.cursor||(t.tagName==='A'?'Open':'');lab.textContent=l;lab.style.visibility=l?'':'hidden';el.classList.toggle('lab',!!t.dataset.cursor)}else el.classList.remove('act','lab');
   }
   window.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;tx=e.clientX;ty=e.clientY;el.classList.add('on');target(e.target)},{passive:true});
   window.addEventListener('mouseout',e=>{if(!e.relatedTarget)el.classList.remove('on')});
@@ -620,7 +733,7 @@ const Cursor=(()=>{
 
 /* ---------- clock & footer ---------- */
 let fmtClock=null;try{fmtClock=new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Africa/Lagos'})}catch(_){}
-function tickClock(){if(!fmtClock)return;const t=fmtClock.format(new Date());$('#clock').textContent=`Kaduna ${t} WAT`;$$('.clock-any').forEach(e=>{e.textContent=`Kaduna, Nigeria · ${t} WAT`})}
+function tickClock(){if(!fmtClock)return;const t=fmtClock.format(new Date());$('#clock').textContent=`Kaduna ${t} WAT`;$$('.clock-any').forEach(e=>{e.textContent=`Kaduna, Nigeria · ${t} WAT`});$$('.clock-short').forEach(e=>{e.textContent=`${t} WAT`})}
 tickClock();setInterval(tickClock,20000);
 function fitFooter(){const el=$('#ftr-name');if(!el)return;const par=el.parentElement,cs=getComputedStyle(par);const w=par.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);el.style.display='inline-block';el.style.fontSize='100px';const sw=el.getBoundingClientRect().width;if(sw)el.style.fontSize=(100*w/sw*.99).toFixed(2)+'px'}
 window.addEventListener('resize',fitFooter);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{fitFooter();if(lenis)lenis.resize()});
@@ -703,21 +816,28 @@ async function removeCov(btn){
 renderHome();renderWC();renderCov();renderArt();
 show(decodeURIComponent(location.hash.slice(1))||'home',true);
 if(document.body.dataset.view==='home')playSplit($('#hero-h'),120);
-Hero.start();
 if(!reduced){
   whenLib('lib-lenis',()=>!!window.Lenis).then(ok=>{if(ok)initLenis()});
   whenLib('lib-three',()=>!!window.THREE).then(ok=>{
     if(!ok||GL)return;
     GL=makeGL();if(!GL)return;
     /* if the GPU drops the context, fall back to the plain page for the rest of the visit */
-    GL.onLost=()=>{GL=null;document.documentElement.classList.remove('gl');$('#hero-sheet').classList.remove('gl-on');$('#gl').style.zIndex='';$('#gl').style.display='none'};
-    document.documentElement.classList.add('gl');DomPV.hide();Hero.attachGL();
+    GL.onLost=()=>{GL=null;document.documentElement.classList.remove('gl');$('#gl').style.zIndex='';$('#gl').style.display='none'};
+    document.documentElement.classList.add('gl');DomPV.hide();
   });
+}
+let prevSy=null;const hdrEl=$('#hdr');
+function headerFrame(sy){
+  if(document.body.dataset.world==='play')return;
+  const d=prevSy==null?0:sy-prevSy;
+  if(sy>8)hdrEl.setAttribute('data-scrolled','');else hdrEl.removeAttribute('data-scrolled');
+  if(sy>160&&d>3&&$('#menu').hidden)hdrEl.setAttribute('data-hide','');else if(d<-3||sy<=160)hdrEl.removeAttribute('data-hide');
 }
 function loop(t){
   if(lenis)lenis.raf(t);
   const sy=scrollY_();
-  Ruler.frame(sy);if(Cursor)Cursor.frame(sy);hoverRecheck(sy);Hero.frame(t);
+  scrollV=prevSy==null?0:clamp(sy-prevSy,-120,120);headerFrame(sy);prevSy=sy;
+  if(Cursor)Cursor.frame(sy);hoverRecheck(sy);studioFrame(t,sy);
   if(GL)GL.frame(t);else DomPV.frame();
   requestAnimationFrame(loop);
 }
