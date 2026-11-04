@@ -30,6 +30,15 @@ const ART_EXTRA=/*EXTRA*/[]/*END*/;
 const ART_CATS=[['all','All'],['sports','Sports'],['animals','Animals'],['people','People & places'],['still','Still life']];
 ART_EXTRA.forEach(a=>{if(a.cat==='football')a.cat='sports'});
 const ART=[...ART_EXTRA.slice().sort((a,b)=>(b.added||'').localeCompare(a.added||'')),...ART_BASE];
+/* pieces are labelled by number and medium, not by a title: "No. 03 · Oil pastel on paper". A piece in img/art keeps
+   the number in its file name; pieces added later from the owner panel continue the count in the order they were added.
+   it.cap stays as a plain description of the picture, used only for screen readers and search. */
+const artMedium=a=>{const m=String(a.medium||'').trim();return !m||/^oil pastels?$/i.test(m)?'Oil pastel on paper':m};
+(()=>{const fileNo=a=>+((String(a.src).match(/art-(\d+)\.\w+$/)||[])[1]||0);
+  let next=ART_BASE.reduce((n,a)=>Math.max(n,fileNo(a)),0);
+  ART_BASE.forEach(a=>{a.no=fileNo(a)||++next});
+  ART_EXTRA.slice().sort((a,b)=>(a.added||'').localeCompare(b.added||'')).forEach(a=>{a.no=++next});
+  ART.forEach(a=>{a.label='No. '+pad(a.no,2);a.mediumLabel=artMedium(a)})})();
 const DAY=864e5;
 const isNew=it=>it.added&&(Date.now()-new Date(it.added+'T00:00:00').getTime())<14*DAY;
 const covAll=()=>[...COV_BASE,...COV_POSTERS].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
@@ -430,7 +439,7 @@ const ArtWheel=(()=>{
       c.style.transform=`translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${(mob?-ph:ph).toFixed(4)}rad) scale(${(1-k*.22).toFixed(4)})`;
       c.style.opacity=(1-k*.55).toFixed(3);c.style.zIndex=100-Math.round(Math.abs(ph)*20);
     }
-    const i=clamp(Math.round(sm),0,N-1);if(i!==last){last=i;cap.textContent=items[i].cap;num.textContent=`${pad(i+1,2)} / ${pad(N,2)}`}
+    const i=clamp(Math.round(sm),0,N-1);if(i!==last){last=i;num.textContent=items[i].label;cap.textContent=items[i].mediumLabel}
   }
   return {frame};
 })();
@@ -586,7 +595,7 @@ function renderArt(){
   artVisible=artFilter==='all'?ART:ART.filter(a=>a.cat===artFilter);
   $('#art-filters').innerHTML=ART_CATS.map(([id,l])=>{const n=id==='all'?ART.length:ART.filter(a=>a.cat===id).length;return `<button type="button" class="chip" data-cat="${id}" aria-pressed="${artFilter===id}">${esc(l)}<sup>${n}</sup></button>`}).join('');
   $('#art-total').textContent=`${ART.length} pieces`;
-  $('#art-grid').innerHTML=artVisible.map((it,k)=>`<figure><button class="shotc" type="button" data-art="${k}" data-cursor="Enlarge" aria-label="View larger: ${esc(it.cap)}"><img src="${esc(it.src)}" width="${it.w}" height="${it.h}" alt="${esc(it.cap)}, ${esc(it.medium||'oil pastel')}" loading="lazy"></button><figcaption class="mono">${isNew(it)?'<span class="new-badge">New</span>':''}<b>${esc(it.cap)}</b>${it.medium&&it.medium!=='Oil pastel'?`<span>${esc(it.medium)}</span>`:''}${artAdmin&&it.id?`<button type="button" class="rm-btn" data-rm="${esc(it.id)}">Remove</button>`:''}</figcaption></figure>`).join('');
+  $('#art-grid').innerHTML=artVisible.map((it,k)=>`<figure><button class="shotc" type="button" data-art="${k}" data-cursor="Enlarge" aria-label="View larger: ${esc(it.label)}, ${esc(it.cap)}"><img src="${esc(it.src)}" width="${it.w}" height="${it.h}" alt="${esc(it.cap)}. ${esc(it.mediumLabel)}" loading="lazy"></button><figcaption class="mono">${isNew(it)?'<span class="new-badge">New</span>':''}<b>${esc(it.label)}</b><span>${esc(it.mediumLabel)}</span>${artAdmin&&it.id?`<button type="button" class="rm-btn" data-rm="${esc(it.id)}">Remove</button>`:''}</figcaption></figure>`).join('');
 }
 $('#art-filters').addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(!b)return;artFilter=b.dataset.cat;renderArt()});
 
@@ -601,7 +610,7 @@ $('#disc').innerHTML=[
 /* ---------- lightbox ---------- */
 let lbList=[],lbI=0,lbFrom=null;
 function openLB(list,i,from){if(!list||!list.length)return;lbList=list;lbFrom=from||null;$('#lb').hidden=false;lbShow(i);if(lenis)lenis.stop();document.documentElement.style.overflow='hidden';Preview.hide();$('#lb-close').focus()}
-function lbShow(i){lbI=(i+lbList.length)%lbList.length;const it=lbList[lbI];const im=$('#lb-img');im.src=it.src;im.alt=it.cap||'';$('#lb-cap').textContent=it.cap||'';$('#lb-count').textContent=`${lbI+1} / ${lbList.length}`;$('#lb-prev').hidden=$('#lb-next').hidden=lbList.length<2}
+function lbShow(i){lbI=(i+lbList.length)%lbList.length;const it=lbList[lbI];const im=$('#lb-img');im.src=it.src;im.alt=it.alt||it.cap||'';$('#lb-cap').textContent=it.cap||'';$('#lb-count').textContent=`${lbI+1} / ${lbList.length}`;$('#lb-prev').hidden=$('#lb-next').hidden=lbList.length<2}
 function closeLB(){$('#lb').hidden=true;if(lenis)lenis.start();document.documentElement.style.overflow='';if(lbFrom)lbFrom.focus({preventScroll:true})}
 $('#lb-close').addEventListener('click',closeLB);
 $('#lb-prev').addEventListener('click',()=>lbShow(lbI-1));
@@ -709,7 +718,7 @@ document.addEventListener('click',e=>{
   const c=t.closest('[data-cov]');if(c){openLB(covLB,covStart[+c.dataset.cov],c);return}
   const rm=t.closest('[data-rm]');if(rm){removeArt(rm);return}
   const crm=t.closest('[data-covrm]');if(crm){removeCov(crm);return}
-  const a=t.closest('[data-art]');if(a){openLB(artVisible.map(x=>({src:x.src,cap:x.cap+(x.medium&&x.medium!=='Oil pastel'?` · ${x.medium}`:'')})),+a.dataset.art,a);return}
+  const a=t.closest('[data-art]');if(a){openLB(artVisible.map(x=>({src:x.src,cap:`${x.label} · ${x.mediumLabel}`,alt:x.cap})),+a.dataset.art,a);return}
   const cp=t.closest('[data-copy]');if(cp){copy(cp);return}
   const sc=t.closest('[data-scroll]');if(sc){const el=document.getElementById(sc.dataset.scroll);if(el){scrollToEl(el);if(!el.hasAttribute('tabindex'))el.setAttribute('tabindex','-1');el.focus({preventScroll:true})}return}
   const g=t.closest('[data-go]');if(g){if(e.metaKey||e.ctrlKey||e.shiftKey)return;e.preventDefault();if(g.dataset.filter){work.filter=g.dataset.filter;work.earlier=false}if(g.dataset.interest)Play.setInterest(g.dataset.interest);go(g.dataset.go)}
@@ -768,13 +777,13 @@ aa.file.addEventListener('change',async()=>{const f=aa.file.files[0];if(!f)retur
   try{const r=await prepImage(f);aaBlob=r.blob;aaSize=[r.w,r.h];aa.prev.src=URL.createObjectURL(r.blob);aa.prev.hidden=false;aa.drop.hidden=true;aaMsg('');if(!aa.title.value)aa.title.value=f.name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').replace(/^IMG \d+$/i,'')}
   catch(_){aaBlob=null;aaMsg("This image type can't be read here. Export it as JPG or PNG and try again.",true)}});
 $('#aa-open').addEventListener('click',()=>{aa.form.hidden=false;$('#aa-open').hidden=true;aa.title.focus()});
-$('#aa-cancel').addEventListener('click',()=>{aa.form.reset();aa.medium.value='Oil pastel';aaBlob=null;aa.prev.hidden=true;aa.drop.hidden=false;aaMsg('');aa.form.hidden=true;$('#aa-open').hidden=false});
+$('#aa-cancel').addEventListener('click',()=>{aa.form.reset();aa.medium.value='Oil pastel on paper';aaBlob=null;aa.prev.hidden=true;aa.drop.hidden=false;aaMsg('');aa.form.hidden=true;$('#aa-open').hidden=false});
 aa.form.addEventListener('submit',async e=>{e.preventDefault();
   if(!aaBlob){aaMsg('Choose an image first.',true);return}
   const title=aa.title.value.trim();if(!title){aaMsg('Add a title.',true);aa.title.focus();return}
   aa.save.disabled=true;aaMsg('Uploading image…');
   try{const up=await artAdmin.assets.upload(aaBlob,{type:'image/jpeg'});aaMsg('Publishing to the site…');
-    const item={id:up.id,src:up.url,w:aaSize[0],h:aaSize[1],cap:title,cat:aa.cat.value,medium:aa.medium.value.trim()||'Oil pastel',added:todayISO()};
+    const item={id:up.id,src:up.url,w:aaSize[0],h:aaSize[1],cap:title,cat:aa.cat.value,medium:aa.medium.value.trim()||'Oil pastel on paper',added:todayISO()};
     await publishData({art:[...ART_EXTRA,item]});aaMsg('Published. The page is reloading with your new piece.')}
   catch(err){aa.save.disabled=false;aaMsg(publishError(err),true)}});
 async function removeArt(btn){
