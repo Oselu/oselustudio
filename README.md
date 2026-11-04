@@ -1,6 +1,6 @@
 # Oselu Studio
 
-The website of Oselu Irabor, a designer and illustrator in Kaduna, Nigeria, and of **Play Inquiry**, his creative workshop practice.
+The website of Oselu Irabor, a designer, illustrator and maker in Kaduna, Nigeria, and of **Play Inquiry**, his creative workshop practice.
 
 The site has two parts in one page:
 
